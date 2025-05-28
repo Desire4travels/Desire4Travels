@@ -1,0 +1,115 @@
+.package-container {
+  background-color: #f9f9f9 !important;
+  min-height: 50vh !important;
+  max-width: 1200px !important;
+  margin: 0 auto !important;
+}
+
+.package-container h1 {
+  text-align: center !important;
+  margin-bottom: 5px !important;
+  font-size: 3rem !important;
+  color: white !important;
+}
+
+.package-grid {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  justify-content: center !important;
+  gap: 1.5rem !important;
+}
+
+.package-hero {
+  width: 100vw !important;
+  background: linear-gradient(135deg, #0F172A, #5B76D6) !important;
+  padding: 2rem 0 !important;
+  color: #fff !important;
+  position: relative !important;
+  left: 50% !important;
+  right: 50% !important;
+  margin-left: -50vw !important;
+  margin-right: -50vw !important;
+  text-align: center !important;
+}
+
+.package-hero-content {
+  max-width: 900px !important;
+  margin: 0 auto !important;
+  padding: 0 20px !important;
+}
+
+.package-title {
+  font-size: 3rem !important;
+  font-weight: 800 !important;
+  margin: 0 !important;
+  color: white !important;
+}
+
+.package-title, .package-container h1 {
+  text-decoration: none !important;
+}
+
+.package-title {
+  text-decoration: none !important;
+  border-bottom: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.loading-message {
+  text-align: center;
+  font-size: 1.5rem;
+  color: #5B76D6; /* Same brand color as Destination */
+  padding: 2rem 0;
+  font-weight: 600;
+  user-select: none;
+  position: relative;
+}
+
+.loading-message::after {
+  content: '.';
+  animation: dots 1.5s steps(3, end) infinite;
+  display: inline-block;
+  margin-left: 5px;
+  font-weight: 600;
+  color: #5B76D6;
+}
+
+@keyframes dots {
+  0%, 20% {
+    color: rgba(91, 118, 214, 0);
+    text-shadow:
+      .25em 0 0 rgba(91, 118, 214, 0),
+      .5em 0 0 rgba(91, 118, 214, 0);
+  }
+  40% {
+    color: #5B76D6;
+    text-shadow:
+      .25em 0 0 rgba(91, 118, 214, 0),
+      .5em 0 0 rgba(91, 118, 214, 0);
+  }
+  60% {
+    text-shadow:
+      .25em 0 0 #5B76D6,
+      .5em 0 0 rgba(91, 118, 214, 0);
+  }
+  80%, 100% {
+    text-shadow:
+      .25em 0 0 #5B76D6,
+      .5em 0 0 #5B76D6;
+  }
+}
+
+@media (max-width: 768px) {
+  .package-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 1.5rem !important;
+    justify-content: center !important;
+  }
+
+  .package-grid > * {
+    width: 100% !important;
+  }
+}
+

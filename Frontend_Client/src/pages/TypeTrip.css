@@ -1,0 +1,59 @@
+.typetrip {
+  text-align: center;
+  padding: 40px;
+  background-color: transparent;
+}
+
+.typetrip-box {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.typetripcard {
+  width: 180px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  text-decoration: none;
+  color: black;
+  transition: transform 0.2s ease;
+  cursor: pointer;
+}
+
+.typetripcard:hover {
+  transform: translateY(-5px);
+}
+
+.logo {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+
+.typetripcard p {
+  padding: 10px 0;
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+.trip-type-page h1 {
+  font-size: 2rem;
+  margin-bottom: 30px;
+  text-align: center;
+  color: #333;
+}
+
+@media (max-width: 600px) {
+  .typetrip-box {
+    justify-content: center;
+  }
+
+  .typetripcard {
+    width: calc(50% - 10px);
+  }
+}

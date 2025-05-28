@@ -1,0 +1,269 @@
+body {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.hero-section {
+  position: relative !important;
+  height: 650px !important;
+  overflow: hidden !important;
+}
+
+.hero-explore-btn {
+  background: none !important;
+}
+
+.hero {
+  min-height: 350px !important;
+  margin: 0px 120px !important;
+  margin-top: 100px !important;
+  margin-bottom: 100px !important;
+  position: relative !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: flex-start !important;
+  gap: 80px !important;
+}
+
+.hero-left {
+  flex: 1 !important;
+  margin-top: 100px !important;
+}
+
+.hero-text {
+  color: #f0f0f0 !important;
+  font-size: 48px !important;
+  font-weight: 500 !important;
+  line-height: 1.5 !important;
+  background: rgba(0, 0, 0, 0.6) !important;
+  border-radius: 24px !important;
+  padding: 20px !important;
+  text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.8) !important;
+  min-height: 210px !important;
+}
+
+.p1 {
+  font-size: 18px !important;
+  font-weight: 300 !important;
+  max-width: 450px !important;
+  word-wrap: break-word !important;
+  line-height: 1.6 !important;
+  color: #eaeaea !important;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5) !important;
+}
+
+.p2 {
+  font-size: 42px !important;
+  color: #ffffff !important;
+  font-weight: 400 !important;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7) !important;
+}
+
+.hero-dot {
+  width: 15px !important;
+  height: 15px !important;
+  background: #fff !important;
+  border-radius: 50% !important;
+  cursor: pointer !important;
+  margin-right: 10px !important;
+}
+
+.hero-dot.orange {
+  background: orange !important;
+}
+
+.hero-dots {
+  display: flex !important;
+  left: 15px !important;
+  bottom: 10px !important;
+  list-style: none !important;
+  padding: 0 !important;
+  margin-top: 20px !important;
+}
+
+.hero-explore {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  width: 250px !important;
+  height: 50px !important;
+  border-radius: 50px !important;
+  padding: 10px 38px !important;
+  background: #2873a1 !important;
+  margin-top: 25px !important;
+  cursor: pointer !important;
+}
+
+.hero-explore p {
+  color: white !important;
+  font-weight: 1000 !important;
+  font-size: 15px !important;
+}
+
+.enquiry-container {
+  flex: 1 !important;
+  display: flex !important;
+  justify-content: center !important;
+  width: 100% !important;
+  margin-top: -70px !important;
+}
+
+.enquiry-form {
+  backdrop-filter: blur(8px) !important;
+  background: linear-gradient(145deg, #0b1120, #10192d) !important;
+  border-radius: 24px !important;
+  padding: 20px 30px !important;
+  width: 400px !important;
+  max-width: 90vw !important;
+  max-height: 90vh !important;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6) !important;
+  color: #fff !important;
+
+  /* Changed from grid to flex column */
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 20px !important;
+
+  overflow-y: auto !important;
+  transition: all 0.3s ease-in-out !important;
+}
+
+.enquiry-form h2 {
+  text-align: center !important;
+  margin-bottom: 10px !important;
+  font-size: 26px !important;
+  font-weight: 800 !important;
+  text-transform: uppercase !important;
+  color: white !important;
+  letter-spacing: 1px !important;
+}
+
+.enquiry-form input,
+.enquiry-form select,
+.enquiry-form textarea {
+  padding: 14px 18px !important;
+  font-size: 16px !important;
+  border: 2px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 12px !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #fff !important;
+  width: 100% !important;
+  transition: border 0.3s ease, background 0.3s ease, box-shadow 0.3s ease !important;
+  height: 50px !important;
+  box-sizing: border-box !important;
+}
+
+.enquiry-form select option {
+  background: #0e1a2b !important;
+  color: #fff !important;
+}
+
+.enquiry-form input:focus,
+.enquiry-form select:focus,
+.enquiry-form textarea:focus {
+  background: rgba(255, 255, 255, 0.15) !important;
+  border-color: #00f7d3 !important;
+  box-shadow: 0 0 12px rgba(0, 247, 211, 0.5) !important;
+}
+
+.enquiry-form textarea {
+  resize: vertical !important;
+  min-height: 90px !important;
+  /* Removed grid-column span */
+}
+
+.enquiry-form input::placeholder,
+.enquiry-form textarea::placeholder {
+  color: #d4d4d4 !important;
+  font-weight: 300 !important;
+}
+
+.enquiry-btn {
+  background-color: #2873a1 !important;
+  color: #fff !important;
+  padding: 16px !important;
+  border: none !important;
+  border-radius: 10px !important;
+  font-weight: 700 !important;
+  font-size: 17px !important;
+  letter-spacing: 0.5px !important;
+  cursor: pointer !important;
+  transition: background 0.3s ease, transform 0.25s ease !important;
+}
+
+.enquiry-btn:hover {
+  background-color: #1f5d80 !important;
+  color: #fff !important;
+  transform: translateY(-3px) scale(1.02) !important;
+}
+
+.enquiry-form button:active {
+  transform: translateY(0) !important;
+}
+
+@media (max-width: 768px) {
+  .hero-section {
+    height: auto !important;
+    padding: 20px 0 !important;
+  }
+
+  .hero {
+    flex-direction: column !important;
+    margin: 0 16px !important;
+    gap: 40px !important;
+    margin-top: 100px !important;
+    align-items: center !important;
+  }
+
+  .hero-left {
+    width: 100% !important;
+    margin-top: 0 !important;
+    text-align: center !important;
+  }
+
+  .hero-text {
+    font-size: 32px !important;
+    padding: 16px !important;
+    min-height: 210px !important;
+  }
+
+  .p1 {
+    font-size: 16px !important;
+    max-width: 100% !important;
+    line-height: 1.5 !important;
+  }
+
+  .p2 {
+    font-size: 28px !important;
+  }
+
+  .hero-explore {
+    width: auto !important;
+    padding: 10px 20px !important;
+  }
+
+  .hero-dots {
+    justify-content: center !important;
+  }
+
+  .enquiry-container {
+    width: 100% !important;
+    margin-top: 0 !important;
+    padding: 0 16px !important;
+  }
+
+  .enquiry-form {
+    width: 100% !important;
+    padding: 16px !important;
+    /* keep flex column */
+  }
+
+  .enquiry-form h2 {
+    font-size: 20px !important;
+  }
+
+  .enquiry-btn {
+    font-size: 16px !important;
+    padding: 14px !important;
+  }
+}

@@ -1,0 +1,30 @@
+.trip-type-page {
+    margin-top: -50px;
+  }
+  
+  .cards-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  
+  .trip-type-buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .trip-type-button {
+    padding: 10px 16px;
+    background: #0077cc;
+    color: white;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 500;
+  }
+  .trip-type-button:hover {
+    background: #005fa3;
+  }
+
+  
+  

@@ -1,0 +1,265 @@
+.review-carousel-container {
+  position: relative;
+  padding: 40px 20px;
+  text-align: center;
+  background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+              url('https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+  background-size: cover;
+  background-position: center;
+  color: white;
+  overflow: hidden;
+}
+
+.background-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 0;
+}
+
+.section-title {
+  position: relative;
+  font-size: 1.8rem;
+  margin-bottom: 30px;
+  color: #fff;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.review-carousel {
+  position: relative;
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 10px;
+}
+
+.carousel-button {
+  position: absolute;
+  top: 43%;
+  transform: translateY(-50%);
+  background: rgba(47, 64, 212, 0.897);
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+.carousel-button:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.carousel-button.prev {
+  margin-right: 10px;
+    left: 10px;
+
+}
+
+.carousel-button.next {
+  margin-left: 10px;
+    right: 10px;
+
+}
+
+.reviews-wrapper {
+  position: relative;
+  width: 100%;
+  height: auto;
+  min-height: 300px;
+  overflow: hidden;
+}
+
+.review-card {
+  position: absolute;
+  width: 100%;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 0;
+}
+
+.review-content {
+  background: rgba(255, 255, 255, 0.9);
+  padding: 20px;
+  border-radius: 10px;
+  width: 100%;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  color: #333;
+  text-align: center;
+}
+
+.star-rating {
+  margin-bottom: 10px;
+  font-size: 1.2rem;
+}
+
+.star {
+  color: #ccc;
+  margin: 0 2px;
+}
+
+.star.filled {
+  color: #2c2496;
+}
+
+.review-text {
+  font-size: 1rem;
+  line-height: 1.5;
+  margin-bottom: 15px;
+  font-style: italic;
+}
+
+.review-author {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.author-image {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 0;
+  margin-bottom: 10px;
+  border: 2px solid #ffc107;
+}
+
+.author-name {
+  font-weight: bold;
+  color: #333;
+  font-size: 0.9rem;
+}
+
+.carousel-indicators {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  position: relative;
+}
+
+.indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50px;
+  background: rgba(255, 255, 255, 0.5);
+  border: none;
+  margin: 0 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.indicator.active {
+  background: #5d86b6;
+  transform: scale(1.2);
+}
+
+/* Mobile-specific styles */
+@media (max-width: 576px) {
+  .review-carousel-container {
+    padding: 30px 10px;
+  }
+  
+  .section-title {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+  }
+  
+  .review-carousel {
+    flex-direction: column;
+    padding: 0;
+  }
+  
+  .carousel-button {
+    position: static;
+    margin: 10px 0;
+    order: 2;
+  }
+  
+  .carousel-button.prev,
+  .carousel-button.next {
+    margin: 10px 5px;
+    display: inline-block;
+  }
+  
+  .reviews-wrapper {
+    min-height: 350px;
+  }
+  
+  .review-content {
+    padding: 15px;
+  }
+  
+  .review-text {
+    font-size: 0.9rem;
+  }
+  
+  .review-author {
+    flex-direction: column;
+  }
+  
+  .author-image {
+    margin-right: 0;
+    margin-bottom: 8px;
+  }
+}
+
+/* Tablet styles */
+@media (min-width: 577px) and (max-width: 768px) {
+  .review-carousel {
+    padding: 0 20px;
+  }
+  
+  .review-content {
+    padding: 25px;
+  }
+  
+  .review-text {
+    font-size: 1rem;
+  }
+}
+
+
+/* Mobile adjustments */
+@media (max-width: 576px) {
+  .carousel-button {
+    width: 35px;
+    height: 35px;
+    font-size: 1.2rem;
+  }
+  
+  .carousel-button.prev {
+    left: 0;
+  }
+  
+  .carousel-button.next {
+    right: 0;
+  }
+  
+  /* Remove the mobile-controls container if you're not using it */
+  .mobile-controls {
+    display: none;
+  }
+}
+
+/* Make sure the review content doesn't overlap with buttons on small screens */
+@media (max-width: 400px) {
+  .review-content {
+    margin: 0 15px;
+  }
+}

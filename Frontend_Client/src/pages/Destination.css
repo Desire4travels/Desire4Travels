@@ -1,0 +1,135 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+.destination-page {
+  background-color: #f9f9f9;
+  min-height: 50vh; 
+}
+
+.destination-page h1 {
+  text-align: center;
+  margin-bottom: 5px;
+  font-size: 3rem;
+  color: white;
+}
+
+.destination-hero {
+  width: 100vw;
+  background: linear-gradient(135deg, #0F172A, #5B76D6);
+  padding: 2rem 0;
+  color: #fff;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  text-align: center;
+}
+
+.destination-hero-content {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 20px;
+  position: relative;
+}
+
+.destination-title {
+  font-size: 3rem;
+  font-weight: 800;
+  margin: 0;
+  color: white;
+}
+
+.destination-hero-content select {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 8px 12px;
+  font-size: 1rem;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  background-color: white;
+  color: #333;
+  min-width: 140px;
+}
+
+.cards-container {
+  display: grid !important;
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: 1rem !important;
+  max-width: 1200px;
+  margin: 0 auto;    
+  padding: 0 1rem !important;
+}
+
+@media (max-width: 1024px) {
+  .cards-container {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .destination-hero-content {
+    position: static !important;
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+  
+  .destination-hero-content select {
+    position: static !important;
+    display: inline-block;
+    width: 100%;
+    max-width: 300px;
+    margin: 0 auto;
+  }
+  
+  .cards-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+.loading-message {
+  text-align: center;
+  font-size: 1.5rem;
+  color: #5B76D6; 
+  padding: 2rem 0;
+  font-weight: 600;
+  user-select: none;
+}
+
+.loading-message::after {
+  content: '...';
+  animation: dots 1.5s steps(3, end) infinite;
+  display: inline-block;
+  margin-left: 5px;
+}
+
+@keyframes dots {
+  0%, 20% {
+    color: rgba(91, 118, 214, 0);
+    text-shadow:
+      .25em 0 0 rgba(91, 118, 214, 0),
+      .5em 0 0 rgba(91, 118, 214, 0);
+  }
+  40% {
+    color: #5B76D6;
+    text-shadow:
+      .25em 0 0 rgba(91, 118, 214, 0),
+      .5em 0 0 rgba(91, 118, 214, 0);
+  }
+  60% {
+    text-shadow:
+      .25em 0 0 #5B76D6,
+      .5em 0 0 rgba(91, 118, 214, 0);
+  }
+  80%, 100% {
+    text-shadow:
+      .25em 0 0 #5B76D6,
+      .5em 0 0 #5B76D6;
+  }
+}

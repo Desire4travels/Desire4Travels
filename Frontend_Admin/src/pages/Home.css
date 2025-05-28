@@ -1,0 +1,72 @@
+body, html {
+    margin: 0;
+    padding: 0;
+}
+
+.home-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 30px;
+    justify-content: flex-start;  
+    align-items: flex-start;     
+    padding: 20px;
+    box-sizing: border-box;
+    height: 100vh;
+    background-color: lightblue;
+    margin-top: -15px;
+}
+
+
+.manage-enquiries-card,
+.manage-popup-enquiries-card,
+.manage-upcoming-trip-card,
+.manage-custom-quotes-card,
+.manage-planned-trips-card,
+.manage-newsletter-card,
+.manage-package-card,
+.manage-blog-card,
+.manage-destination-card {
+    background-color: #f0f0f0;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    height: 150px;
+    width: 250px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.manage-package-card:hover,
+.manage-blog-card:hover,
+.manage-destination-card:hover {
+    transform: translateY(-5px);
+}
+
+.manage-destination-card
+.manage-package-card h1 {
+    font-size: 24px;
+    font-weight: 600;
+    color: #333;
+    margin: 0;
+}
+
+.link {
+    text-decoration: none;
+    color: #333;
+}
+
+.link:hover {
+    color: rgb(28, 63, 129);
+}
+
+.link:active {
+    color: red;
+}
+
+

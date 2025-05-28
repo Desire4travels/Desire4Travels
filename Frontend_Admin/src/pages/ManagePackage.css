@@ -1,0 +1,72 @@
+.manage-package {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  max-width: 100%;
+  gap: 40px;
+}
+
+.form-section {
+  max-width: 500px;
+  margin: 0 auto;
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.table-section {
+  overflow-x: auto;
+}
+
+.manage-package form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.manage-package input,
+.manage-package textarea {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.manage-package button {
+  background-color: #007bff;
+  color: white;
+  padding: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  border: none;
+}
+
+.manage-package button:hover {
+  background-color: #0056b3;
+}
+
+.manage-package table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.manage-package th,
+.manage-package td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.manage-package th {
+  background-color: #007bff;
+  color: white;
+}
+
+.table-content-cell {
+  max-height: 100px;    
+  overflow-y: auto;      
+  white-space: pre-wrap;
+  padding: 5px;
+  border: 1px solid #ddd;
+}

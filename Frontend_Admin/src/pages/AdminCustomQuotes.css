@@ -1,0 +1,60 @@
+.admin-quotes-container {
+  padding: 20px;
+  max-width: 900px;
+  margin: 40px auto;
+  font-family: Arial, sans-serif;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.admin-quotes-container h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.admin-quotes-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.admin-quotes-table th,
+.admin-quotes-table td {
+  border: 1px solid #ddd;
+  padding: 12px 15px;
+  text-align: left;
+}
+
+.admin-quotes-table th {
+  background-color: #007bff;
+  color: white;
+  font-weight: 600;
+}
+
+.admin-quotes-table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.admin-quotes-table tr:hover {
+  background-color: #d9eaff;
+}
+
+.admin-quotes-empty {
+  text-align: center;
+  font-style: italic;
+  color: #666;
+  margin-top: 40px;
+}
+
+.admin-error {
+  color: red;
+  text-align: center;
+  margin-top: 20px;
+}
+
+.admin-loading {
+  text-align: center;
+  margin-top: 20px;
+  font-style: italic;
+}

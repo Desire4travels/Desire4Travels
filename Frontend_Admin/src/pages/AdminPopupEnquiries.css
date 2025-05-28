@@ -1,0 +1,22 @@
+.admin-popup-enquiries-container {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  }
+  
+  .enquiries-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  
+  .enquiries-table th,
+  .enquiries-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+  }
+  
+  .enquiries-table th {
+    background-color: black;
+    text-align: left;
+  }
+  

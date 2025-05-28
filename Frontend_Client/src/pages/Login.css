@@ -1,0 +1,86 @@
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f6e6ff;
+  }
+  
+  .login-box {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  .login-box h2 {
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+  
+  .login-box form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .login-box input[type='tel'],
+  .login-box input[type='text'] {
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .terms {
+    display: flex;
+    align-items: start;
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+  }
+  
+  .terms input {
+    margin-right: 0.5rem;
+  }
+  
+  .login-box button {
+    background-color: #f44336;
+    color: white;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  
+  .login-box button:hover {
+    background-color: #2873a1;
+  }
+  
+  .signup-link {
+    text-align: center;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+  }
+  
+  .toggle-method {
+    margin-top: 10px;
+    background: none;
+    border: none;
+    color: #007bff;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+
+  .login-box input[type='tel'],
+  .login-box input[type='text'],
+  .login-box input[type='password'] {
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%;
+    font-size: 1rem;
+  }
+  
