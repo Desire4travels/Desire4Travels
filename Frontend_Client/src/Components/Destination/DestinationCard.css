@@ -80,12 +80,17 @@
   background: #e65c00;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 768px) {
   .destination-card {
     width: 90vw;
   }
   .destination-card {
     width: 100%;
     max-width: 150px;
+  }
+  .destination-image {
+    height: 150px;
+    padding: 5px;
+    border-radius: 15px;
   }
 }
