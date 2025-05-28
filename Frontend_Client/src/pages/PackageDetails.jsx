@@ -1,14 +1,13 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
+import axios from "axios";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
-import axios from "axios";
 import "./PackageDetails.css";
 import Hotel from "../assets/Hotel.png";
 import Taxi from "../assets/Taxi.png";
 import Passport from "../assets/Passport.png";
 import Flight from "../assets/Flight.png";
-
 
 const PackageDetails = () => {
   const { packageId } = useParams();
@@ -25,6 +24,15 @@ const PackageDetails = () => {
 
   const leftRef = useRef(null);
   const rightRef = useRef(null);
+
+  const [expandedCards, setExpandedCards] = useState({});
+
+  const toggleReadMore = (index) => {
+  setExpandedCards((prev) => ({
+    ...prev,
+    [index]: !prev[index],
+  }));
+};
 
   useEffect(() => {
     const fetchPackageDetails = async () => {
@@ -131,27 +139,60 @@ const PackageDetails = () => {
   });
   if (currentDay) days.push(currentDay);
 
-  const DestinationsJSX = (
-    <section className="package-details-section">
-      <h1 className="package-title package-details-destinations-title">Destinations Covered</h1>
-      <div className="package-details-destinations-grid">
-        {destinations.length ? (
-          destinations.map((dest, i) => (
-            <div key={i} className="package-details-destination-card">
-              <img src={dest.image} alt={dest.name} className="package-details-destination-image" />
-              <h3>{dest.name}</h3>
-              <p><strong>{dest.state} - {dest.type}</strong></p>
-            </div>
-          ))
-        ) : (
-          <p>No destinations available.</p>
-        )}
-      </div>
-    </section>
-  );
+const DestinationsJSX = (
+  <section className="package-details-section">
+    <h1 className="package-title package-details-destinations-title">Destinations Covered</h1>
+    <div className="package-details-destinations-grid">
+      {destinations.length ? (
+        destinations.map((dest, i) => (
+          <div
+            key={i}
+            className={`package-details-destination-card ${expandedCards[i] ? 'expanded' : ''}`}
+          >
+            <img src={dest.image} alt={dest.name} className="package-details-destination-image" />
+            <h3 className="destination-title">{dest.name}</h3>
+            <p><strong>{dest.state} - {dest.type}</strong></p>
+
+            {/* ⬇️ Read more toggle */}
+            <span
+              className="read-more-toggle"
+              onClick={() => toggleReadMore(i)}
+            >
+              {expandedCards[i] ? 'Show less' : 'Read more'}
+            </span>
+          </div>
+        ))
+      ) : (
+        <p>No destinations available.</p>
+      )}
+    </div>
+  </section>
+);
+
 
   return (
     <div className="package-details-container">
+      <div className="mobile-slider mobile-only">
+        <Swiper spaceBetween={16} slidesPerView={1} loop={true}>
+          {/* Main image first */}
+          <SwiperSlide>
+            <div className="slider-image-container">
+              <img src={photo} alt={packageName} />
+            </div>
+          </SwiperSlide>
+
+          {/* Other gallery images */}
+          {[Hotel, Taxi, Passport, Flight].map((imgSrc, index) => (
+            <SwiperSlide key={index}>
+              <div className="slider-image-container">
+                <img src={imgSrc} alt={`Slide ${index + 1}`} />
+              </div>
+            </SwiperSlide>
+          ))}
+        </Swiper>
+      </div>
+
+
       <div className="package-details-header-flex premium-package-header-wrapper">
         <section className="premium-package-header-section">
           <h1 className="premium-package-title">{packageName}</h1>
@@ -161,12 +202,15 @@ const PackageDetails = () => {
       </div>
 
       <div className="package-details-header-flex">
-        <img src={photo} alt={packageName} className="package-details-main-image" />
-        <div className="package-details-icons">
+        <div className="desktop-only">
+          <img src={photo} alt={packageName} className="package-details-main-image" />
+        </div>
+
+        <div className="package-details-icons desktop-only">
           <img src={Hotel} alt="Hotel" className="package-icon" />
           <img src={Taxi} alt="Taxi" className="package-icon" />
         </div>
-        <div className="package-details-icons">
+        <div className="package-details-icons desktop-only second-margin">
           <img src={Passport} alt="Passport" className="package-icon" />
           <img src={Flight} alt="Flight" className="package-icon" />
         </div>
@@ -174,15 +218,17 @@ const PackageDetails = () => {
 
       <div className="package-details-flex-wrapper">
         <div className="package-details-left" ref={leftRef}>
-          <section className="package-details-section">
-            <h1 className="package-title">About the Package</h1>
-            <div
-              className="package-description"
-              dangerouslySetInnerHTML={{ __html: description || "" }}
-            />
-          </section>
+        <section className="package-details-section">
+          <h1 className="package-title">About the Package</h1>
+          <div
+            className="package-description"
+            dangerouslySetInnerHTML={{ __html: description || "" }}
+          />
+        </section>
 
-          {DestinationsJSX}
+          <div className="mobile-only">
+            {DestinationsJSX}
+          </div>
 
           <section className="package-details-section">
             <h1 className="package-title">Inclusions</h1>
@@ -221,6 +267,9 @@ const PackageDetails = () => {
         </div>
 
         <div className="package-details-right" ref={rightRef}>
+          <div className="desktop-only">
+            {DestinationsJSX}
+          </div>
         </div>
       </div>
 
