@@ -144,24 +144,33 @@ const DestinationsJSX = (
     <h1 className="package-title package-details-destinations-title">Destinations Covered</h1>
     <div className="package-details-destinations-grid">
       {destinations.length ? (
-        destinations.map((dest, i) => (
-          <div
-            key={i}
-            className={`package-details-destination-card ${expandedCards[i] ? 'expanded' : ''}`}
-          >
-            <img src={dest.image} alt={dest.name} className="package-details-destination-image" />
-            <h3 className="destination-title">{dest.name}</h3>
-            <p><strong>{dest.state} - {dest.type}</strong></p>
+        destinations.map((dest, i) => {
+          const shortText = `${dest.state}`;
+          const fullText = `${dest.state} - ${dest.type}`;
+          const isExpanded = expandedCards[i];
 
-            {/* ⬇️ Read more toggle */}
-            <span
-              className="read-more-toggle"
-              onClick={() => toggleReadMore(i)}
+          return (
+            <div
+              key={i}
+              className={`package-details-destination-card ${isExpanded ? 'expanded' : ''}`}
             >
-              {expandedCards[i] ? 'Show less' : 'Read more'}
-            </span>
-          </div>
-        ))
+              <img src={dest.image} alt={dest.name} className="package-details-destination-image" />
+              <h3 className="destination-title">{dest.name}</h3>
+              <p>
+                <strong>{isExpanded ? fullText : shortText}</strong>
+              </p>
+
+              {dest.type && (
+                <span
+                  className="read-more-toggle"
+                  onClick={() => toggleReadMore(i)}
+                >
+                  {isExpanded ? 'Show less' : 'Read more'}
+                </span>
+              )}
+            </div>
+          );
+        })
       ) : (
         <p>No destinations available.</p>
       )}
