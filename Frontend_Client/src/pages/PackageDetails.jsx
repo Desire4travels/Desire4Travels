@@ -210,7 +210,7 @@ const DestinationsJSX = (
           <img src={Hotel} alt="Hotel" className="package-icon" />
           <img src={Taxi} alt="Taxi" className="package-icon" />
         </div>
-        <div className="package-details-icons desktop-only second-margin">
+        <div className="package-details-icons desktop-only">
           <img src={Passport} alt="Passport" className="package-icon" />
           <img src={Flight} alt="Flight" className="package-icon" />
         </div>
