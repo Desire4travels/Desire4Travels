@@ -368,6 +368,60 @@
   color: #000;
 }
 
+.read-more-toggle {
+  color: #007bff;
+  cursor: pointer;
+  font-size: 0.875rem;
+  display: inline-block;
+  margin-top: 5px;
+}
+
+.package-details-destination-card {
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.package-description {
+  position: relative;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #333;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+.package-description.collapsed {
+  display: -webkit-box;
+  -webkit-line-clamp: 4; /* truncate at 4 lines */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-height: none; /* remove max-height */
+}
+
+
+
+.package-description.expanded {
+  display: block;
+  overflow: visible;
+  max-height: none;
+}
+
+
+
+.read-more-btn {
+  margin-top: 10px;
+  background: none;
+  border: none;
+  color: #0b4a7b;
+  cursor: pointer;
+  font-weight: 600;
+  text-decoration: underline;
+  font-size: 0.95rem;
+}
+
+
+
 @media (max-width: 768px) {  
   .package-details-header-section {
     flex-direction: column;
