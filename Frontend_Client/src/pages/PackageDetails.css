@@ -368,11 +368,6 @@
   color: #000;
 }
 
-.second-margin{
-  position: relative;
-  left: -225px;
-}
-
 @media (max-width: 768px) {
   .package-details-header-section {
     flex-direction: column;
