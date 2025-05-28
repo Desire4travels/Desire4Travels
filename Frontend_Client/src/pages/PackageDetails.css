@@ -381,20 +381,45 @@
   transition: all 0.3s ease;
 }
 
-.package-details-destination-card.expanded {
-  height: auto;
-  overflow: visible;
+.package-description {
+  position: relative;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #333;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
 }
 
-@media (max-width: 768px) {
+.package-description.collapsed {
+  display: -webkit-box;
+  -webkit-line-clamp: 5; /* changed from 4 to 5 */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-height: 8em; /* 5 lines * 1.6 line-height = 8em approx */
+}
 
-  .package-details-destination-card {
-    min-height: 200px;
-  }
 
-  .package-details-destination-card.expanded {
-    min-height: auto;
-  }
+.package-description.expanded {
+  max-height: none;
+  display: block;
+}
+
+
+.read-more-btn {
+  margin-top: 10px;
+  background: none;
+  border: none;
+  color: #0b4a7b;
+  cursor: pointer;
+  font-weight: 600;
+  text-decoration: underline;
+  font-size: 0.95rem;
+}
+
+
+
+@media (max-width: 768px) {  
   .package-details-header-section {
     flex-direction: column;
     align-items: center;
@@ -599,20 +624,6 @@
     overflow: hidden;
     text-overflow: ellipsis;
   }
-
-  .package-details-destination-card.expanded .destination-title {
-    -webkit-line-clamp: unset;
-    max-height: none;
-    overflow: visible;
-  }
-
-  .read-more-toggle {
-    display: inline-block;
-    margin-top: 6px;
-    font-size: 0.9rem;
-    color: #0077cc;
-    cursor: pointer;
-  }
 }
 
 @media (max-width: 768px) {
@@ -643,3 +654,41 @@
   }
 }
 
+@media (max-width: 768px) {
+  .premium-package-title,
+  .package-title {
+    font-size: 1.25rem !important; 
+  }
+
+  .premium-package-duration,
+  .package-subtitle {
+    font-size: 0.9rem !important; 
+  }
+
+  /* Price Text */
+  .premium-package-price,
+  .package-price {
+    font-size: 0.85rem !important; 
+  }
+
+  .package-description,
+  .package-details-list,
+  .package-details-list li,
+  .itinerary-table,
+  .itinerary-day-row td,
+  .itinerary-item-row td,
+  .quote-form input,
+  .quote-form button {
+    font-size: 0.8rem !important;
+  }
+
+  .package-details-destination-card h3,
+  .package-details-destination-card p {
+    font-size: 0.8rem !important;
+  }
+
+  .request-package-button,
+  .read-more-btn {
+    font-size: 0.8rem !important;
+  }
+}
