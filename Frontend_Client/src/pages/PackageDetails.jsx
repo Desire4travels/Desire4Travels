@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
+import { Autoplay } from 'swiper/modules';
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -27,12 +28,13 @@ const PackageDetails = () => {
 
   const [expandedCards, setExpandedCards] = useState({});
 
-  const toggleReadMore = (index) => {
+const toggleReadMore = (key) => {
   setExpandedCards((prev) => ({
     ...prev,
-    [index]: !prev[index],
+    [key]: !prev[key],
   }));
 };
+
 
   useEffect(() => {
     const fetchPackageDetails = async () => {
@@ -144,33 +146,15 @@ const DestinationsJSX = (
     <h1 className="package-title package-details-destinations-title">Destinations Covered</h1>
     <div className="package-details-destinations-grid">
       {destinations.length ? (
-        destinations.map((dest, i) => {
-          const shortText = `${dest.state}`;
-          const fullText = `${dest.state} - ${dest.type}`;
-          const isExpanded = expandedCards[i];
-
-          return (
-            <div
-              key={i}
-              className={`package-details-destination-card ${isExpanded ? 'expanded' : ''}`}
-            >
-              <img src={dest.image} alt={dest.name} className="package-details-destination-image" />
-              <h3 className="destination-title">{dest.name}</h3>
-              <p>
-                <strong>{isExpanded ? fullText : shortText}</strong>
-              </p>
-
-              {dest.type && (
-                <span
-                  className="read-more-toggle"
-                  onClick={() => toggleReadMore(i)}
-                >
-                  {isExpanded ? 'Show less' : 'Read more'}
-                </span>
-              )}
-            </div>
-          );
-        })
+        destinations.map((dest, i) => (
+          <div
+            key={i}
+            className="package-details-destination-card"
+          >
+            <img src={dest.image} alt={dest.name} className="package-details-destination-image" />
+            <h3 className="destination-title">{dest.name}</h3>
+          </div>
+        ))
       ) : (
         <p>No destinations available.</p>
       )}
@@ -178,11 +162,26 @@ const DestinationsJSX = (
   </section>
 );
 
+const isLongDescription = description && description.split(' ').length > 50; // or some threshold
+
+{description && isLongDescription && (
+  <button className="read-more-btn" onClick={() => toggleReadMore('about')}>
+    {expandedCards['about'] ? 'Read less' : 'Read more'}
+  </button>
+)}
+
 
   return (
     <div className="package-details-container">
       <div className="mobile-slider mobile-only">
-        <Swiper spaceBetween={16} slidesPerView={1} loop={true}>
+        <Swiper
+            spaceBetween={16}
+            slidesPerView={1}
+            loop={true}
+            autoplay={{ delay: 3000, disableOnInteraction: false }}
+            modules={[Autoplay]}
+          >
+
           {/* Main image first */}
           <SwiperSlide>
             <div className="slider-image-container">
@@ -219,7 +218,7 @@ const DestinationsJSX = (
           <img src={Hotel} alt="Hotel" className="package-icon" />
           <img src={Taxi} alt="Taxi" className="package-icon" />
         </div>
-        <div className="package-details-icons desktop-only">
+        <div className="package-details-icons desktop-only second-margin">
           <img src={Passport} alt="Passport" className="package-icon" />
           <img src={Flight} alt="Flight" className="package-icon" />
         </div>
@@ -229,10 +228,15 @@ const DestinationsJSX = (
         <div className="package-details-left" ref={leftRef}>
         <section className="package-details-section">
           <h1 className="package-title">About the Package</h1>
-          <div
-            className="package-description"
-            dangerouslySetInnerHTML={{ __html: description || "" }}
-          />
+<div className={`package-description ${expandedCards['about'] ? 'expanded' : 'collapsed'}`}>
+  <div dangerouslySetInnerHTML={{ __html: description || "" }} />
+  {description && (
+    <button className="read-more-btn" onClick={() => toggleReadMore('about')}>
+      {expandedCards['about'] ? 'Read less' : 'Read more'}
+    </button>
+  )}
+</div>
+
         </section>
 
           <div className="mobile-only">
