@@ -226,19 +226,17 @@ const isLongDescription = description && description.split(' ').length > 50; // 
 
       <div className="package-details-flex-wrapper">
         <div className="package-details-left" ref={leftRef}>
-        <section className="package-details-section">
-          <h1 className="package-title">About the Package</h1>
-<div className={`package-description ${expandedCards['about'] ? 'expanded' : 'collapsed'}`}>
-  <div dangerouslySetInnerHTML={{ __html: description || "" }} />
-  {description && (
-    <button className="read-more-btn" onClick={() => toggleReadMore('about')}>
-      {expandedCards['about'] ? 'Read less' : 'Read more'}
-    </button>
-  )}
-</div>
-
-        </section>
-
+          <section className="package-details-section">
+            <h1 className="package-title">About the Package</h1>
+            <div className={`package-description ${expandedCards['about'] ? 'expanded' : 'collapsed'}`}>
+              <div dangerouslySetInnerHTML={{ __html: description || "" }} />
+            </div>
+            {description && description.split(' ').length > 50 && (
+              <button className="read-more-btn" onClick={() => toggleReadMore('about')}>
+                {expandedCards['about'] ? 'Read less' : 'Read more'}
+              </button>
+            )}
+          </section>
           <div className="mobile-only">
             {DestinationsJSX}
           </div>
