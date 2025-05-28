@@ -368,7 +368,33 @@
   color: #000;
 }
 
+.read-more-toggle {
+  color: #007bff;
+  cursor: pointer;
+  font-size: 0.875rem;
+  display: inline-block;
+  margin-top: 5px;
+}
+
+.package-details-destination-card {
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.package-details-destination-card.expanded {
+  height: auto;
+  overflow: visible;
+}
+
 @media (max-width: 768px) {
+
+  .package-details-destination-card {
+    min-height: 200px;
+  }
+
+  .package-details-destination-card.expanded {
+    min-height: auto;
+  }
   .package-details-header-section {
     flex-direction: column;
     align-items: center;
