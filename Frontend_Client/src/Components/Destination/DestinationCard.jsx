@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import './DestinationCard.css';
 import { FaMapMarkerAlt, FaStar } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+import SuccessPopup from '../SuccessPopup.jsx';
 
 const DestinationCard = ({
   imgSrc,
@@ -10,7 +11,7 @@ const DestinationCard = ({
   tripType,
   rating,
   showExtras = true,
-  showLocation = true
+  showLocation = true,
 }) => {
   const [showCallbackForm, setShowCallbackForm] = useState(false);
   const [mobileNumber, setMobileNumber] = useState('');
@@ -46,8 +47,6 @@ const DestinationCard = ({
         setShowCallbackForm(false);
         setMobileNumber('');
         setShowSuccessTick(true);
-        alert('Callback request sent successfully!');
-        setTimeout(() => setShowSuccessTick(false), 2000);
       } else {
         const errorData = await response.json();
         alert(`Error: ${errorData.error}`);
@@ -59,50 +58,69 @@ const DestinationCard = ({
   };
 
   return (
-    <div className="destination-card" onClick={handleCardClick} style={{ cursor: 'pointer' }}>
-      <img src={imgSrc} alt={title} className="destination-image" />
-      <div className="card-content">
-        <h2 className="destination-title">{title}</h2>
+    <>
+      {showSuccessTick && (
+        <SuccessPopup
+          message="Your callback request has been submitted successfully."
+          onClose={() => setShowSuccessTick(false)}
+        />
+      )}
 
-        {showLocation && (
-          <p className="location"><FaMapMarkerAlt /> {location}</p>
-        )}
+      <div className="destination-card" onClick={handleCardClick} style={{ cursor: 'pointer' }}>
+        <img src={imgSrc} alt={title} className="destination-image" />
+        <div className="card-content">
+          <h2 className="destination-title">{title}</h2>
 
-        {tripType && (
-          <p className="trip-type">
-            Type: {Array.isArray(tripType) ? tripType.join(', ') : tripType}
-          </p>
-        )}
+          {showLocation && (
+            <p className="location">
+              <FaMapMarkerAlt /> {location}
+            </p>
+          )}
 
-        {showExtras && (
-          <>
-            <p className="rating"><FaStar className="star-icon" /> {rating} / 5</p>
-            <button className="request-btn" onClick={handleCallbackRequest}>Request Call Back</button>
-          </>
-        )}
+          {tripType && (
+            <p className="trip-type">
+              Type: {Array.isArray(tripType) ? tripType.join(', ') : tripType}
+            </p>
+          )}
 
-        {showExtras && showCallbackForm && (
-          <div className="callback-form-overlay" onClick={(e) => e.stopPropagation()}>
-            <form className="callback-form" onSubmit={handleSubmit}>
-              <input
-                type="tel"
-                placeholder="Enter mobile number"
-                value={mobileNumber}
-                onChange={(e) => setMobileNumber(e.target.value)}
-                required
-              />
-              <div>
-                <a href="/signup" className="signup-link">Sign up for updates</a>
-              </div>
-              <div className="form-buttons">
-                <button type="submit">Submit</button>
-                <button type="button" onClick={() => setShowCallbackForm(false)}>Cancel</button>
-              </div>
-            </form>
-          </div>
-        )}
+          {showExtras && (
+            <>
+              <p className="rating">
+                <FaStar className="star-icon" /> {rating} / 5
+              </p>
+              <button className="request-btn" onClick={handleCallbackRequest}>
+                Request Call Back
+              </button>
+            </>
+          )}
+
+          {showExtras && showCallbackForm && (
+            <div className="callback-form-overlay" onClick={(e) => e.stopPropagation()}>
+              <form className="callback-form" onSubmit={handleSubmit}>
+                <input
+                  type="tel"
+                  placeholder="Enter mobile number"
+                  value={mobileNumber}
+                  onChange={(e) => setMobileNumber(e.target.value)}
+                  required
+                />
+                <div>
+                  <a href="/signup" className="signup-link">
+                    Sign up for updates
+                  </a>
+                </div>
+                <div className="form-buttons">
+                  <button type="submit">Submit</button>
+                  <button type="button" onClick={() => setShowCallbackForm(false)}>
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

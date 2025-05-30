@@ -65,7 +65,7 @@ const Footer = () => {
           <a href="mailto:info@desire4travels.com" className="footer-link">info@desire4travels.com</a>
         </div>
 
-        <div className="footer-section">
+        <div className="footer-section lastsection">
           <div className="icon-heading">
             <FaWhatsapp className="icon" />
             <h4>WhatsApp us</h4>

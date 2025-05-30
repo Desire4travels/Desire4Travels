@@ -67,6 +67,52 @@
   padding: 0 1rem !important;
 }
 
+.spinner-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center; 
+  align-items: center;     
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 100vh;         
+  width: 100%;
+  text-align: center;
+  margin: 0 auto;
+  padding: 1rem;
+  background-color: #f9f9f9; 
+  z-index: 999; 
+}
+
+
+
+.spinner {
+  width: 60px;
+  height: 60px;
+  border: 6px solid #ddd;
+  border-top: 6px solid #5B76D6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+.spinner-text {
+  font-size: 1.2rem;
+  color: #5B76D6;
+  font-weight: 600;
+  user-select: none;
+}
+
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+
+
 @media (max-width: 1024px) {
   .cards-container {
     grid-template-columns: repeat(2, 1fr) !important;

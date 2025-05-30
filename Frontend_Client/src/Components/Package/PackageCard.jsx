@@ -2,12 +2,14 @@ import React, { useState } from "react";
 import "./PackageCard.css";
 import { FaMapMarkerAlt } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import SuccessPopup from "../SuccessPopup.jsx";
 
 const PackageCard = ({ id, imgSrc, packageName, destinations, price, duration }) => {
   const navigate = useNavigate();
   const [showCallbackForm, setShowCallbackForm] = useState(false);
   const [mobileNumber, setMobileNumber] = useState("");
   const [fullName, setFullName] = useState("");
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
 
   const formattedPrice = isNaN(parseFloat(price)) ? "N/A" : `₹${parseFloat(price).toLocaleString()}`;
 
@@ -20,17 +22,7 @@ const PackageCard = ({ id, imgSrc, packageName, destinations, price, duration })
     setShowCallbackForm(true);
   };
 
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   e.stopPropagation();
-  //   console.log("Mobile:", mobileNumber, "Full Name:", fullName);
-  //   setShowCallbackForm(false);
-  //   setMobileNumber("");
-  //   setFullName("");
-  // };
-
-
- const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
@@ -41,15 +33,15 @@ const PackageCard = ({ id, imgSrc, packageName, destinations, price, duration })
         },
         body: JSON.stringify({
           phoneNo: mobileNumber,
-          package: packageName, // or `${title}-${location}` if that's your format
+          package: packageName,
           called: false,
         }),
       });
 
       if (response.ok) {
-        alert('Callback request sent successfully!');
         setShowCallbackForm(false);
         setMobileNumber('');
+        setShowSuccessPopup(true);
       } else {
         const errorData = await response.json();
         alert(`Error: ${errorData.error}`);
@@ -61,41 +53,49 @@ const PackageCard = ({ id, imgSrc, packageName, destinations, price, duration })
   };
 
   const handleCardClick = () => {
-    console.log(`Navigating to: /package/${id}`);
     navigate(`/package/${id}`);
   };
 
   return (
-    <div className="package-card" onClick={handleCardClick} style={{ cursor: "pointer" }}>
-      <img src={imgSrc} alt={packageName} className="package-image" />
-      <div className="card-content">
-        <h2 className="package-title1" title={packageName}>
-          {packageName.length > 25 ? `${packageName.slice(0, 25)}...` : packageName}
-        </h2>
+    <>
+      {showSuccessPopup && (
+        <SuccessPopup
+          message="Your callback request has been submitted successfully."
+          onClose={() => setShowSuccessPopup(false)}
+        />
+      )}
 
-        <p className="location">
-          <FaMapMarkerAlt /> {locations}
-        </p>
-        <p className="price">{formattedPrice}</p>
-        <p className="duration">{duration}</p>
-        <button className="request-btn" onClick={handleCallbackRequest}>Request Call Back</button>
+      <div className="package-card" onClick={handleCardClick} style={{ cursor: "pointer" }}>
+        <img src={imgSrc} alt={packageName} className="package-image" />
+        <div className="card-content">
+          <h2 className="package-title1" title={packageName}>
+            {packageName.length > 25 ? `${packageName.slice(0, 25)}...` : packageName}
+          </h2>
 
-        {showCallbackForm && (
-          <form onSubmit={handleSubmit} onClick={(e) => e.stopPropagation()}>
-            <div>
-              <input
-                type="tel"
-                value={mobileNumber}
-                onChange={(e) => setMobileNumber(e.target.value)}
-                placeholder="Enter Mobile Number"
-                required
-              />
-            </div>
-            <button type="submit">Submit</button>
-          </form>
-        )}
+          <p className="location">
+            <FaMapMarkerAlt /> {locations}
+          </p>
+          <p className="price">{formattedPrice}</p>
+          <p className="duration">{duration}</p>
+          <button className="request-btn" onClick={handleCallbackRequest}>Request Call Back</button>
+
+          {showCallbackForm && (
+            <form onSubmit={handleSubmit} onClick={(e) => e.stopPropagation()}>
+              <div>
+                <input
+                  type="tel"
+                  value={mobileNumber}
+                  onChange={(e) => setMobileNumber(e.target.value)}
+                  placeholder="Enter Mobile Number"
+                  required
+                />
+              </div>
+              <button type="submit">Submit</button>
+            </form>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

@@ -23,7 +23,7 @@ html, body {
 }
 
 .nav-logo {
-  font-family: Outfit, sans-serif;
+  font-family: 'Playfair Display', serif !important;
   font-size: 28px;
   font-weight: 500;
   color: #6A8DFF;
@@ -38,6 +38,13 @@ html, body {
   text-decoration: none;
   color: inherit;
 }
+
+.nav-logo,
+.nav-logo a,
+.nav-logo span {
+  font-family: 'Playfair Display', serif !important;
+}
+
 
 .nav-container {
   display: flex;
@@ -78,7 +85,7 @@ html, body {
   text-align: center;
 }
 .nav-link:hover {
-  color: #1DB954;
+  color: blue;
 }
 
 .dropdown {
@@ -139,7 +146,7 @@ html, body {
 }
 
 .dropdown-menu li button:hover {
-  background-color: #1DB954;
+  background-color: rgb(40, 40, 157);
   color: black;
 }
 
@@ -184,7 +191,7 @@ html, body {
   background: transparent !important;
   box-shadow: none !important;
   outline: none !important;
-  color: #1DB954;
+  color: blue;
 }
 
 
@@ -271,7 +278,7 @@ html, body {
   }
 
   .dropdown-menu li button:hover {
-    background-color: #1DB954;
+    background-color: blue;
     color: black;
   }
 }

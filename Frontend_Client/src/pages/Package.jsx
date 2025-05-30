@@ -53,7 +53,11 @@ const Package = () => {
 
         <div className="package-grid">
           {loading ? (
-            <p className="loading-message">Loading Packages</p>
+            <div className="spinner-container">
+            <div className="spinner"></div>
+            <div className="spinner-text">Loading packages...</div>
+          </div>
+          
           ) : packages.length > 0 ? (
             packages.map((pkg) => (
               <PackageCard

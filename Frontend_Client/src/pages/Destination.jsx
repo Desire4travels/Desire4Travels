@@ -122,8 +122,11 @@ const Destination = () => {
       </header>
 
       <div className="cards-container">
-        {loading ? (
-          <p className="loading-message">Loading destinations</p>
+      {loading ? (
+          <div className="spinner-container">
+            <div className="spinner"></div>
+            <div className="spinner-text">Loading destinations...</div>
+          </div>
         ) : paginatedDestinations.length > 0 ? (
           paginatedDestinations.map(dest => (
             <DestinationCard

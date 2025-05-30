@@ -1,0 +1,30 @@
+html, body {
+    overflow-x: hidden;
+  }
+  
+  iframe[src*="tawk.to"] {
+    pointer-events: auto !important;
+  }
+  
+  .tawk-custom-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999;
+    pointer-events: none; 
+  }
+  
+  .tawk-custom-container iframe {
+    pointer-events: auto;
+  }
+  
+  @media (max-width: 600px) {
+    .tawk-custom-container {
+      width: 90vw;
+      right: 5vw;
+      bottom: 10px;
+      transform: scale(0.95);
+      transform-origin: bottom right;
+    }
+  }
+  

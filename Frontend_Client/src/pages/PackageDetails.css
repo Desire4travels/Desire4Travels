@@ -420,6 +420,12 @@
   font-size: 0.95rem;
 }
 
+.package-description,
+.package-details-list,
+.package-details-list li {
+  text-align: justify;
+}
+
 
 
 @media (max-width: 768px) {  

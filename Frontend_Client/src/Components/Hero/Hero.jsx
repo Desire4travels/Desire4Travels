@@ -11,6 +11,48 @@ const Hero = ({ heroData, setHeroCount, heroCount, planTripRef }) => {
     travelDate: ''
   });
 
+  useEffect(() => {
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    const isMobile = () => window.innerWidth <= 768;
+
+    const handleTouchStart = (e) => {
+      if (!isMobile()) return;
+      touchStartX = e.changedTouches[0].screenX;
+    };
+
+    const handleTouchEnd = (e) => {
+      if (!isMobile()) return;
+      touchEndX = e.changedTouches[0].screenX;
+      handleSwipeGesture();
+    };
+
+    const handleSwipeGesture = () => {
+      const swipeThreshold = 50;
+      const swipeDistance = touchEndX - touchStartX;
+
+      if (swipeDistance > swipeThreshold) {
+        setHeroCount(prev => (prev - 1 + 3) % 3); 
+      } else if (swipeDistance < -swipeThreshold) {
+        setHeroCount(prev => (prev + 1) % 3);
+      }
+    };
+
+    const heroSection = document.querySelector('.hero-section');
+    if (heroSection) {
+      heroSection.addEventListener('touchstart', handleTouchStart);
+      heroSection.addEventListener('touchend', handleTouchEnd);
+    }
+
+    return () => {
+      if (heroSection) {
+        heroSection.removeEventListener('touchstart', handleTouchStart);
+        heroSection.removeEventListener('touchend', handleTouchEnd);
+      }
+    };
+  }, [setHeroCount]);
+
   const handleScroll = () => {
     if (planTripRef?.current) {
       planTripRef.current.scrollIntoView({ behavior: 'smooth' });
