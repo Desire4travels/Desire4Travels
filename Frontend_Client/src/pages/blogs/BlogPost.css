@@ -142,6 +142,17 @@ body {
   margin-bottom: 1.5rem;
 }
 
+/* .blog-post h1 {
+  font-size: 2.25rem;
+  margin: 1rem 0;
+  color: var(--gray-800);
+  line-height: 1.3;
+  font-weight: 700;
+  position: relative;
+  padding-bottom: 1rem;
+  text-align: center;
+} */
+
 .blog-post h1 {
   font-size: 2.25rem;
   margin: 1rem 0;
@@ -150,7 +161,11 @@ body {
   font-weight: 700;
   position: relative;
   padding-bottom: 1rem;
+  text-align: center;        /* ← Align to the left */
+  width: 100%;             /* ← Take full width of the container */
+  display: block;          /* ← Ensure it's a block-level element */
 }
+
 
 .blog-post h1::after {
   content: '';

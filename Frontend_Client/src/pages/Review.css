@@ -79,7 +79,7 @@
   width: 100%;
   height: auto;
   min-height: 300px;
-  overflow: hidden;
+  overflow: hidden;;
 }
 
 .review-card {
@@ -149,7 +149,6 @@
 .carousel-indicators {
   display: flex;
   justify-content: center;
-  margin-top: 20px;
   position: relative;
 }
 
@@ -198,7 +197,7 @@
   }
   
   .reviews-wrapper {
-    min-height: 350px;
+    min-height: 275px;
   }
   
   .review-content {
@@ -262,4 +261,8 @@
   .review-content {
     margin: 0 15px;
   }
+  .carousel-indicators{
+    margin-top: 0px;
+  }
+
 }

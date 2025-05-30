@@ -158,7 +158,7 @@ const BlogPost = () => {
                 <span>
                   <FiUser /> {blog.author}
                 </span>
-                <span className="blog-category">{blog.category}</span>
+                {/* <span className="blog-category">{blog.category}</span> */}
 
                 <span>
                   <FiCalendar /> {new Date(blog.date).toLocaleDateString('en-US', {

@@ -317,8 +317,8 @@ const BlogCard = ({ blog, index }) => {
           <span className="blog-category-badge">{blog.category}</span>
         </div>
         <div className="blog-content">
-          <h2 className="blog-title">{blog.title}</h2>
-          <p className="blog-excerpt">{blog.excerpt}</p>
+          <div className="blog-title">{blog.title}</div>
+          <div className="blog-excerpt">{blog.excerpt}</div>
           <div className="blog-meta">
             <span className="blog-author">
               <svg className="author-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

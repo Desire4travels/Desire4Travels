@@ -361,15 +361,29 @@ body {
   flex-direction: column;
 }
 
-.blog-title {
-  font-size: 1rem;
+/* .blog-title {
+  font-size: 1.2rem;
   margin: 0 0 10px 0;
   margin-bottom: 8px;
   color: #333;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  font-weight: 600;
+
+} */
+
+.blog-title {
+  font-size: 1.2rem;
+  color: #333;
+  font-weight: 600;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;     /* Show only 2 lines */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
+
 
 .blog-excerpt {
   color: #666;
