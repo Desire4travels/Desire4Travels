@@ -3,7 +3,7 @@ body, html {
     padding: 0;
 }
 
-.home-container {
+.all-enquiries-container {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;

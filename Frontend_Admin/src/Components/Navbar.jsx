@@ -9,11 +9,11 @@ const Navbar = () => {
       </div>
       <ul className="nav-menu">
         <li><Link to="/" className="nav-link">Home</Link></li>
-        <li><Link to="/managedestination" className="nav-link">Manage Destination</Link></li>
+        {/*<li><Link to="/managedestination" className="nav-link">Manage Destination</Link></li>
         <li><Link to="/managepackage" className="nav-link">Manage Packages</Link></li>    
         <li><Link to="/manageblog" className="nav-link">Manage Blog</Link></li>
         <li><Link to="/packageCallback" className="nav-link">Package Callback</Link></li>
-        <li><Link to="/destinationCallback" className="nav-link">Package Callback</Link></li>
+        <li><Link to="/destinationCallback" className="nav-link">Package Callback</Link></li>*/}
       </ul>
     </nav>
   );

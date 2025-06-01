@@ -23,6 +23,7 @@ const NewsletterAdmin = () => {
   }, []);
 
   return (
+    <ProtectedCard cardKey="enquiries"> 
     <div className="newsletter-admin-container">
       <h2>Newsletter Subscribers</h2>
 
@@ -53,6 +54,7 @@ const NewsletterAdmin = () => {
         </table>
       )}
     </div>
+    </ProtectedCard>
   );
 };
 

@@ -14,6 +14,8 @@ import PackageCallback from './pages/callback/packageCallback.jsx';
 import DestinationCallback from './pages/callback/destinationCallback.jsx';
 import AdminUpcomingTrip from './pages/AdminUpcomingTrip.jsx';
 import AdminPopupEnquiries from './pages/AdminPopupEnquiries.jsx';
+import AllEnquiries from './pages/AllEnquiries.jsx';
+import PrivateRoute from './Components/PrivateRoute.jsx';
 
 function App() {
   const [count, setCount] = useState(0);
@@ -23,17 +25,18 @@ function App() {
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/managepackage" element={<ManagePackage />} />
-        <Route path="/manageblog" element={<ManageBlog />} />
-        <Route path="/managedestination" element={<ManageDestination />} />
-        <Route path="/adminenquiries" element={<AdminEnquiries />} />
-        <Route path="/newsletteradmin" element={<NewsletterAdmin />} />
-        <Route path="/homeplannedtrips" element={<HomePlannedTrips />} />
-        <Route path="/admincustomquotes" element={<AdminCustomQuotes />} />
-        <Route path="/packageCallback" element={<PackageCallback />} />
-        <Route path="/destinationCallback" element={<DestinationCallback />} />
-        <Route path="/adminupcomingtrip" element={<AdminUpcomingTrip />} />
-        <Route path="/adminpopupenquiries" element={<AdminPopupEnquiries />} />
+        <Route path="/managepackage" element={<PrivateRoute cardKey="packages"><ManagePackage /></PrivateRoute>} />
+        <Route path="/manageblog" element={<PrivateRoute cardKey="blogs"><ManageBlog /></PrivateRoute>} />
+        <Route path="/managedestination" element={<PrivateRoute cardKey="destinations"><ManageDestination /></PrivateRoute>} />
+        <Route path="/adminenquiries" element={<PrivateRoute cardKey="enquiries"><AdminEnquiries /></PrivateRoute>} />
+        <Route path="/newsletteradmin" element={<PrivateRoute cardKey="enquiries"><NewsletterAdmin /></PrivateRoute >} />
+        <Route path="/homeplannedtrips" element={<PrivateRoute cardKey="enquiries"><HomePlannedTrips /></PrivateRoute>} />
+        <Route path="/admincustomquotes" element={<PrivateRoute cardKey="enquiries"><AdminCustomQuotes /></PrivateRoute>} />
+        <Route path="/packageCallback" element={<PrivateRoute cardKey="enquiries"><PackageCallback /></PrivateRoute>} />
+        <Route path="/destinationCallback" element={<PrivateRoute cardKey="enquiries"><DestinationCallback /></PrivateRoute>} />
+        <Route path="/adminupcomingtrip" element={<PrivateRoute cardKey="enquiries"><AdminUpcomingTrip /></PrivateRoute>} />
+        <Route path="/adminpopupenquiries" element={<PrivateRoute cardKey="enquiries"><AdminPopupEnquiries /></PrivateRoute>} />
+        <Route path="/allenquiries" element={<AllEnquiries />} />
       </Routes>
     </div>
   );
