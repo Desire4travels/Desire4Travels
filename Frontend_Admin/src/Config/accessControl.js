@@ -1,4 +1,3 @@
-// src/config/accessControl.js
 export const accessConfig = {
     enquiries: { password: 'enquiry123' },
     blogs: { password: 'blog123' },
