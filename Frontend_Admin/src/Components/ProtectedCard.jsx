@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { accessConfig } from '../config/accessControl.js';
+import { accessConfig } from '../config/accessControl';
 
 const AUTO_LOCK_TIME = 5 * 60 * 1000; // 5 minutes 
 
