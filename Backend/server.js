@@ -794,36 +794,85 @@ app.delete('/api/admin/packages/:id', async (req, res) => {
 });
 
 // GET - Fetch packages (public endpoint)
+// app.get('/api/packages', async (req, res) => {
+//   try {
+//     const { destination } = req.query;
+//     const snapshot = await db.collection('packages').orderBy('createdAt', 'desc').get();
+//     const packages = [];
+
+//     for (const doc of snapshot.docs) {
+//       const pkg = doc.data();
+//       const destIds = pkg.destinations || [];
+
+//       const destinationNames = [];
+//       for (const destId of destIds) {
+//         const destDoc = await db.collection('destinations').doc(destId).get();
+//         if (destDoc.exists) {
+//           const dest = destDoc.data();
+//           destinationNames.push(`${dest.name}-${dest.state}`);
+//         }
+//       }
+
+//       if (destination && !destinationNames.includes(destination)) continue;
+
+//       packages.push({
+//         id: doc.id,
+//         packageName: pkg.packageName,
+//         photo: pkg.photo, // ImageKit URL is already complete
+//         price: pkg.price,
+//         duration: pkg.duration,
+//         destinations: destinationNames,
+//       });
+//     }
+
+//     res.status(200).json(packages);
+//   } catch (error) {
+//     console.error('Error fetching packages:', error);
+//     res.status(500).json({ error: 'Server error' });
+//   }
+// });
+
 app.get('/api/packages', async (req, res) => {
   try {
     const { destination } = req.query;
     const snapshot = await db.collection('packages').orderBy('createdAt', 'desc').get();
-    const packages = [];
 
-    for (const doc of snapshot.docs) {
-      const pkg = doc.data();
-      const destIds = pkg.destinations || [];
+    const packagesRaw = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    
+    // Step 1: Collect all unique destination IDs
+    const destIdSet = new Set();
+    packagesRaw.forEach(pkg => {
+      (pkg.destinations || []).forEach(id => destIdSet.add(id));
+    });
 
-      const destinationNames = [];
-      for (const destId of destIds) {
-        const destDoc = await db.collection('destinations').doc(destId).get();
-        if (destDoc.exists) {
-          const dest = destDoc.data();
-          destinationNames.push(`${dest.name}-${dest.state}`);
-        }
+    // Step 2: Batch fetch all destination docs
+    const destIdArray = Array.from(destIdSet);
+    const destDocs = await Promise.all(destIdArray.map(id => db.collection('destinations').doc(id).get()));
+
+    const destMap = {};
+    destDocs.forEach(doc => {
+      if (doc.exists) {
+        const data = doc.data();
+        destMap[doc.id] = `${data.name}-${data.state}`;
       }
+    });
 
-      if (destination && !destinationNames.includes(destination)) continue;
+    // Step 3: Map destinations back to packages
+    const packages = packagesRaw.map(pkg => {
+      const destinationNames = (pkg.destinations || []).map(id => destMap[id]).filter(Boolean);
 
-      packages.push({
-        id: doc.id,
+      // Apply filter if `destination` query param is set
+      if (destination && !destinationNames.includes(destination)) return null;
+
+      return {
+        id: pkg.id,
         packageName: pkg.packageName,
-        photo: pkg.photo, // ImageKit URL is already complete
+        photo: pkg.photo,
         price: pkg.price,
         duration: pkg.duration,
         destinations: destinationNames,
-      });
-    }
+      };
+    }).filter(Boolean);
 
     res.status(200).json(packages);
   } catch (error) {
