@@ -1,7 +1,7 @@
 export const accessConfig = {
-    enquiries: { password: 'enquiry123' },
-    blogs: { password: 'blog123' },
-    destinations: { password: 'dest123' },
-    packages: { password: 'package123' },
+    enquiries: { password: 'D4tenquiry123' },
+    blogs: { password: 'D4tblogs246' },
+    destinations: { password: 'D4tdest369' },
+    packages: { password: 'D4tpackage4812' },
   };
   
