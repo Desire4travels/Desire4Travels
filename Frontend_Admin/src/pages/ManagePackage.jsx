@@ -102,20 +102,26 @@ const ManagePackage = () => {
     }
   };
 
-  const handleEdit = (pkg) => {
-    setFormData({
-      packageName: pkg.packageName,
-      duration: pkg.duration,
-      price: pkg.price,
-      description: pkg.description,
-      inclusions: pkg.inclusions,
-      itinerary: pkg.itinerary,
-      photo: null,
-      destinations: Array.isArray(pkg.destinations) ? pkg.destinations : [],
-    });
-    setPreviewImage(pkg.photo || null);
-    setEditingId(pkg._id || pkg.id);
-  };
+const handleEdit = (pkg) => {
+  console.log('Editing package:', pkg);
+
+  setFormData({
+    packageName: pkg.packageName,
+    duration: pkg.duration,
+    price: pkg.price,
+    description: pkg.description,
+    inclusions: pkg.inclusions,
+    itinerary: pkg.itinerary,
+    photo: null,
+    destinations: Array.isArray(pkg.destinations) && pkg.destinations.length > 0
+      ? pkg.destinations
+      : [],
+  });
+
+  setPreviewImage(pkg.photo || null);
+  setEditingId(pkg._id || pkg.id);
+};
+
 
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure you want to delete this package?')) return;
