@@ -225,10 +225,10 @@ const ManagePackage = () => {
           </thead>
           <tbody>
             {packages.map(pkg => {
-              const selectedDests = Array.isArray(pkg.destinationNames)
-                ? pkg.destinationNames.join(', ')
+              const selectedDests = Array.isArray(pkg.destinations)
+                ? pkg.destinations.join(', ')
                 : 'No destinations';
-      
+
               return (
                 <tr key={pkg._id || pkg.id}>
                   <td>
