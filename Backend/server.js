@@ -695,19 +695,20 @@ app.get('/api/admin/packages', async (req, res) => {
           destinationNames.push('Unknown');
         }
       }
-        packages.push({
-          id: doc.id,
-          packageName: pkg.packageName,
-          photo: pkg.photo,
-          price: pkg.price,
-          duration: pkg.duration,
-          description: pkg.description,
-          inclusions: pkg.inclusions,
-          itinerary: pkg.itinerary,
-          destinations: destIds,         // send IDs
-          destinationNames: destinationNames, // send resolved names
-          createdAt: pkg.createdAt
-        });
+
+      packages.push({
+        id: doc.id,
+        packageName: pkg.packageName,
+        photo: pkg.photo,
+        price: pkg.price,
+        duration: pkg.duration,
+        description: pkg.description,
+        inclusions: pkg.inclusions,
+        itinerary: pkg.itinerary,
+        destinations: destIds, 
+        destinationNames: destinationNames,
+        createdAt: pkg.createdAt
+      });
     }
 
     res.status(200).json(packages);
@@ -716,6 +717,7 @@ app.get('/api/admin/packages', async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 });
+
 
 // PUT - Update package with ImageKit
 app.put('/api/admin/packages/:id', upload.single('photo'), async (req, res) => {
