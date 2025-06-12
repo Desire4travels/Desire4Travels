@@ -1,0 +1,158 @@
+.container {
+  min-height: 100vh;
+  background-color: #f3f4f6;
+  padding: 24px;
+}
+
+.content {
+  max-width: 1024px;
+  margin: auto;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #1f2937;
+  margin-bottom: 1.5rem;
+}
+
+.error-box {
+  background-color: #fee2e2;
+  border: 1px solid #f87171;
+  color: #b91c1c;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.filter-buttons {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 1.5rem;
+}
+
+.filter-btn {
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  background: #ffffff;
+  color: #374151;
+}
+
+.filter-btn.active {
+  background-color: #2563eb;
+  color: white;
+}
+
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 256px;
+}
+
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid transparent;
+  border-top: 4px solid #3b82f6;
+  border-bottom: 4px solid #3b82f6;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.table-container {
+  background: white;
+  border-radius: 8px;
+  overflow-x: auto;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.callback-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.callback-table thead {
+  background-color: #f9fafb;
+}
+
+.callback-table th,
+.callback-table td {
+  padding: 12px 24px;
+  text-align: left;
+  font-size: 0.875rem;
+}
+
+.callback-table tbody tr {
+  border-top: 1px solid #e5e7eb;
+}
+
+.no-data {
+  text-align: center;
+  color: #6b7280;
+}
+
+.input {
+  padding: 4px 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+}
+
+.status {
+  padding: 4px 8px;
+  font-size: 0.75rem;
+  border-radius: 9999px;
+  font-weight: 600;
+}
+
+.called {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.not-called {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+.btn.green {
+  color: #059669;
+}
+
+.btn.red {
+  color: #dc2626;
+}
+
+.btn.blue {
+  color: #2563eb;
+}
+
+.btn.purple {
+  color: #7c3aed;
+}
+
+.btn.gray {
+  color: #6b7280;
+}

@@ -1905,6 +1905,173 @@ app.get('/api/admin/popup-enquiries', async (req, res) => {
 
 
 
+
+
+// const activityCallback = db.collection('activity-callbacks');
+
+// /**
+//  * CREATE
+//  * POST /api/callbacks
+//  */
+// app.post('/activity-callback', async (req, res) => {
+//   try {
+//     const { number } = req.body;
+//     if (!number) return res.status(400).json({ error: 'Number is required' });
+
+//     const newDoc = await activityCallback.add({ number, createdAt: admin.firestore.FieldValue.serverTimestamp() });
+//     res.status(201).json({ id: newDoc.id, number });
+//   } catch (err) {
+//     res.status(500).json({ error: 'Failed to add callback' });
+//   }
+// });
+
+// /**
+//  * READ ALL
+//  * GET /api/callbacks
+//  */
+// app.get('/activity-callback', async (req, res) => {
+//   try {
+//     const snapshot = await activityCallback.orderBy('createdAt', 'desc').get();
+//     const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+//     res.json(data);
+//   } catch (err) {
+//     res.status(500).json({ error: 'Failed to fetch callbacks' });
+//   }
+// });
+
+// /**
+//  * READ ONE
+//  * GET /api/callbacks/:id
+//  */
+// app.get('/activity-callback/:id', async (req, res) => {
+//   try {
+//     const doc = await activityCallback.doc(req.params.id).get();
+//     if (!doc.exists) return res.status(404).json({ error: 'Not found' });
+//     res.json({ id: doc.id, ...doc.data() });
+//   } catch {
+//     res.status(500).json({ error: 'Error getting callback' });
+//   }
+// });
+
+// /**
+//  * UPDATE
+//  * PUT /api/callbacks/:id
+//  */
+// app.put('/activity-callback/:id', async (req, res) => {
+//   try {
+//     const { number } = req.body;
+//     if (!number) return res.status(400).json({ error: 'Number is required' });
+
+//     await activityCallback.doc(req.params.id).update({ number });
+//     res.json({ message: 'Updated successfully' });
+//   } catch {
+//     res.status(500).json({ error: 'Failed to update' });
+//   }
+// });
+
+// /**
+//  * DELETE
+//  * DELETE /api/callbacks/:id
+//  */
+// app.delete('/activity-callback/:id', async (req, res) => {
+//   try {
+//     await activityCallback.doc(req.params.id).delete();
+//     res.status(200).json({ message: 'Deleted successfully' });
+//   } catch {
+//     res.status(500).json({ error: 'Failed to delete' });
+//   }
+// });
+
+
+
+const activityCallback = db.collection('activity-callbacks');
+
+/**
+ * CREATE
+ * POST /activity-callback
+ */
+app.post('/activity-callback', async (req, res) => {
+  try {
+    const { number } = req.body;
+    if (!number) return res.status(400).json({ error: 'Number is required' });
+
+    const newDoc = await activityCallback.add({
+      number,
+      called: false, // 👈 default value
+      createdAt: admin.firestore.FieldValue.serverTimestamp()
+    });
+
+    res.status(201).json({ id: newDoc.id, number, called: false });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to add callback' });
+  }
+});
+
+/**
+ * READ ALL
+ * GET /activity-callback
+ */
+app.get('/activity-callback', async (req, res) => {
+  try {
+    const snapshot = await activityCallback.orderBy('createdAt', 'desc').get();
+    const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch callbacks' });
+  }
+});
+
+/**
+ * READ ONE
+ * GET /activity-callback/:id
+ */
+app.get('/activity-callback/:id', async (req, res) => {
+  try {
+    const doc = await activityCallback.doc(req.params.id).get();
+    if (!doc.exists) return res.status(404).json({ error: 'Not found' });
+    res.json({ id: doc.id, ...doc.data() });
+  } catch {
+    res.status(500).json({ error: 'Error getting callback' });
+  }
+});
+
+/**
+ * UPDATE
+ * PUT /activity-callback/:id
+ */
+app.put('/activity-callback/:id', async (req, res) => {
+  try {
+    const { number, called } = req.body;
+    const updateData = {};
+
+    if (number !== undefined) updateData.number = number;
+    if (called !== undefined) updateData.called = called;
+
+    if (Object.keys(updateData).length === 0) {
+      return res.status(400).json({ error: 'No valid fields provided to update' });
+    }
+
+    await activityCallback.doc(req.params.id).update(updateData);
+    res.json({ message: 'Updated successfully' });
+  } catch {
+    res.status(500).json({ error: 'Failed to update' });
+  }
+});
+
+/**
+ * DELETE
+ * DELETE /activity-callback/:id
+ */
+app.delete('/activity-callback/:id', async (req, res) => {
+  try {
+    await activityCallback.doc(req.params.id).delete();
+    res.status(200).json({ message: 'Deleted successfully' });
+  } catch {
+    res.status(500).json({ error: 'Failed to delete' });
+  }
+});
+
+
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
