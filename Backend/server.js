@@ -45,7 +45,6 @@ const serviceAccount = JSON.parse(process.env.FIREBASE_ADMIN_CONFIG);
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  storageBucket: 'desire4travels.appspot.com'
 });
 const db = admin.firestore();
 
