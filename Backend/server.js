@@ -45,6 +45,7 @@ const serviceAccount = JSON.parse(process.env.FIREBASE_ADMIN_CONFIG);
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
+  storageBucket: 'desire4travels.appspot.com'
 });
 const db = admin.firestore();
 
@@ -624,6 +625,7 @@ app.delete('/api/admin/destinations/:id', async (req, res) => {
 });
 
 // POST - Create package with ImageKit
+// POST - Create package with Firebase Storage
 app.post('/api/admin/packages', upload.single('photo'), async (req, res) => {
   try {
     const {
@@ -645,15 +647,20 @@ app.post('/api/admin/packages', upload.single('photo'), async (req, res) => {
       return res.status(400).json({ error: 'Destinations must be an array' });
     }
 
-    // Upload photo to ImageKit
-    const uploadedPhoto = await imagekit.upload({
-      file: fs.readFileSync(req.file.path),
-      fileName: req.file.originalname,
-      folder: "/packages"
+    // Upload photo to Firebase Storage
+    const fileName = `packages/${Date.now()}-${req.file.originalname}`;
+    const file = admin.storage().bucket().file(fileName);
+
+    await file.save(fs.readFileSync(req.file.path), {
+      metadata: { contentType: req.file.mimetype },
     });
-    
+
+    await file.makePublic();
+
     // Remove temporary file
     fs.unlinkSync(req.file.path);
+
+    const publicUrl = `https://storage.googleapis.com/${admin.storage().bucket().name}/${fileName}`;
 
     const newPackage = {
       packageName,
@@ -662,7 +669,7 @@ app.post('/api/admin/packages', upload.single('photo'), async (req, res) => {
       description,
       inclusions,
       itinerary,
-      photo: `${imagekit.urlEndpoint}/${uploadedPhoto.filePath}?tr=n-ikml`,
+      photo: publicUrl,
       destinations: parsedDestinations,
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
     };
@@ -674,6 +681,7 @@ app.post('/api/admin/packages', upload.single('photo'), async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 });
+
 
 // GET - Fetch all admin packages
 app.get('/api/admin/packages', async (req, res) => {
