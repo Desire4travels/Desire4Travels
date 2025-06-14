@@ -22,7 +22,7 @@ const ManagePackage = () => {
     fetchPackages();
     fetchDestinations();
   }, []);
-
+  
   const fetchPackages = async () => {
     try {
       const res = await fetch('https://desire4travels-1.onrender.com/api/admin/packages');
@@ -231,9 +231,15 @@ const handleEdit = (pkg) => {
           </thead>
           <tbody>
             {packages.map(pkg => {
-              const selectedDests = Array.isArray(pkg.destinations)
-                ? pkg.destinations.join(', ')
-                : 'No destinations';
+                const selectedDests = Array.isArray(pkg.destinations)
+                  ? pkg.destinations
+                      .map(destId => {
+                        const dest = destinations.find(d => d._id === destId || d.id === destId);
+                        return dest ? `${dest.name} (${dest.state})` : destId;
+                      })
+                      .join(', ')
+                  : 'No destinations';
+
 
               return (
                 <tr key={pkg._id || pkg.id}>
