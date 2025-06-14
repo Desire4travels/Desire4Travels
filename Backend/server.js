@@ -662,7 +662,7 @@ app.post('/api/admin/packages', upload.single('photo'), async (req, res) => {
       description,
       inclusions,
       itinerary,
-      photo: `${imagekit.urlEndpoint}/${uploadedPhoto.filePath}`,
+      photo: `${imagekit.urlEndpoint}/${uploadedPhoto.filePath}?tr=n-ikml`,
       destinations: parsedDestinations,
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
     };
