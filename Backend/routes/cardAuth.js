@@ -1,15 +1,7 @@
 const express = require('express');
-const session = require('express-session');
 require('dotenv').config();
 
 const router = express.Router();
-
-router.use(session({
-  secret: 'card_secret_key',
-  resave: false,
-  saveUninitialized: true,
-  cookie: { secure: false }  // set to true only with HTTPS
-}));
 
 const CARD_PASSWORDS = {
   destinations: process.env.DESTINATION_PASS,
