@@ -16,7 +16,12 @@ const ProtectedCard = ({ cardKey, children }) => {
   const BASE_URL = 'https://desire4travels-1.onrender.com';
 
   useEffect(() => {
-    axios.get(`${BASE_URL}/api/card-status/${cardKey}`, { withCredentials: true })
+    axios.get(`${BASE_URL}/api/card-status/${cardKey}`, {
+      withCredentials: true, headers: {
+        'Content-Type': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest'
+      }
+    })
       .then(res => {
         if (res.data.authenticated) setIsAuthenticated(true);
       });
@@ -27,10 +32,10 @@ const ProtectedCard = ({ cardKey, children }) => {
       { password },
       { withCredentials: true }
     )
-    .then(() => setIsAuthenticated(true))
-    .catch(() => setError("Invalid password"));
+      .then(() => setIsAuthenticated(true))
+      .catch(() => setError("Invalid password"));
   };
-  
+
 
   if (isAuthenticated) return <>{children}</>;
 

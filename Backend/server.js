@@ -15,25 +15,37 @@ const app = express();
 const port = 3000;
 
 // Allow requests only from your frontend domain
-const allowedOrigins = ['http://localhost:3000', 'https://desire4-travels.vercel.app'];
+const allowedOrigins = [
+  'http://localhost:3000', 
+  'https://desire4-travels.vercel.app',
+  'https://desire4travels-1.onrender.com'
+];
 
 const corsOptions = {
   origin: function (origin, callback) {
-    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
-      callback(null, true);
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      // Set the specific origin in the response header
+      callback(null, origin);
     } else {
+      console.log('Blocked by CORS:', origin);
       callback(new Error('Not allowed by CORS'));
     }
   },
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   credentials: true,
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  exposedHeaders: ['Content-Range', 'X-Content-Range']
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  exposedHeaders: ['Content-Range', 'X-Content-Range'],
+  preflightContinue: false,
+  optionsSuccessStatus: 204
 };
 
+// Apply CORS before other middleware
 app.use(cors(corsOptions));
 
-
+// Update session configuration
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
@@ -41,12 +53,20 @@ app.use(session({
   cookie: {
     httpOnly: true,     
     secure: true,       
-    sameSite: 'Lax',    
-    maxAge: 30 * 60 * 1000 
+    sameSite: 'None',    // Required for cross-origin requests
+    maxAge: 30 * 60 * 1000
   }
 }));
 
-
+// Add a middleware to set CORS headers for all responses
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+  }
+  next();
+});
 
 app.use(bodyParser.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -2124,6 +2144,12 @@ const CARD_PASSWORDS = {
   enquiries: process.env.ENQUIRY_PASS,
 };
 
+app.get('/api/card-status/:cardKey', (req, res) => {
+  const { cardKey } = req.params;
+  const isAuthed = !!req.session[`auth_${cardKey}`];
+  res.json({ authenticated: isAuthed });
+});
+
 app.post('/api/card-login/:cardKey', (req, res) => {
   const { cardKey } = req.params;
   const { password } = req.body;
@@ -2134,12 +2160,6 @@ app.post('/api/card-login/:cardKey', (req, res) => {
 
   req.session[`auth_${cardKey}`] = true;
   res.json({ success: true });
-});
-
-app.get('/api/card-status/:cardKey', (req, res) => {
-  const { cardKey } = req.params;
-  const isAuthed = !!req.session[`auth_${cardKey}`];
-  res.json({ authenticated: isAuthed });
 });
 
 
