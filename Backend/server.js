@@ -14,12 +14,24 @@ const session = require('express-session');
 const app = express();
 const port = 3000;
 
-app.use(cors({
-  origin: ['https://desire4-travels.vercel.app'],
-  credentials: true 
-}));
+// Allow requests only from your frontend domain
+const allowedOrigins = ['http://localhost:3000', 'https://desire4-travels.vercel.app'];
 
-app.set('trust proxy', 1);
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+      // Allow the request if the origin is in the allowed list, or if there is no origin (like during testing)
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials: true, // If you need to send cookies or authorization headers
+};
+
+app.use(cors(corsOptions));
+
 
 app.use(session({
   secret: process.env.SESSION_SECRET,
