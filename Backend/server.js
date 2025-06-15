@@ -14,48 +14,13 @@ const session = require('express-session');
 const app = express();
 const port = 3000;
 
-// Allow requests only from your frontend domain
-const allowedOrigins = [
-  'http://localhost:3000', 
-  'https://desire4-travels.vercel.app',
-  'https://desire4travels-1.onrender.com'
-];
-
-// Apply CORS middleware with specific configuration
-app.use((req, res, next) => {
-  const origin = req.headers.origin;
-  
-  // Check if the origin is in our allowed list
-  if (allowedOrigins.includes(origin)) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
-    res.setHeader('Access-Control-Expose-Headers', 'Content-Range, X-Content-Range');
-  }
-
-  // Handle preflight requests
-  if (req.method === 'OPTIONS') {
-    res.status(204).end();
-    return;
-  }
-
-  next();
-});
-
-// Update session configuration
-app.use(session({
-  secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    httpOnly: true,     
-    secure: true,       
-    sameSite: 'None',    // Required for cross-origin requests
-    maxAge: 30 * 60 * 1000
-  }
+app.use(cors({
+  origin: [
+    'http://localhost:3000',
+    'https://desire4-travels.vercel.app',
+    'https://desire4travels-1.onrender.com'
+  ]
 }));
-
 app.use(bodyParser.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
@@ -2124,32 +2089,6 @@ app.delete('/activity-callback/:id', async (req, res) => {
     res.status(500).json({ error: 'Failed to delete' });
   }
 });
-
-const CARD_PASSWORDS = {
-  destinations: process.env.DESTINATION_PASS,
-  packages: process.env.PACKAGE_PASS,
-  blogs: process.env.BLOG_PASS,
-  enquiries: process.env.ENQUIRY_PASS,
-};
-
-app.get('/api/card-status/:cardKey', (req, res) => {
-  const { cardKey } = req.params;
-  const isAuthed = !!req.session[`auth_${cardKey}`];
-  res.json({ authenticated: isAuthed });
-});
-
-app.post('/api/card-login/:cardKey', (req, res) => {
-  const { cardKey } = req.params;
-  const { password } = req.body;
-  const correct = CARD_PASSWORDS[cardKey];
-
-  if (!correct) return res.status(400).json({ error: 'Invalid card' });
-  if (password !== correct) return res.status(401).json({ error: 'Wrong password' });
-
-  req.session[`auth_${cardKey}`] = true;
-  res.json({ success: true });
-});
-
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);

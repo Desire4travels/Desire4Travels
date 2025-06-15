@@ -1,5 +1,6 @@
+// ProtectedCard.jsx
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { accessConfig } from '../Config/accessControl.js';
 
 const cardNames = {
   packages: "Manage Packages",
@@ -13,29 +14,25 @@ const ProtectedCard = ({ cardKey, children }) => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  const BASE_URL = 'https://desire4travels-1.onrender.com';
-
   useEffect(() => {
-    axios.get(`${BASE_URL}/api/card-status/${cardKey}`, {
-      withCredentials: true, headers: {
-        'Content-Type': 'application/json',
-        'X-Requested-With': 'XMLHttpRequest'
-      }
-    })
-      .then(res => {
-        if (res.data.authenticated) setIsAuthenticated(true);
-      });
+    const localAuth = localStorage.getItem(`auth-${cardKey}`);
+    if (localAuth === 'true') {
+      setIsAuthenticated(true);
+    }
   }, [cardKey]);
 
   const handleLogin = () => {
-    axios.post(`https://desire4travels-1.onrender.com/api/card-login/${cardKey}`,
-      { password },
-      { withCredentials: true }
-    )
-      .then(() => setIsAuthenticated(true))
-      .catch(() => setError("Invalid password"));
-  };
+    const correctPassword = accessConfig[cardKey]?.password;
 
+    if (password === correctPassword) {
+      localStorage.setItem(`auth-${cardKey}`, 'true');
+      localStorage.setItem('activeCard', cardKey);
+      setIsAuthenticated(true);
+      setError('');
+    } else {
+      setError('Invalid password');
+    }
+  };
 
   if (isAuthenticated) return <>{children}</>;
 
@@ -50,7 +47,10 @@ const ProtectedCard = ({ cardKey, children }) => {
         style={{ padding: 8, borderRadius: 5, marginBottom: 10 }}
       />
       <div>
-        <button onClick={handleLogin} style={{ padding: '5px 12px', background: '#2196F3', color: 'white', border: 'none', borderRadius: 5 }}>
+        <button
+          onClick={handleLogin}
+          style={{ padding: '5px 12px', background: '#2196F3', color: 'white', border: 'none', borderRadius: 5 }}
+        >
           Login
         </button>
       </div>
