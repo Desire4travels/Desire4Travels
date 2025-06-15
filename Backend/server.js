@@ -18,16 +18,17 @@ const port = 3000;
 const allowedOrigins = ['http://localhost:3000', 'https://desire4-travels.vercel.app'];
 
 const corsOptions = {
-  origin: (origin, callback) => {
+  origin: function (origin, callback) {
     if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
-      // Allow the request if the origin is in the allowed list, or if there is no origin (like during testing)
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
     }
   },
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    credentials: true, // If you need to send cookies or authorization headers
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true,
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  exposedHeaders: ['Content-Range', 'X-Content-Range']
 };
 
 app.use(cors(corsOptions));
@@ -402,6 +403,7 @@ app.get('/api/admin/enquiries', async (req, res) => {
 //       return res.status(404).json({ error: 'Package not found' });
 //     }
 
+//     
 //     await db.collection('packages').doc(packageId).delete();
 //     res.status(200).json({ message: 'Package deleted successfully' });
 //   } catch (error) {
@@ -434,7 +436,7 @@ app.get('/api/admin/enquiries', async (req, res) => {
 //       packages.push({
 //         id: doc.id,
 //         packageName: pkg.packageName,
-//         photo: `${req.protocol}://${req.get('host')}/uploads/${pkg.photo}`,
+//         photo: pkg.photo, // ImageKit URL is already complete
 //         price: pkg.price,
 //         duration: pkg.duration,
 //         destinations: destinationNames,
