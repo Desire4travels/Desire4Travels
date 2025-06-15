@@ -15,7 +15,7 @@ const ManageContact = () => {
   const fetchContacts = async () => {
     try {
       setLoading(true);
-      const res = await axios.get('http://localhost:5000/contact'); // Ensure the endpoint is correct
+      const res = await axios.get('https://desire4travels-1.onrender.com/contact');
       setContacts(res.data);
       setLoading(false);
     } catch (error) {
@@ -27,7 +27,7 @@ const ManageContact = () => {
   // Mark a contact as called
   const markAsCalled = async (id) => {
     try {
-      await axios.put(`http://localhost:5000/contacts/${id}`, { called: true });
+      await axios.put(`https://desire4travels-1.onrender.com/contacts/${id}`, { called: true });
       fetchContacts(); // Refresh the list after updating
     } catch (error) {
       console.error('Failed to mark as called', error);

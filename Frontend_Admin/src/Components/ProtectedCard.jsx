@@ -13,18 +13,24 @@ const ProtectedCard = ({ cardKey, children }) => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
+  const BASE_URL = 'https://desire4travels-1.onrender.com';
+
   useEffect(() => {
-    axios.get(`http://localhost:3000/api/card-status/${cardKey}`, { withCredentials: true })
+    axios.get(`${BASE_URL}/api/card-status/${cardKey}`, { withCredentials: true })
       .then(res => {
         if (res.data.authenticated) setIsAuthenticated(true);
       });
   }, [cardKey]);
 
   const handleLogin = () => {
-    axios.post(`http://localhost:3000/api/card-login/${cardKey}`, { password }, { withCredentials: true })
-      .then(() => setIsAuthenticated(true))
-      .catch(() => setError("Invalid password"));
+    axios.post(`https://desire4travels-1.onrender.com/api/card-login/${cardKey}`,
+      { password },
+      { withCredentials: true }
+    )
+    .then(() => setIsAuthenticated(true))
+    .catch(() => setError("Invalid password"));
   };
+  
 
   if (isAuthenticated) return <>{children}</>;
 
