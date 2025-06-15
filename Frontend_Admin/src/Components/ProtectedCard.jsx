@@ -1,56 +1,50 @@
-import { useState, useEffect } from 'react';
-import { accessConfig } from '../Config/accessControl';
-// import { accessConfig } from './accessControl';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
-
-const AUTO_LOCK_TIME = 5 * 60 * 1000; // 5 minutes 
+const cardNames = {
+  packages: "Manage Packages",
+  blogs: "Manage Blogs",
+  destinations: "Manage Destinations",
+  enquiries: "Enquiry Panel"
+};
 
 const ProtectedCard = ({ cardKey, children }) => {
-  const [accessGranted, setAccessGranted] = useState(
-    sessionStorage.getItem(`access_${cardKey}`) === 'true'
-  );
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 
   useEffect(() => {
-    let timer;
+    axios.get(`http://localhost:3000/api/card-status/${cardKey}`, { withCredentials: true })
+      .then(res => {
+        if (res.data.authenticated) setIsAuthenticated(true);
+      });
+  }, [cardKey]);
 
-    if (accessGranted) {
-      // Start auto-lock timer
-      timer = setTimeout(() => {
-        setAccessGranted(false);
-        sessionStorage.removeItem(`access_${cardKey}`);
-        alert(`Access to ${cardKey} has been locked due to inactivity.`);
-      }, AUTO_LOCK_TIME);
-    }
-
-    // Cleanup on unmount or if accessGranted changes
-    return () => clearTimeout(timer);
-  }, [accessGranted, cardKey]);
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (password === accessConfig[cardKey]?.password) {
-      setAccessGranted(true);
-      sessionStorage.setItem(`access_${cardKey}`, 'true');
-      setPassword('');
-    } else {
-      alert('Invalid password!');
-    }
+  const handleLogin = () => {
+    axios.post(`http://localhost:3000/api/card-login/${cardKey}`, { password }, { withCredentials: true })
+      .then(() => setIsAuthenticated(true))
+      .catch(() => setError("Invalid password"));
   };
 
-  if (accessGranted) return children;
+  if (isAuthenticated) return <>{children}</>;
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h3>Enter password for {cardKey}</h3>
+    <div style={{ background: '#c4e4ef', padding: 20, marginBottom: 10, borderRadius: 8 }}>
+      <h3>{cardNames[cardKey] || cardKey}</h3>
+      <p>Enter password to access this card:</p>
       <input
         type="password"
         value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        autoFocus
+        onChange={e => setPassword(e.target.value)}
+        style={{ padding: 8, borderRadius: 5, marginBottom: 10 }}
       />
-      <button type="submit">Unlock</button>
-    </form>
+      <div>
+        <button onClick={handleLogin} style={{ padding: '5px 12px', background: '#2196F3', color: 'white', border: 'none', borderRadius: 5 }}>
+          Login
+        </button>
+      </div>
+      {error && <p style={{ color: 'red' }}>{error}</p>}
+    </div>
   );
 };
 

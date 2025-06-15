@@ -8,13 +8,28 @@ const fs = require('fs');
 const sanitizeHtml = require('sanitize-html');
 require('dotenv').config();
 const ImageKit = require("imagekit");
+const session = require('express-session');
+
 
 const app = express();
 const port = 3000;
 
+app.use(cors({
+  origin: 'http://localhost:5173',
+  credentials: true
+}));
+
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: false,        
+    maxAge: 30 * 60 * 1000 //session expiry time
+  }
+}));
 
 
-app.use(cors());
 app.use(bodyParser.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
@@ -39,12 +54,16 @@ const imagekit = new ImageKit({
     // urlEndpoint:"https://ik.imagekit.io/Desire4travels"
 
 
+    console.log("FIREBASE_ADMIN_CONFIG loaded:", typeof process.env.FIREBASE_ADMIN_CONFIG);
 
 // const serviceAccount = require('./firebaseAdminConfig.json');
-const serviceAccount = JSON.parse(process.env.FIREBASE_ADMIN_CONFIG);
+  const serviceAccount = JSON.parse(process.env.FIREBASE_ADMIN_CONFIG);
+
+
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
+  storageBucket: 'desire4travels.appspot.com'
 });
 const db = admin.firestore();
 
@@ -794,6 +813,7 @@ app.delete('/api/admin/packages/:id', async (req, res) => {
       return res.status(404).json({ error: 'Package not found' });
     }
 
+    
     await db.collection('packages').doc(packageId).delete();
     res.status(200).json({ message: 'Package deleted successfully' });
   } catch (error) {
@@ -2076,6 +2096,31 @@ app.delete('/activity-callback/:id', async (req, res) => {
   } catch {
     res.status(500).json({ error: 'Failed to delete' });
   }
+});
+
+const CARD_PASSWORDS = {
+  destinations: process.env.DESTINATION_PASS,
+  packages: process.env.PACKAGE_PASS,
+  blogs: process.env.BLOG_PASS,
+  enquiries: process.env.ENQUIRY_PASS,
+};
+
+app.post('/api/card-login/:cardKey', (req, res) => {
+  const { cardKey } = req.params;
+  const { password } = req.body;
+  const correct = CARD_PASSWORDS[cardKey];
+
+  if (!correct) return res.status(400).json({ error: 'Invalid card' });
+  if (password !== correct) return res.status(401).json({ error: 'Wrong password' });
+
+  req.session[`auth_${cardKey}`] = true;
+  res.json({ success: true });
+});
+
+app.get('/api/card-status/:cardKey', (req, res) => {
+  const { cardKey } = req.params;
+  const isAuthed = !!req.session[`auth_${cardKey}`];
+  res.json({ authenticated: isAuthed });
 });
 
 

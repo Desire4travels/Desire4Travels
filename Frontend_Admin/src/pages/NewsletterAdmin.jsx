@@ -1,6 +1,7 @@
 import './NewsletterAdmin.css';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import ProtectedCard from '../Components/ProtectedCard.jsx';
 
 const NewsletterAdmin = () => {
   const [subscribers, setSubscribers] = useState([]);
