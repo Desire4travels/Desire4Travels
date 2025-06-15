@@ -15,19 +15,24 @@ const app = express();
 const port = 3000;
 
 app.use(cors({
-  origin: 'https://desire4-travels.vercel.app/',
-  credentials: true
+  origin: ['https://desire4-travels.vercel.app'],
+  credentials: true 
 }));
+
+app.set('trust proxy', 1);
 
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
   cookie: {
-    secure: true,        
-    maxAge: 30 * 60 * 10000
+    httpOnly: true,     
+    secure: true,       
+    sameSite: 'Lax',    
+    maxAge: 30 * 60 * 1000 
   }
 }));
+
 
 
 app.use(bodyParser.json());
