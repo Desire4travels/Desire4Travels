@@ -15,7 +15,7 @@ const app = express();
 const port = 3000;
 
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: 'https://desire4-travels.vercel.app/',
   credentials: true
 }));
 
@@ -24,7 +24,7 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   cookie: {
-    secure: false,        
+    secure: true,        
     maxAge: 30 * 60 * 1000 //session expiry time
   }
 }));
