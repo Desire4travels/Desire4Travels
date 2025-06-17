@@ -10,7 +10,6 @@ require('dotenv').config();
 const ImageKit = require("imagekit");
 const session = require('express-session');
 
-
 const app = express();
 const port = 3000;
 
@@ -18,9 +17,11 @@ app.use(cors({
   origin: [
     'http://localhost:3000',
     'https://desire4-travels.vercel.app',
-    'https://desire4travels-1.onrender.com'
+    'https://desire4travels-1.onrender.com',
+    'http://localhost:5173'
   ]
 }));
+
 app.use(bodyParser.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
@@ -72,6 +73,54 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 
+// app.post('/enquiry', async (req, res) => {
+//   try {
+//     const { name, phone, destination, travelers, travelDate } = req.body;
+
+//     if (!name || !phone) {
+//       return res.status(400).json({ error: 'Name and phone are required' });
+//     }
+
+//     const enquiry = {
+//       name,
+//       phone,
+//       destination,
+//       travelers,
+//       travelDate,
+//       submittedAt: admin.firestore.FieldValue.serverTimestamp(),
+//     };
+
+//     const docRef = await db.collection('enquiries').add(enquiry);
+
+//     res.status(201).json({ message: 'Form submitted', id: docRef.id });
+//   } catch (error) {
+//     console.error('Error saving enquiry:', error);
+//     res.status(500).json({ error: 'Server error' });
+//   }
+// });
+
+
+// app.get('/api/admin/enquiries', async (req, res) => {
+//   try {
+//     const snapshot = await db.collection('enquiries').orderBy('submittedAt', 'desc').get();
+//     const enquiries = snapshot.docs.map(doc => {
+//       const data = doc.data();
+//       return {
+//         id: doc.id,
+//         ...data,
+//         submittedAt: data.submittedAt ? data.submittedAt.toDate().toISOString() : null
+//       };
+//     });
+
+//     res.status(200).json(enquiries);
+//   } catch (error) {
+//     console.error('Error fetching enquiries:', error);
+//     res.status(500).json({ error: 'Server error' });
+//   }
+// });
+
+
+// POST - Create a new enquiry
 app.post('/enquiry', async (req, res) => {
   try {
     const { name, phone, destination, travelers, travelDate } = req.body;
@@ -86,6 +135,7 @@ app.post('/enquiry', async (req, res) => {
       destination,
       travelers,
       travelDate,
+      called: false, // default to false
       submittedAt: admin.firestore.FieldValue.serverTimestamp(),
     };
 
@@ -98,7 +148,7 @@ app.post('/enquiry', async (req, res) => {
   }
 });
 
-
+// GET - Retrieve all enquiries
 app.get('/api/admin/enquiries', async (req, res) => {
   try {
     const snapshot = await db.collection('enquiries').orderBy('submittedAt', 'desc').get();
@@ -114,6 +164,55 @@ app.get('/api/admin/enquiries', async (req, res) => {
     res.status(200).json(enquiries);
   } catch (error) {
     console.error('Error fetching enquiries:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// PUT - Update an enquiry (e.g., mark as called or update fields)
+app.put('/api/admin/enquiries/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updateData = req.body;
+
+    await db.collection('enquiries').doc(id).update(updateData);
+    res.status(200).json({ message: 'Enquiry updated' });
+  } catch (error) {
+    console.error('Error updating enquiry:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// DELETE - Delete an enquiry
+app.delete('/api/admin/enquiries/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    await db.collection('enquiries').doc(id).delete();
+    res.status(200).json({ message: 'Enquiry deleted' });
+  } catch (error) {
+    console.error('Error deleting enquiry:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+
+
+// DELETE - Delete all enquiries
+app.delete('/api/admin/enquiries', async (req, res) => {
+  try {
+    const snapshot = await db.collection('enquiries').get();
+
+    const batch = db.batch();
+
+    snapshot.forEach(doc => {
+      batch.delete(doc.ref);
+    });
+
+    await batch.commit();
+
+    res.status(200).json({ message: 'All enquiries deleted' });
+  } catch (error) {
+    console.error('Error deleting all enquiries:', error);
     res.status(500).json({ error: 'Server error' });
   }
 });
@@ -978,6 +1077,65 @@ app.get('/api/destinations', async (req, res) => {
   }
 });
 
+
+
+
+
+
+
+//NEWSLETTER 
+
+// app.post('/api/newsletter', async (req, res) => {
+//   try {
+//     const { email } = req.body;
+
+//     // Validate email format
+//     if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
+//       return res.status(400).json({ error: 'Valid email is required' });
+//     }
+
+//     const existing = await db.collection('newsletter')
+//       .where('email', '==', email)
+//       .limit(1)
+//       .get();
+
+//     if (!existing.empty) {
+//       return res.status(409).json({ error: 'Email already subscribed' });
+//     }
+
+//     await db.collection('newsletter').add({
+//       email,
+//       subscribedAt: admin.firestore.FieldValue.serverTimestamp()
+//     });
+
+//     res.status(201).json({ message: 'Subscribed successfully' });
+//   } catch (error) {
+//     console.error('Newsletter subscription error:', error);
+//     res.status(500).json({ error: 'Server error' });
+//   }
+// });
+
+// app.get('/api/admin/newsletter', async (req, res) => {
+//   try {
+//     const snapshot = await db.collection('newsletter').orderBy('subscribedAt', 'desc').get();
+//     const subscribers = snapshot.docs.map(doc => {
+//       const data = doc.data();
+//       return {
+//         id: doc.id,
+//         email: data.email,
+//         subscribedAt: data.subscribedAt ? data.subscribedAt.toDate().toISOString() : null,
+//       };
+//     });
+
+//     res.status(200).json(subscribers);
+//   } catch (error) {
+//     console.error('Error fetching newsletter subscribers:', error);
+//     res.status(500).json({ error: 'Server error' });
+//   }
+// });
+
+
+// Subscribe to newsletter
 app.post('/api/newsletter', async (req, res) => {
   try {
     const { email } = req.body;
@@ -998,6 +1156,7 @@ app.post('/api/newsletter', async (req, res) => {
 
     await db.collection('newsletter').add({
       email,
+      called: false,
       subscribedAt: admin.firestore.FieldValue.serverTimestamp()
     });
 
@@ -1008,14 +1167,17 @@ app.post('/api/newsletter', async (req, res) => {
   }
 });
 
+// Get all newsletter subscribers
 app.get('/api/admin/newsletter', async (req, res) => {
   try {
     const snapshot = await db.collection('newsletter').orderBy('subscribedAt', 'desc').get();
+
     const subscribers = snapshot.docs.map(doc => {
       const data = doc.data();
       return {
         id: doc.id,
         email: data.email,
+        called: data.called || false,
         subscribedAt: data.subscribedAt ? data.subscribedAt.toDate().toISOString() : null,
       };
     });
@@ -1026,6 +1188,113 @@ app.get('/api/admin/newsletter', async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 });
+
+// Update 'called' status for a subscriber
+app.put('/api/newsletter/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { called } = req.body;
+
+    if (typeof called !== 'boolean') {
+      return res.status(400).json({ error: 'Called must be a boolean' });
+    }
+
+    await db.collection('newsletter').doc(id).update({ called });
+    res.status(200).json({ message: 'Called status updated' });
+  } catch (error) {
+    console.error('Error updating called status:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Delete a single subscriber by ID
+app.delete('/api/newsletter/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    await db.collection('newsletter').doc(id).delete();
+    res.status(200).json({ message: 'Subscriber deleted' });
+  } catch (error) {
+    console.error('Error deleting subscriber:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Delete all subscribers
+app.delete('/api/newsletter', async (req, res) => {
+  try {
+    const snapshot = await db.collection('newsletter').get();
+
+    const batch = db.batch();
+    snapshot.forEach(doc => {
+      batch.delete(doc.ref);
+    });
+
+    await batch.commit();
+    res.status(200).json({ message: 'All subscribers deleted' });
+  } catch (error) {
+    console.error('Error deleting all subscribers:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+
+
+
+
+
+
+////////////////////////////////////////////////////////////////
+
+
+
+
+
+// // POST: Plan a Trip
+// app.post('/api/plan-trip', async (req, res) => {
+//   const { destination, startDate, noofdays, travelers, preference, mobileNumber } = req.body;
+
+//   if (!destination || !startDate || !noofdays || !travelers || !mobileNumber) {
+//     return res.status(400).json({ error: 'Missing required fields' });
+//   }
+
+//   try {
+//     const tripData = {
+//       destination,
+//       startDate,
+//       noofdays,
+//       travelers,
+//       preference: preference || '',
+//       mobileNumber,
+//       createdAt: admin.firestore.FieldValue.serverTimestamp()
+//     };
+
+//     await db.collection('plannedTrips').add(tripData);
+
+//     res.status(200).json({ message: 'Trip planned successfully' });
+//   } catch (error) {
+//     console.error('Error saving planned trip:', error);
+//     res.status(500).json({ error: 'Server error' });
+//   }
+// });
+
+// // GET: Admin fetch planned trips
+// app.get('/api/admin/planned-trips', async (req, res) => {
+//   try {
+//     const snapshot = await db.collection('plannedTrips').orderBy('createdAt', 'desc').get();
+
+//     const trips = snapshot.docs.map(doc => ({
+//       id: doc.id,
+//       ...doc.data()
+//     }));
+
+//     res.status(200).json(trips);
+//   } catch (error) {
+//     console.error('Error fetching admin planned trips:', error);
+//     res.status(500).json({ error: 'Server error' });
+//   }
+// });
+
 
 // POST: Plan a Trip
 app.post('/api/plan-trip', async (req, res) => {
@@ -1043,11 +1312,11 @@ app.post('/api/plan-trip', async (req, res) => {
       travelers,
       preference: preference || '',
       mobileNumber,
+      called: false, // NEW FIELD
       createdAt: admin.firestore.FieldValue.serverTimestamp()
     };
 
     await db.collection('plannedTrips').add(tripData);
-
     res.status(200).json({ message: 'Trip planned successfully' });
   } catch (error) {
     console.error('Error saving planned trip:', error);
@@ -1055,15 +1324,19 @@ app.post('/api/plan-trip', async (req, res) => {
   }
 });
 
-// GET: Admin fetch planned trips
+// GET: Admin fetch all planned trips
 app.get('/api/admin/planned-trips', async (req, res) => {
   try {
     const snapshot = await db.collection('plannedTrips').orderBy('createdAt', 'desc').get();
 
-    const trips = snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    }));
+    const trips = snapshot.docs.map(doc => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        ...data,
+        createdAt: data.createdAt?.toDate().toISOString() || null,
+      };
+    });
 
     res.status(200).json(trips);
   } catch (error) {
@@ -1071,6 +1344,102 @@ app.get('/api/admin/planned-trips', async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 });
+
+// PUT: Mark trip as 'called' or update status
+app.put('/api/admin/planned-trips/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { called } = req.body;
+
+    if (typeof called !== 'boolean') {
+      return res.status(400).json({ error: 'called must be a boolean' });
+    }
+
+    await db.collection('plannedTrips').doc(id).update({ called });
+    res.status(200).json({ message: 'Called status updated successfully' });
+  } catch (error) {
+    console.error('Error updating called status:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// DELETE: Delete one planned trip by ID
+app.delete('/api/admin/planned-trips/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    await db.collection('plannedTrips').doc(id).delete();
+    res.status(200).json({ message: 'Trip deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting trip:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// DELETE: Delete all planned trips
+app.delete('/api/admin/planned-trips', async (req, res) => {
+  try {
+    const snapshot = await db.collection('plannedTrips').get();
+    const batch = db.batch();
+
+    snapshot.forEach(doc => {
+      batch.delete(doc.ref);
+    });
+
+    await batch.commit();
+    res.status(200).json({ message: 'All planned trips deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting all trips:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+
+//CUSTOM QUOTES
+
+// // POST: submit custom quote
+// app.post('/api/custom-quotes', async (req, res) => {
+//   const { name, mobile, travelers, date, packageName } = req.body;
+
+//   if (!name || !mobile || !travelers || !date) {
+//     return res.status(400).json({ error: 'Missing required fields' });
+//   }
+
+//   try {
+//     const quoteData = {
+//       name,
+//       mobile,
+//       travelers,
+//       date,
+//       packageName: packageName || null,
+//       createdAt: admin.firestore.FieldValue.serverTimestamp(),
+//     };
+
+//     await db.collection('customQuotes').add(quoteData);
+
+//     res.status(200).json({ message: 'Quote request submitted successfully' });
+//   } catch (error) {
+//     console.error('Error saving custom quote:', error);
+//     res.status(500).json({ error: 'Server error' });
+//   }
+// });
+
+// // GET: fetch all quotes ordered by createdAt descending
+// app.get('/api/admin/custom-quotes', async (req, res) => {
+//   try {
+//     const snapshot = await db.collection('customQuotes').orderBy('createdAt', 'desc').get();
+
+//     const quotes = snapshot.docs.map(doc => ({
+//       id: doc.id,
+//       ...doc.data(),
+//     }));
+
+//     res.status(200).json(quotes);
+//   } catch (error) {
+//     console.error('Error fetching custom quotes:', error);
+//     res.status(500).json({ error: 'Server error' });
+//   }
+// });
+
 
 // POST: submit custom quote
 app.post('/api/custom-quotes', async (req, res) => {
@@ -1087,6 +1456,7 @@ app.post('/api/custom-quotes', async (req, res) => {
       travelers,
       date,
       packageName: packageName || null,
+      called: false,
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
     };
 
@@ -1104,10 +1474,19 @@ app.get('/api/admin/custom-quotes', async (req, res) => {
   try {
     const snapshot = await db.collection('customQuotes').orderBy('createdAt', 'desc').get();
 
-    const quotes = snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
+    const quotes = snapshot.docs.map(doc => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        name: data.name,
+        mobile: data.mobile,
+        travelers: data.travelers,
+        date: data.date,
+        packageName: data.packageName,
+        called: data.called || false,
+        createdAt: data.createdAt ? data.createdAt.toDate().toISOString() : null,
+      };
+    });
 
     res.status(200).json(quotes);
   } catch (error) {
@@ -1116,7 +1495,54 @@ app.get('/api/admin/custom-quotes', async (req, res) => {
   }
 });
 
+// PUT: update 'called' status for a specific quote
+app.put('/api/custom-quotes/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { called } = req.body;
 
+    if (typeof called !== 'boolean') {
+      return res.status(400).json({ error: 'Called must be a boolean' });
+    }
+
+    await db.collection('customQuotes').doc(id).update({ called });
+    res.status(200).json({ message: 'Called status updated' });
+  } catch (error) {
+    console.error('Error updating called status:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// DELETE: remove a single quote by ID
+app.delete('/api/custom-quotes/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    await db.collection('customQuotes').doc(id).delete();
+    res.status(200).json({ message: 'Quote deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting quote:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// DELETE: remove all custom quotes
+app.delete('/api/custom-quotes', async (req, res) => {
+  try {
+    const snapshot = await db.collection('customQuotes').get();
+    const batch = db.batch();
+
+    snapshot.forEach(doc => {
+      batch.delete(doc.ref);
+    });
+
+    await batch.commit();
+    res.status(200).json({ message: 'All quotes deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting all custom quotes:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
 
 
 
