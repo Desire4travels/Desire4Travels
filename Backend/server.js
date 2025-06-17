@@ -15,11 +15,12 @@ const port = 3000;
 
 const allowedOrigins = [
   'https://desire4travels.com',
+  'https://desire4-travels.vercel.app',
   'http://localhost:5173',
   'http://localhost:3000'
 ];
 
-// Enable CORS with dynamic origin check
+// Use dynamic origin handling
 app.use(cors({
   origin: function (origin, callback) {
     // Allow requests with no origin (like mobile apps or curl)
@@ -34,21 +35,22 @@ app.use(cors({
   credentials: true
 }));
 
-// Forcefully set headers in case proxy strips them
+// Manually set headers to ensure coverage
 app.use((req, res, next) => {
   const origin = req.headers.origin;
   if (allowedOrigins.includes(origin)) {
     res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
   }
-  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Vary', 'Origin'); // important for caching proxies
   next();
 });
 
-// Preflight
-app.options('*', (req, res) => {
-  res.sendStatus(200);
-});
+// Preflight support (important for PUT/POST with content-type or credentials)
+app.options('*', cors());
+
 
 app.use(bodyParser.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
