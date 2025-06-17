@@ -13,45 +13,7 @@ const session = require('express-session');
 const app = express();
 const port = 3000;
 
-const allowedOrigins = [
-  'https://desire4travels.com',
-  'https://desire4-travels.vercel.app',
-  'http://localhost:5173',
-  'http://localhost:3000'
-];
-
-// Use dynamic origin handling
-app.use(cors({
-  origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl)
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    } else {
-      return callback(new Error('Not allowed by CORS'));
-    }
-  },
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  credentials: true
-}));
-
-// Manually set headers to ensure coverage
-app.use((req, res, next) => {
-  const origin = req.headers.origin;
-  if (allowedOrigins.includes(origin)) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
-  }
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  res.setHeader('Vary', 'Origin'); // important for caching proxies
-  next();
-});
-
-// Preflight support (important for PUT/POST with content-type or credentials)
-app.options('*', cors());
-
-
+app.use(cors());
 app.use(bodyParser.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
@@ -76,8 +38,6 @@ const imagekit = new ImageKit({
     // urlEndpoint:"https://ik.imagekit.io/Desire4travels"
 
 
-    console.log("FIREBASE_ADMIN_CONFIG loaded:", typeof process.env.FIREBASE_ADMIN_CONFIG);
-
 // const serviceAccount = require('./firebaseAdminConfig.json');
   const serviceAccount = JSON.parse(process.env.FIREBASE_ADMIN_CONFIG);
 
@@ -85,7 +45,6 @@ const imagekit = new ImageKit({
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  storageBucket: 'desire4travels.appspot.com'
 });
 const db = admin.firestore();
 
