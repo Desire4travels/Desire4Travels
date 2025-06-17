@@ -15,6 +15,7 @@ const port = 3000;
 
 const allowedOrigins = [
   'https://desire4travels.com',
+  'https://desire4-travels.vercel.app',
   'http://localhost:5173',
   'http://localhost:3000'
 ];
