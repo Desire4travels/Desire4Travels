@@ -299,7 +299,6 @@ app.delete('/api/admin/destinations/:id', async (req, res) => {
 });
 
 // POST - Create package with ImageKit
-// POST - Create package with Firebase Storage
 app.post('/api/admin/packages', upload.single('photo'), async (req, res) => {
   try {
     const {
@@ -321,29 +320,29 @@ app.post('/api/admin/packages', upload.single('photo'), async (req, res) => {
       return res.status(400).json({ error: 'Destinations must be an array' });
     }
 
-    // Upload photo to Firebase Storage
-    const fileName = `packages/${Date.now()}-${req.file.originalname}`;
-    const file = admin.storage().bucket().file(fileName);
-
-    await file.save(fs.readFileSync(req.file.path), {
-      metadata: { contentType: req.file.mimetype },
+    const safeDescription = sanitizeHtml(description, {
+      allowedTags: ['p', 'b', 'i', 'em', 'strong', 'h1', 'h2', 'ul', 'ol', 'li', 'br'],
+      allowedAttributes: {},
     });
 
-    await file.makePublic();
+    // Upload photo to ImageKit
+    const uploadedImage = await imagekit.upload({
+      file: fs.readFileSync(req.file.path),
+      fileName: req.file.originalname,
+      folder: "/packages"
+    });
 
-    // Remove temporary file
+    // Remove temp file
     fs.unlinkSync(req.file.path);
-
-    const publicUrl = `https://storage.googleapis.com/${admin.storage().bucket().name}/${fileName}`;
 
     const newPackage = {
       packageName,
       duration,
       price,
-      description,
+      description: safeDescription,
       inclusions,
       itinerary,
-      photo: publicUrl,
+      photo: uploadedImage.url,
       destinations: parsedDestinations,
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
     };
@@ -351,7 +350,12 @@ app.post('/api/admin/packages', upload.single('photo'), async (req, res) => {
     const docRef = await db.collection('packages').add(newPackage);
     res.status(201).json({ message: 'Package added successfully', id: docRef.id });
   } catch (error) {
-    console.error('Error creating package:', error);
+    console.error('Error creating package:', {
+      message: error.message,
+      stack: error.stack,
+      body: req.body,
+      file: req.file,
+    });
     res.status(500).json({ error: 'Server error' });
   }
 });
