@@ -126,20 +126,26 @@ const HomePlannedTrips = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`https://desire4travels-1.onrender.com/api/admin/planned-trips/${id}`);
+      const isOwner = localStorage.getItem('isOwner') === 'yes';
+      const headers = isOwner ? { 'x-owner-key': 'OWNER-KEY-123' } : {};
+  
+      await axios.delete(`https://desire4travels-1.onrender.com/api/admin/planned-trips/${id}`, { headers });
       fetchTrips();
     } catch (err) {
       setError('Failed to delete trip');
     }
   };
-
+  
   const handleDeleteSelected = async () => {
     if (selectedIds.length === 0) return;
-    
+  
+    const isOwner = localStorage.getItem('isOwner') === 'yes';
+    const headers = isOwner ? { 'x-owner-key': 'OWNER-KEY-123' } : {};
+  
     try {
       await Promise.all(
-        selectedIds.map(id => 
-          axios.delete(`https://desire4travels-1.onrender.com/api/admin/planned-trips/${id}`)
+        selectedIds.map(id =>
+          axios.delete(`https://desire4travels-1.onrender.com/api/admin/planned-trips/${id}`, { headers })
         )
       );
       fetchTrips();
@@ -147,17 +153,21 @@ const HomePlannedTrips = () => {
       setError('Failed to delete selected trips');
     }
   };
-
+  
   const handleDeleteAll = async () => {
     if (!window.confirm('Are you sure you want to delete ALL planned trips?')) return;
-    
+  
+    const isOwner = localStorage.getItem('isOwner') === 'yes';
+    const headers = isOwner ? { 'x-owner-key': 'OWNER-KEY-123' } : {};
+  
     try {
-      await axios.delete('https://desire4travels-1.onrender.com/api/admin/planned-trips');
+      await axios.delete('https://desire4travels-1.onrender.com/api/admin/planned-trips', { headers });
       fetchTrips();
     } catch (err) {
       setError('Failed to delete all trips');
     }
   };
+  
 
   const toggleSelectAll = () => {
     if (selectedAll) {

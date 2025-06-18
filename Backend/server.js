@@ -62,6 +62,16 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 
+const ownerAuth = (req, res, next) => {
+  console.log('Middleware reached');
+  console.log('x-owner-key:', req.headers['x-owner-key']);
+  const key = req.headers['x-owner-key'];
+  if (key === 'OWNER-KEY-123') {
+    return next();
+  }
+  return res.status(403).json({ error: 'Only the owner can delete enquiries.' });
+};
+
 // POST - Create a new enquiry
 app.post('/enquiry', async (req, res) => {
   try {
@@ -124,8 +134,8 @@ app.put('/api/admin/enquiries/:id', async (req, res) => {
   }
 });
 
-// DELETE - Delete an enquiry
-app.delete('/api/admin/enquiries/:id', async (req, res) => {
+// DELETE - Delete an enquiry (owner only)
+app.delete('/api/admin/enquiries/:id', ownerAuth, async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -136,8 +146,6 @@ app.delete('/api/admin/enquiries/:id', async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 });
-
-
 
 // DELETE - Delete all enquiries
 app.delete('/api/admin/enquiries', async (req, res) => {
@@ -679,11 +687,10 @@ app.put('/api/newsletter/:id', async (req, res) => {
   }
 });
 
-// Delete a single subscriber by ID
-app.delete('/api/newsletter/:id', async (req, res) => {
+// Delete a single subscriber by ID (owner-only)
+app.delete('/api/newsletter/:id', ownerAuth, async (req, res) => {
   try {
     const { id } = req.params;
-
     await db.collection('newsletter').doc(id).delete();
     res.status(200).json({ message: 'Subscriber deleted' });
   } catch (error) {
@@ -692,12 +699,12 @@ app.delete('/api/newsletter/:id', async (req, res) => {
   }
 });
 
-// Delete all subscribers
-app.delete('/api/newsletter', async (req, res) => {
+// Delete all subscribers (owner-only)
+app.delete('/api/newsletter', ownerAuth, async (req, res) => {
   try {
     const snapshot = await db.collection('newsletter').get();
-
     const batch = db.batch();
+
     snapshot.forEach(doc => {
       batch.delete(doc.ref);
     });
@@ -777,8 +784,8 @@ app.put('/api/admin/planned-trips/:id', async (req, res) => {
   }
 });
 
-// DELETE: Delete one planned trip by ID
-app.delete('/api/admin/planned-trips/:id', async (req, res) => {
+// DELETE: Delete one planned trip by ID (owner-only)
+app.delete('/api/admin/planned-trips/:id', ownerAuth, async (req, res) => {
   try {
     const { id } = req.params;
     await db.collection('plannedTrips').doc(id).delete();
@@ -789,8 +796,8 @@ app.delete('/api/admin/planned-trips/:id', async (req, res) => {
   }
 });
 
-// DELETE: Delete all planned trips
-app.delete('/api/admin/planned-trips', async (req, res) => {
+// DELETE: Delete all planned trips (owner-only)
+app.delete('/api/admin/planned-trips', ownerAuth, async (req, res) => {
   try {
     const snapshot = await db.collection('plannedTrips').get();
     const batch = db.batch();
@@ -806,6 +813,7 @@ app.delete('/api/admin/planned-trips', async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 });
+
 
 // POST: submit custom quote
 app.post('/api/custom-quotes', async (req, res) => {
@@ -879,8 +887,8 @@ app.put('/api/custom-quotes/:id', async (req, res) => {
   }
 });
 
-// DELETE: remove a single quote by ID
-app.delete('/api/custom-quotes/:id', async (req, res) => {
+// DELETE: remove a single quote by ID (owner-only)
+app.delete('/api/custom-quotes/:id', ownerAuth, async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -892,8 +900,8 @@ app.delete('/api/custom-quotes/:id', async (req, res) => {
   }
 });
 
-// DELETE: remove all custom quotes
-app.delete('/api/custom-quotes', async (req, res) => {
+// DELETE: remove all custom quotes (owner-only)
+app.delete('/api/custom-quotes', ownerAuth, async (req, res) => {
   try {
     const snapshot = await db.collection('customQuotes').get();
     const batch = db.batch();
@@ -909,6 +917,7 @@ app.delete('/api/custom-quotes', async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 });
+
 
 const slugify = (text) => {
   return text.toString().toLowerCase()
@@ -1130,19 +1139,18 @@ app.put('/callback-destination/:id', async (req, res) => {
   }
 });
 
-//delete contact
-app.delete('/callback-destination/:id', async (req, res) =>
-  {
-    try {
-      const id = req.params.id;
-      await db.collection('callback-destination').doc(id).delete();
-      res.json({ message: 'Contact deleted successfully' });
-      } catch (error) {
-        console.error('DELETE CONTACT ERROR:', error);
-        res.status(500).json({ error: 'Internal server error' });
-        }
-        }
-);
+// DELETE contact (owner only)
+app.delete('/callback-destination/:id', ownerAuth, async (req, res) => {
+  try {
+    const id = req.params.id;
+    await db.collection('callback-destination').doc(id).delete();
+    res.json({ message: 'Contact deleted successfully' });
+  } catch (error) {
+    console.error('DELETE CONTACT ERROR:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 
 //Request Call back Package
 app.post('/callback-package', async (req, res) => {
@@ -1222,18 +1230,18 @@ app.put('/callback-package/:id', async (req, res) => {
 });
 
 
-app.delete('/callback-package/:id', async (req, res) =>
-  {
-    try {
-      const id = req.params.id;
-      await db.collection('callback-package').doc(id).delete();
-      res.json({ message: 'Contact deleted successfully' });
-      } catch (error) {
-        console.error('DELETE CONTACT ERROR:', error);
-        res.status(500).json({ error: 'Internal server error' });
-        }
-        }
-);
+// DELETE contact from callback-package (owner only)
+app.delete('/callback-package/:id', ownerAuth, async (req, res) => {
+  try {
+    const id = req.params.id;
+    await db.collection('callback-package').doc(id).delete();
+    res.json({ message: 'Contact deleted successfully' });
+  } catch (error) {
+    console.error('DELETE CONTACT ERROR:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 
 app.post('/api/admin/upcoming-trip', async (req, res) => {
   try {
@@ -1348,8 +1356,7 @@ app.put('/contact-us/:id', async (req, res) => {
   }
 });
 
-// DELETE contact by ID
-app.delete('/contact-us/:id', async (req, res) => {
+app.delete('/contact-us/:id', ownerAuth, async (req, res) => {
   try {
     await db.collection('contact-us').doc(req.params.id).delete();
     res.json({ message: 'Contact message deleted successfully' });
@@ -1357,8 +1364,8 @@ app.delete('/contact-us/:id', async (req, res) => {
     console.error('DELETE /contact-us/:id ERROR:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
-}
-);
+});
+
 // Popup enquiry POST
 app.post('/api/popup-enquiries', async (req, res) => {
   const { mobileNumber, destination } = req.body;
@@ -1477,12 +1484,23 @@ app.put('/activity-callback/:id', async (req, res) => {
  * DELETE
  * DELETE /activity-callback/:id
  */
-app.delete('/activity-callback/:id', async (req, res) => {
+app.delete('/activity-callback/:id', ownerAuth, async (req, res) => {
   try {
     await activityCallback.doc(req.params.id).delete();
     res.status(200).json({ message: 'Deleted successfully' });
-  } catch {
+  } catch (error) {
+    console.error('DELETE /activity-callback/:id ERROR:', error);
     res.status(500).json({ error: 'Failed to delete' });
+  }
+});
+
+app.delete('/api/admin/popup-enquiries/:id', ownerAuth, async (req, res) => {
+  try {
+    await db.collection('popupEnquiries').doc(req.params.id).delete();
+    res.status(200).json({ message: 'Popup enquiry deleted' });
+  } catch (error) {
+    console.error('Error deleting popup enquiry:', error);
+    res.status(500).json({ error: 'Server error' });
   }
 });
 

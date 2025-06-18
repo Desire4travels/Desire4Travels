@@ -4,10 +4,9 @@ import './ManageContact.css';
 
 const ManageContact = () => {
   const [contacts, setContacts] = useState([]);
-  const [activeTab, setActiveTab] = useState('all'); // default to 'all'
+  const [activeTab, setActiveTab] = useState('all');
   const [loading, setLoading] = useState(true);
 
-  // Fetch contacts from the backend
   useEffect(() => {
     fetchContacts();
   }, []);
@@ -24,39 +23,80 @@ const ManageContact = () => {
     }
   };
 
-  // Mark a contact as called
   const markAsCalled = async (id) => {
     try {
       await axios.put(`https://desire4travels-1.onrender.com/contacts/${id}`, { called: true });
-      fetchContacts(); // Refresh the list after updating
+      fetchContacts();
     } catch (error) {
       console.error('Failed to mark as called', error);
     }
   };
 
-  // Filter contacts based on the active tab
+  const deleteContact = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this contact?')) return;
+
+    try {
+      const isOwner = localStorage.getItem('isOwner') === 'yes';
+      const headers = isOwner ? { 'x-owner-key': 'OWNER-KEY-123' } : {};
+
+      await axios.delete(`https://desire4travels-1.onrender.com/contact-us/${id}`, { headers });
+      fetchContacts();
+    } catch (error) {
+      console.error('Failed to delete contact', error);
+      alert('Failed to delete. You may not have permission.');
+    }
+  };
+
   const filterContacts = () => {
     if (activeTab === 'called') return contacts.filter(c => c.called);
     if (activeTab === 'notCalled') return contacts.filter(c => !c.called);
-    return contacts; // all contacts
+    return contacts;
   };
 
-  // Render each contact in a list
   const renderContacts = (list) => (
     <ul>
       {list.map(contact => (
-        <li key={contact.id} style={{ marginBottom: '10px', padding: '10px', border: '1px solid #ccc', borderRadius: '5px' }}>
+        <li
+          key={contact.id}
+          style={{
+            marginBottom: '10px',
+            padding: '10px',
+            border: '1px solid #ccc',
+            borderRadius: '5px'
+          }}
+        >
           <div>
             <strong>{contact.name}</strong> — {contact.phoneNo} — Called: {contact.called ? 'Yes' : 'No'}
           </div>
-          {!contact.called && (
-            <button 
-              onClick={() => markAsCalled(contact.id)} 
-              style={{ marginTop: '5px', padding: '5px 10px', backgroundColor: '#4CAF50', color: 'white', border: 'none', borderRadius: '4px' }}
+          <div style={{ marginTop: '5px' }}>
+            {!contact.called && (
+              <button
+                onClick={() => markAsCalled(contact.id)}
+                style={{
+                  padding: '5px 10px',
+                  backgroundColor: '#4CAF50',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '4px',
+                  marginRight: '10px'
+                }}
+              >
+                Mark as Called
+              </button>
+            )}
+            <button
+              onClick={() => deleteContact(contact.id)}
+              style={{
+                padding: '5px 10px',
+                backgroundColor: '#f44336',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px'
+              }}
             >
-              Mark as Called
+              Delete
             </button>
-          )}
+          </div>
         </li>
       ))}
     </ul>

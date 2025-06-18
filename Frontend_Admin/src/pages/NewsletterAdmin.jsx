@@ -113,20 +113,29 @@ const NewsletterAdmin = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`https://desire4travels-1.onrender.com/api/newsletter/${id}`);
+      const isOwner = localStorage.getItem('isOwner') === 'yes';
+  
+      await axios.delete(`https://desire4travels-1.onrender.com/api/newsletter/${id}`, {
+        headers: isOwner ? { 'x-owner-key': 'OWNER-KEY-123' } : {}
+      });
+  
       fetchSubscribers();
     } catch (err) {
       setError('Failed to delete subscriber.');
     }
   };
+  
 
   const handleDeleteSelected = async () => {
     if (selectedIds.length === 0) return;
-    
+  
+    const isOwner = localStorage.getItem('isOwner') === 'yes';
+    const headers = isOwner ? { 'x-owner-key': 'OWNER-KEY-123' } : {};
+  
     try {
       await Promise.all(
-        selectedIds.map(id => 
-          axios.delete(`https://desire4travels-1.onrender.com/api/newsletter/${id}`)
+        selectedIds.map(id =>
+          axios.delete(`https://desire4travels-1.onrender.com/api/newsletter/${id}`, { headers })
         )
       );
       fetchSubscribers();
@@ -134,17 +143,22 @@ const NewsletterAdmin = () => {
       setError('Failed to delete selected subscribers.');
     }
   };
+  
 
   const handleDeleteAll = async () => {
     if (!window.confirm('Are you sure you want to delete ALL subscribers?')) return;
-    
+  
+    const isOwner = localStorage.getItem('isOwner') === 'yes';
+    const headers = isOwner ? { 'x-owner-key': 'OWNER-KEY-123' } : {};
+  
     try {
-      await axios.delete('https://desire4travels-1.onrender.com/api/newsletter');
+      await axios.delete('https://desire4travels-1.onrender.com/api/newsletter', { headers });
       fetchSubscribers();
     } catch (err) {
       setError('Failed to delete all subscribers.');
     }
   };
+  
 
   const toggleSelectAll = () => {
     if (selectedAll) {

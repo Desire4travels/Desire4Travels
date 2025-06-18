@@ -147,20 +147,26 @@ const AdminCustomQuotes = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`https://desire4travels-1.onrender.com/api/custom-quotes/${id}`);
+      const isOwner = localStorage.getItem('isOwner') === 'yes';
+      const headers = isOwner ? { 'x-owner-key': 'OWNER-KEY-123' } : {};
+  
+      await axios.delete(`https://desire4travels-1.onrender.com/api/custom-quotes/${id}`, { headers });
       fetchQuotes();
     } catch (err) {
       setError('Failed to delete quote');
     }
   };
-
+  
   const handleDeleteSelected = async () => {
     if (selectedIds.length === 0) return;
-    
+  
+    const isOwner = localStorage.getItem('isOwner') === 'yes';
+    const headers = isOwner ? { 'x-owner-key': 'OWNER-KEY-123' } : {};
+  
     try {
       await Promise.all(
-        selectedIds.map(id => 
-          axios.delete(`https://desire4travels-1.onrender.com/api/custom-quotes/${id}`)
+        selectedIds.map(id =>
+          axios.delete(`https://desire4travels-1.onrender.com/api/custom-quotes/${id}`, { headers })
         )
       );
       fetchQuotes();
@@ -168,17 +174,21 @@ const AdminCustomQuotes = () => {
       setError('Failed to delete selected quotes');
     }
   };
-
+  
   const handleDeleteAll = async () => {
     if (!window.confirm('Are you sure you want to delete ALL custom quotes?')) return;
-    
+  
+    const isOwner = localStorage.getItem('isOwner') === 'yes';
+    const headers = isOwner ? { 'x-owner-key': 'OWNER-KEY-123' } : {};
+  
     try {
-      await axios.delete('https://desire4travels-1.onrender.com/api/custom-quotes');
+      await axios.delete('https://desire4travels-1.onrender.com/api/custom-quotes', { headers });
       fetchQuotes();
     } catch (err) {
       setError('Failed to delete all quotes');
     }
   };
+  
 
   const toggleSelectAll = () => {
     if (selectedAll) {

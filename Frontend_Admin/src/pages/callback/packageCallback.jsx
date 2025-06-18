@@ -150,13 +150,18 @@ const packageCallback = () => {
   };
 
   const deleteContact = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this contact?")) return;
+  
     try {
-      await axios.delete(`https://desire4travels-1.onrender.com/callback-package/${id}`);
+      const isOwner = localStorage.getItem('isOwner') === 'yes';
+      const headers = isOwner ? { 'x-owner-key': 'OWNER-KEY-123' } : {};
+  
+      await axios.delete(`https://desire4travels-1.onrender.com/callback-package/${id}`, { headers });
       fetchContacts(); // Refresh list
     } catch (error) {
       console.error('Failed to delete contact', error);
     }
-  };
+  };  
 
   const filterContacts = () => {
     if (activeTab === 'called') return contacts.filter(c => c.called);

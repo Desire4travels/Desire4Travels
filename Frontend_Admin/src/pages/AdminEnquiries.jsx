@@ -112,13 +112,23 @@ const fetchEnquiries = async () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`https://desire4travels-1.onrender.com/api/admin/enquiries/${id}`);
+      const headers = {};
+  
+      if (localStorage.getItem('isOwner') === 'yes') {
+        headers['x-owner-key'] = 'OWNER-KEY-123';
+      }
+  
+      await axios.delete(`https://desire4travels-1.onrender.com/api/admin/enquiries/${id}`, {
+        headers
+      });
+  
       fetchEnquiries();
     } catch (err) {
       console.error('Delete error:', err);
       setError('Failed to delete enquiry');
     }
   };
+  
 
   const formatDate = (date) => {
     if (!date) return 'N/A';

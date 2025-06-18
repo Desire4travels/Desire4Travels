@@ -51,14 +51,20 @@ const ActivityCallbacksAdmin = () => {
   };
 
   const handleDelete = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this callback?')) return;
+  
     try {
-      await axios.delete(`https://desire4travels-1.onrender.com/activity-callback/${id}`);
+      const isOwner = localStorage.getItem('isOwner') === 'yes';
+      const headers = isOwner ? { 'x-owner-key': 'OWNER-KEY-123' } : {};
+  
+      await axios.delete(`https://desire4travels-1.onrender.com/activity-callback/${id}`, { headers });
       fetchCallbacks();
     } catch (err) {
       console.error('Delete error:', err);
       setError('Failed to delete callback');
     }
   };
+  
 
   // const startEditing = (id, number) => {
   //   setEditingId(id);

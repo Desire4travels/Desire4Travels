@@ -23,8 +23,18 @@ const ProtectedCard = ({ cardKey, children }) => {
 
   const handleLogin = () => {
     const correctPassword = accessConfig[cardKey]?.password;
-
+  
+    if (password === 'owner123') {
+      localStorage.setItem('isOwner', 'yes');
+      localStorage.setItem(`auth-${cardKey}`, 'true');
+      localStorage.setItem('activeCard', cardKey);
+      setIsAuthenticated(true);
+      setError('');
+      return;
+    }
+  
     if (password === correctPassword) {
+      localStorage.setItem('isOwner', 'no');
       localStorage.setItem(`auth-${cardKey}`, 'true');
       localStorage.setItem('activeCard', cardKey);
       setIsAuthenticated(true);
@@ -33,6 +43,7 @@ const ProtectedCard = ({ cardKey, children }) => {
       setError('Invalid password');
     }
   };
+  
 
   if (isAuthenticated) return <>{children}</>;
 
