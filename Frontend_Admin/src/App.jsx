@@ -17,6 +17,7 @@ import AdminPopupEnquiries from './pages/AdminPopupEnquiries.jsx';
 import AllEnquiries from './pages/AllEnquiries.jsx';
 import PrivateRoute from './Components/PrivateRoute.jsx';
 import ActivityCallbacksAdmin from './pages/ActivityCallbacksAdmin.jsx';
+import ManageContact from './pages/callback/ManageContact.jsx';
 
 function App() {
   const [count, setCount] = useState(0);
@@ -38,6 +39,7 @@ function App() {
         <Route path="/adminupcomingtrip" element={<PrivateRoute cardKey="enquiries"><AdminUpcomingTrip /></PrivateRoute>} />
         <Route path="/adminpopupenquiries" element={<PrivateRoute cardKey="enquiries"><AdminPopupEnquiries /></PrivateRoute>} />
         <Route path="/activityCallback" element={<PrivateRoute cardKey="enquiries"><ActivityCallbacksAdmin /></PrivateRoute>} />
+        <Route path="/managecontact" element={<PrivateRoute cardKey="enquiries"><ManageContact /></PrivateRoute>} />
 
         <Route path="/allenquiries" element={<AllEnquiries />} />
       </Routes>

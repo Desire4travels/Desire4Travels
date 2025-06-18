@@ -14,7 +14,7 @@ const ManageContact = () => {
   const fetchContacts = async () => {
     try {
       setLoading(true);
-      const res = await axios.get('https://desire4travels-1.onrender.com/contact');
+      const res = await axios.get('https://desire4travels-1.onrender.com/contact-us');
       setContacts(res.data);
       setLoading(false);
     } catch (error) {

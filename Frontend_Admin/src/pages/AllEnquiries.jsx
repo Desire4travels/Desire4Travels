@@ -40,7 +40,13 @@ const AllEnquiries = () => {
       <div className="manage-popup-enquiries-card">
         <h1><Link to="/adminpopupenquiries" className="link">Manage Popup Enquiries</Link></h1>
       </div>
+
+      <div className="manage-contact-card">
+        <h1><Link to="/managecontact" className="link">Manage Contact Enquiries</Link></h1>
+      </div>
+
     </div>
+
   );
 };
 
