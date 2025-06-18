@@ -1,5 +1,4 @@
-// ProtectedCard.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { accessConfig } from '../Config/accessControl.js';
 
 const cardNames = {
@@ -9,10 +8,34 @@ const cardNames = {
   enquiries: "Enquiry Panel"
 };
 
+const AUTO_LOCK_MINUTES = 45;
+
 const ProtectedCard = ({ cardKey, children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const timeoutRef = useRef(null);
+
+  const resetInactivityTimer = () => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    timeoutRef.current = setTimeout(() => {
+      handleLogout();
+    }, AUTO_LOCK_MINUTES * 60 * 1000);
+  };
+
+  useEffect(() => {
+    if (!isAuthenticated) return;
+
+    const events = ['mousemove', 'keydown', 'click', 'scroll', 'touchstart'];
+
+    events.forEach(event => window.addEventListener(event, resetInactivityTimer));
+    resetInactivityTimer(); 
+
+    return () => {
+      events.forEach(event => window.removeEventListener(event, resetInactivityTimer));
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+  }, [isAuthenticated]);
 
   useEffect(() => {
     const localAuth = localStorage.getItem(`auth-${cardKey}`);
@@ -23,7 +46,7 @@ const ProtectedCard = ({ cardKey, children }) => {
 
   const handleLogin = () => {
     const correctPassword = accessConfig[cardKey]?.password;
-  
+
     if (password === 'owner123') {
       localStorage.setItem('isOwner', 'yes');
       localStorage.setItem(`auth-${cardKey}`, 'true');
@@ -32,7 +55,7 @@ const ProtectedCard = ({ cardKey, children }) => {
       setError('');
       return;
     }
-  
+
     if (password === correctPassword) {
       localStorage.setItem('isOwner', 'no');
       localStorage.setItem(`auth-${cardKey}`, 'true');
@@ -43,7 +66,15 @@ const ProtectedCard = ({ cardKey, children }) => {
       setError('Invalid password');
     }
   };
-  
+
+  const handleLogout = () => {
+    localStorage.removeItem(`auth-${cardKey}`);
+    localStorage.removeItem('isOwner');
+    localStorage.removeItem('activeCard');
+    setIsAuthenticated(false);
+    setPassword('');
+    alert(`Session expired for ${cardNames[cardKey] || cardKey}. Please log in again.`);
+  };
 
   if (isAuthenticated) return <>{children}</>;
 
