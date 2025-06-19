@@ -1063,30 +1063,58 @@ app.delete('/blogs/:id', async (req, res) => {
 });
 
 //Request Call back Destination
+// app.post('/callback-destination', async (req, res) => {
+//     try {
+//         const { phoneNo, destination, called = false } = req.body;
+
+//         // Validate inputs first
+//         if (!destination || !phoneNo) {
+//             return res.status(400).json({ error: 'All fields are required.' });
+//         }
+
+//         // Save to Firestore
+//         await db.collection('callback-destination').add({
+//             destination,
+//             phoneNo,
+//             called,
+//             createdAt: admin.firestore.FieldValue.serverTimestamp() // optional but useful
+//         });
+
+//         res.status(200).json({ message: 'Contact request sent successfully' });
+
+//     } catch (error) {
+//         console.error('Error saving contact:', error);
+//         res.status(500).json({ error: 'Internal server error' });
+//     }
+// });
+
+// Request Call back Destination
 app.post('/callback-destination', async (req, res) => {
-    try {
-        const { phoneNo, destination, called = false } = req.body;
+  try {
+    const { phoneNo, destination, called = false } = req.body;
 
-        // Validate inputs first
-        if (!destination || !phoneNo) {
-            return res.status(400).json({ error: 'All fields are required.' });
-        }
-
-        // Save to Firestore
-        await db.collection('callback-destination').add({
-            destination,
-            phoneNo,
-            called,
-            createdAt: admin.firestore.FieldValue.serverTimestamp() // optional but useful
-        });
-
-        res.status(200).json({ message: 'Contact request sent successfully' });
-
-    } catch (error) {
-        console.error('Error saving contact:', error);
-        res.status(500).json({ error: 'Internal server error' });
+    // Validate inputs first
+    if (!destination || !phoneNo) {
+      return res.status(400).json({ error: 'All fields are required.' });
     }
+
+    // Save to Firestore
+    await db.collection('callback-destination').add({
+      destination,
+      phoneNo,
+      called,
+      createdAt: admin.firestore.FieldValue.serverTimestamp(), // Firestore native timestamp
+      currentDateTime: new Date().toISOString() // Human-readable timestamp
+    });
+
+    res.status(200).json({ message: 'Contact request sent successfully' });
+
+  } catch (error) {
+    console.error('Error saving contact:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
 });
+
 
 // GET all contact requests
 app.get('/callback-destination', async (req, res) => {
@@ -1152,31 +1180,79 @@ app.delete('/callback-destination/:id', ownerAuth, async (req, res) => {
 });
 
 
-//Request Call back Package
-app.post('/callback-package', async (req, res) => {
-    try {
-        const { phoneNo, package, called = false } = req.body;
+// DELETE all contacts (owner only)
+app.delete('/callback-destination', ownerAuth, async (req, res) => {
+  try {
+    const snapshot = await db.collection('callback-destination').get();
 
-        // Validate inputs first
-        if (!package || !phoneNo) {
-            return res.status(400).json({ error: 'All fields are required.' });
-        }
+    const batch = db.batch();
+    snapshot.docs.forEach(doc => {
+      batch.delete(doc.ref);
+    });
 
-        // Save to Firestore
-        await db.collection('callback-package').add({
-            package,
-            phoneNo,
-            called,
-            createdAt: admin.firestore.FieldValue.serverTimestamp() // optional but useful
-        });
+    await batch.commit();
 
-        res.status(200).json({ message: 'Contact request sent successfully' });
-
-    } catch (error) {
-        console.error('Error saving contact:', error);
-        res.status(500).json({ error: 'Internal server error' });
-    }
+    res.json({ message: 'All contacts deleted successfully' });
+  } catch (error) {
+    console.error('DELETE ALL CONTACTS ERROR:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
 });
+
+
+//Request Call back Package
+// app.post('/callback-package', async (req, res) => {
+//     try {
+//         const { phoneNo, package, called = false } = req.body;
+
+//         // Validate inputs first
+//         if (!package || !phoneNo) {
+//             return res.status(400).json({ error: 'All fields are required.' });
+//         }
+
+//         // Save to Firestore
+//         await db.collection('callback-package').add({
+//             package,
+//             phoneNo,
+//             called,
+//             createdAt: admin.firestore.FieldValue.serverTimestamp() // optional but useful
+//         });
+
+//         res.status(200).json({ message: 'Contact request sent successfully' });
+
+//     } catch (error) {
+//         console.error('Error saving contact:', error);
+//         res.status(500).json({ error: 'Internal server error' });
+//     }
+// });
+
+
+app.post('/callback-package', async (req, res) => {
+  try {
+    const { phoneNo, package, called = false } = req.body;
+
+    // Validate inputs
+    if (!package || !phoneNo) {
+      return res.status(400).json({ error: 'All fields are required.' });
+    }
+
+    // Save to Firestore with both timestamps
+    await db.collection('callback-package').add({
+      package,
+      phoneNo,
+      called,
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      currentDateTime: new Date().toISOString() // human-readable timestamp
+    });
+
+    res.status(200).json({ message: 'Contact request sent successfully' });
+
+  } catch (error) {
+    console.error('Error saving contact:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 
 // GET all contact requests
 app.get('/callback-package', async (req, res) => {
@@ -1281,6 +1357,29 @@ app.get("/api/upcoming-trips", async (req, res) => {
 });
 
 // CREATE contact
+// app.post('/contact-us', async (req, res) => {
+//   try {
+//     const { name, phoneNo, email, message } = req.body;
+
+//     if (!name || !phoneNo || !email || !message) {
+//       return res.status(400).json({ error: 'All fields (name, phoneNo, email, message) are required.' });
+//     }
+
+//     const docRef = await db.collection('contact-us').add({
+//       name,
+//       phoneNo,
+//       email,
+//       message,
+//       createdAt: admin.firestore.FieldValue.serverTimestamp()
+//     });
+
+//     res.status(200).json({ message: 'Contact message sent successfully', id: docRef.id });
+//   } catch (error) {
+//     console.error('POST /contact-us ERROR:', error);
+//     res.status(500).json({ error: 'Internal server error' });
+//   }
+// });
+
 app.post('/contact-us', async (req, res) => {
   try {
     const { name, phoneNo, email, message } = req.body;
@@ -1294,7 +1393,8 @@ app.post('/contact-us', async (req, res) => {
       phoneNo,
       email,
       message,
-      createdAt: admin.firestore.FieldValue.serverTimestamp()
+      createdAt: admin.firestore.FieldValue.serverTimestamp(), // server-based
+      currentDateTime: new Date().toISOString()                // client-readable
     });
 
     res.status(200).json({ message: 'Contact message sent successfully', id: docRef.id });
@@ -1303,6 +1403,7 @@ app.post('/contact-us', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
 
 // GET all contacts
 app.get('/contact-us', async (req, res) => {
