@@ -929,24 +929,78 @@ const slugify = (text) => {
 };
 
 /* ======== CREATE Blog ======== */
-app.post('/blogs', upload.single('image'), async (req, res) => {
+// app.post('/blogs', upload.single('image'), async (req, res) => {
+//   try {
+//     const { title, author, category, content, date, excerpt, status, alt } = req.body;
+//     if (!title || !author || !category || !content || !date || !excerpt || !alt || !status || !req.file) {
+//       return res.status(400).json({ error: 'All fields are required.' });
+//     }
+
+//     const uploadedImage = await imagekit.upload({
+//       file: fs.readFileSync(req.file.path),
+//       fileName: req.file.originalname,
+//       folder: "/blogs"
+//     });
+//     fs.unlinkSync(req.file.path); // Remove temp file
+
+//     const slug = slugify(title);
+//     const docRef = await db.collection('blogs').add({
+//       title, author, category, content, date, excerpt,
+//       status, alt, image: uploadedImage.url, slug,
+//       createdAt: admin.firestore.FieldValue.serverTimestamp(),
+//     });
+
+//     res.status(201).json({
+//       message: 'Blog post added successfully',
+//       id: docRef.id,
+//       url: `/blogs/${slug}`
+//     });
+
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ error: 'Internal server error' });
+//   }
+// });
+
+
+app.post('/blogs', upload.array('images', 5), async (req, res) => {
   try {
     const { title, author, category, content, date, excerpt, status, alt } = req.body;
-    if (!title || !author || !category || !content || !date || !excerpt || !alt || !status || !req.file) {
-      return res.status(400).json({ error: 'All fields are required.' });
+
+    if (
+      !title || !author || !category || !content ||
+      !date || !excerpt || !alt || !status || !req.files || req.files.length === 0
+    ) {
+      return res.status(400).json({ error: 'All fields and at least one image are required.' });
     }
 
-    const uploadedImage = await imagekit.upload({
-      file: fs.readFileSync(req.file.path),
-      fileName: req.file.originalname,
-      folder: "/blogs"
-    });
-    fs.unlinkSync(req.file.path); // Remove temp file
+    const uploadedImages = await Promise.all(
+      req.files.map(file =>
+        imagekit.upload({
+          file: fs.readFileSync(file.path),
+          fileName: file.originalname,
+          folder: "/blogs"
+        })
+      )
+    );
 
+    // Remove temp files
+    req.files.forEach(file => fs.unlinkSync(file.path));
+
+    const imageUrls = uploadedImages.map(img => img.url);
     const slug = slugify(title);
+
     const docRef = await db.collection('blogs').add({
-      title, author, category, content, date, excerpt,
-      status, alt, image: uploadedImage.url, slug,
+      title,
+      author,
+      category,
+      content,
+      date,
+      excerpt,
+      status,
+      alt,
+      images: imageUrls, // now storing array instead of single image
+      slug,
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
     });
 
@@ -962,20 +1016,51 @@ app.post('/blogs', upload.single('image'), async (req, res) => {
   }
 });
 
+
 /* ======== READ All Blogs ======== */
+// app.get('/blogs', async (req, res) => {
+//   try {
+//     const snapshot = await db.collection('blogs').get();
+//     const blogs = snapshot.docs.map(doc => ({
+//       id: doc.id,
+//       ...doc.data(),
+//       url: `/blogs/${doc.data().slug}`
+//     }));
+//     res.json(blogs);
+//   } catch (error) {
+//     res.status(500).json({ error: 'Internal server error' });
+//   }
+// });
+
 app.get('/blogs', async (req, res) => {
   try {
     const snapshot = await db.collection('blogs').get();
-    const blogs = snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data(),
-      url: `/blogs/${doc.data().slug}`
-    }));
+
+    const blogs = snapshot.docs
+      .map(doc => {
+        const data = doc.data();
+        if (!data || !data.slug) return null;
+
+        // Normalize: if old blog has `image` but not `images`, convert it
+        if (!data.images && data.image) {
+          data.images = [data.image];
+        }
+
+        return {
+          id: doc.id,
+          ...data,
+          url: `/blogs/${data.slug}`,
+        };
+      })
+      .filter(Boolean);
+
     res.json(blogs);
   } catch (error) {
-    res.status(500).json({ error: 'Internal server error' });
+    console.error("Error fetching blogs:", error);
+    res.status(500).json({ error: error.message || 'Internal server error' });
   }
 });
+
 
 /* ======== READ Single Blog by ID or Slug ======== */
 app.get('/blogs/:identifier', async (req, res) => {
