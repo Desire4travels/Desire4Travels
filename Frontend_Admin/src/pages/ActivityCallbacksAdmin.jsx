@@ -14,27 +14,58 @@ const ActivityCallbacksAdmin = () => {
     fetchCallbacks();
   }, [filter]);
 
-  const fetchCallbacks = async () => {
-    try {
-      setLoading(true);
-      const response = await axios.get('https://desire4travels-1.onrender.com/activity-callback');
-      let filteredData = response.data.map(item => ({
-        ...item,
-        // Convert Firestore timestamp to Date object
-        createdAt: item.createdAt ? new Date(item.createdAt._seconds * 1000) : null
-      }));
+  // const fetchCallbacks = async () => {
+  //   try {
+  //     setLoading(true);
+  //     const response = await axios.get('https://desire4travels-1.onrender.com/activity-callback');
+  //     let filteredData = response.data.map(item => ({
+  //       ...item,
+  //       // Convert Firestore timestamp to Date object
+  //       createdAt: item.createdAt ? new Date(item.createdAt._seconds * 1000) : null
+  //     }));
       
-      if (filter === 'called') filteredData = filteredData.filter(item => item.called);
-      else if (filter === 'not_called') filteredData = filteredData.filter(item => !item.called);
+  //     if (filter === 'called') filteredData = filteredData.filter(item => item.called);
+  //     else if (filter === 'not_called') filteredData = filteredData.filter(item => !item.called);
       
-      setCallbacks(filteredData);
-      setLoading(false);
-    } catch (err) {
-      console.error('Fetch error:', err);
-      setError('Failed to fetch callbacks');
-      setLoading(false);
+  //     setCallbacks(filteredData);
+  //     setLoading(false);
+  //   } catch (err) {
+  //     console.error('Fetch error:', err);
+  //     setError('Failed to fetch callbacks');
+  //     setLoading(false);
+  //   }
+  // };
+
+const fetchCallbacks = async () => {
+  try {
+    setLoading(true);
+    const response = await axios.get('https://desire4travels-1.onrender.com/activity-callback');
+
+    let filteredData = response.data.map(item => ({
+      ...item,
+      // Convert Firestore timestamp to Date object
+      createdAt: item.createdAt ? new Date(item.createdAt._seconds * 1000) : new Date(0)
+    }));
+
+    // Filter by status
+    if (filter === 'called') {
+      filteredData = filteredData.filter(item => item.called);
+    } else if (filter === 'not_called') {
+      filteredData = filteredData.filter(item => !item.called);
     }
-  };
+
+    // Sort by createdAt (latest first)
+    filteredData.sort((a, b) => b.createdAt - a.createdAt);
+
+    setCallbacks(filteredData);
+    setLoading(false);
+  } catch (err) {
+    console.error('Fetch error:', err);
+    setError('Failed to fetch callbacks');
+    setLoading(false);
+  }
+};
+
 
   const handleCall = (number) => {
     window.open(`tel:${number}`);

@@ -77,15 +77,19 @@ const fetchEnquiries = async () => {
 
     let data = response.data.map(item => ({
       ...item,
-      submittedAt: item.submittedAt ? new Date(item.submittedAt) : null,
-      called: item.called ?? false // Ensure it's boolean
+      submittedAt: item.submittedAt ? new Date(item.submittedAt) : new Date(0),
+      called: item.called ?? false
     }));
 
+    // Apply filters
     if (filter === 'called') {
       data = data.filter(item => item.called === true);
     } else if (filter === 'not_called') {
       data = data.filter(item => item.called === false);
     }
+
+    // Sort by submittedAt (latest first)
+    data.sort((a, b) => b.submittedAt - a.submittedAt);
 
     setEnquiries(data);
     setLoading(false);

@@ -1519,15 +1519,19 @@ app.get('/contact-us/:id', async (req, res) => {
 });
 
 // UPDATE contact by ID
+// UPDATE contact by ID
 app.put('/contact-us/:id', async (req, res) => {
   try {
-    const { name, phoneNo, email, message } = req.body;
+    const { name, phoneNo, email, message, called } = req.body;
     const updateData = {};
 
     if (name) updateData.name = name;
     if (phoneNo) updateData.phoneNo = phoneNo;
     if (email) updateData.email = email;
     if (message) updateData.message = message;
+
+    // ✅ Allow called field to be updated
+    if (typeof called === 'boolean') updateData.called = called;
 
     if (Object.keys(updateData).length === 0) {
       return res.status(400).json({ error: 'At least one field must be provided for update.' });

@@ -185,11 +185,28 @@ const ManageContact = () => {
     }
   };
 
-  const filterContacts = () => {
-    if (activeTab === 'called') return contacts.filter(c => c.called);
-    if (activeTab === 'notCalled') return contacts.filter(c => !c.called);
-    return contacts;
-  };
+const filterContacts = () => {
+  const sorted = [...contacts].sort((a, b) => {
+    const dateA = a.currentDateTime
+      ? new Date(a.currentDateTime)
+      : a.createdAt?.seconds
+      ? new Date(a.createdAt.seconds * 1000)
+      : new Date(0);
+
+    const dateB = b.currentDateTime
+      ? new Date(b.currentDateTime)
+      : b.createdAt?.seconds
+      ? new Date(b.createdAt.seconds * 1000)
+      : new Date(0);
+
+    return dateB - dateA; // Descending (latest first)
+  });
+
+  if (activeTab === 'called') return sorted.filter(c => c.called);
+  if (activeTab === 'notCalled') return sorted.filter(c => !c.called);
+  return sorted;
+};
+
 
   const renderContacts = (list) => (
     <ul>

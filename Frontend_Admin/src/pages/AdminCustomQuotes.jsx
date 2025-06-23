@@ -105,28 +105,56 @@ const AdminCustomQuotes = () => {
   const [selectedAll, setSelectedAll] = useState(false);
   const [selectedIds, setSelectedIds] = useState([]);
 
+  // const fetchQuotes = async () => {
+  //   try {
+  //     setLoading(true);
+  //     const res = await axios.get('https://desire4travels-1.onrender.com/api/admin/custom-quotes');
+      
+  //     let filteredData = res.data.map(item => ({
+  //       ...item,
+  //       createdAt: item.createdAt ? new Date(item.createdAt) : null
+  //     }));
+      
+  //     if (filter === 'called') filteredData = filteredData.filter(item => item.called);
+  //     else if (filter === 'not_called') filteredData = filteredData.filter(item => !item.called);
+      
+  //     setQuotes(filteredData);
+  //     setLoading(false);
+  //     setSelectedAll(false);
+  //     setSelectedIds([]);
+  //   } catch (err) {
+  //     setError('Failed to fetch custom quotes');
+  //     setLoading(false);
+  //   }
+  // };
+
   const fetchQuotes = async () => {
-    try {
-      setLoading(true);
-      const res = await axios.get('https://desire4travels-1.onrender.com/api/admin/custom-quotes');
-      
-      let filteredData = res.data.map(item => ({
-        ...item,
-        createdAt: item.createdAt ? new Date(item.createdAt) : null
-      }));
-      
-      if (filter === 'called') filteredData = filteredData.filter(item => item.called);
-      else if (filter === 'not_called') filteredData = filteredData.filter(item => !item.called);
-      
-      setQuotes(filteredData);
-      setLoading(false);
-      setSelectedAll(false);
-      setSelectedIds([]);
-    } catch (err) {
-      setError('Failed to fetch custom quotes');
-      setLoading(false);
-    }
-  };
+  try {
+    setLoading(true);
+    const res = await axios.get('https://desire4travels-1.onrender.com/api/admin/custom-quotes');
+    
+    let filteredData = res.data.map(item => ({
+      ...item,
+      createdAt: item.createdAt ? new Date(item.createdAt) : null
+    }));
+
+    // Filter
+    if (filter === 'called') filteredData = filteredData.filter(item => item.called);
+    else if (filter === 'not_called') filteredData = filteredData.filter(item => !item.called);
+
+    // Sort by latest
+    filteredData.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+    setQuotes(filteredData);
+    setLoading(false);
+    setSelectedAll(false);
+    setSelectedIds([]);
+  } catch (err) {
+    setError('Failed to fetch custom quotes');
+    setLoading(false);
+  }
+};
+
 
   useEffect(() => {
     fetchQuotes();

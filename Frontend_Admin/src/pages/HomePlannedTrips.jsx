@@ -86,30 +86,37 @@ const HomePlannedTrips = () => {
     fetchTrips();
   }, [filter]);
 
-  const fetchTrips = async () => {
-    try {
-      setLoading(true);
-      const response = await axios.get('https://desire4travels-1.onrender.com/api/admin/planned-trips');
-      
-      let filteredData = response.data.map(item => ({
-        ...item,
-        createdAt: item.createdAt ? new Date(item.createdAt) : null,
-        startDate: item.startDate ? new Date(item.startDate) : null
-      }));
-      
-      if (filter === 'called') filteredData = filteredData.filter(item => item.called);
-      else if (filter === 'not_called') filteredData = filteredData.filter(item => !item.called);
-      
-      setTrips(filteredData);
-      setLoading(false);
-      setSelectedAll(false);
-      setSelectedIds([]);
-    } catch (err) {
-      console.error('Error fetching planned trips:', err);
-      setError('Failed to fetch planned trips');
-      setLoading(false);
+const fetchTrips = async () => {
+  try {
+    setLoading(true);
+    const response = await axios.get('https://desire4travels-1.onrender.com/api/admin/planned-trips');
+
+    let filteredData = response.data.map(item => ({
+      ...item,
+      createdAt: item.createdAt ? new Date(item.createdAt) : null,
+      startDate: item.startDate || null,
+    }));
+
+    // Filter by status
+    if (filter === 'called') {
+      filteredData = filteredData.filter(item => item.called);
+    } else if (filter === 'not_called') {
+      filteredData = filteredData.filter(item => !item.called);
     }
-  };
+
+    // ✅ Sort by createdAt in descending order (latest first)
+    filteredData.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+    setTrips(filteredData);
+    setLoading(false);
+    setSelectedAll(false);
+    setSelectedIds([]);
+  } catch (err) {
+    console.error('Error fetching planned trips:', err);
+    setError('Failed to fetch planned trips');
+    setLoading(false);
+  }
+};
 
   const handleCall = (number) => {
     window.open(`tel:${number}`);
@@ -264,7 +271,7 @@ const HomePlannedTrips = () => {
                   />
                 </td>
                 <td>{trip.destination}</td>
-                <td>{formatDate(trip.startDate)}</td>
+<td>{trip.startDate || 'N/A'}</td>
                 <td>{trip.noofdays}</td>
                 <td>{trip.travelers}</td>
                 <td>{trip.mobileNumber || 'N/A'}</td>
