@@ -453,6 +453,8 @@ const ManageDestination = () => {
             <option value="Religious">Religious</option>
             <option value="Treks">Treks</option>
             <option value="Offbeat">Offbeat</option>
+            <option value="Desert">Desert</option>
+            <option value="Cityscape">Cityscape</option>
             <option value="Other">Other</option>
           </select>
         </div>

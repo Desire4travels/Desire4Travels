@@ -27,18 +27,18 @@ const Blog = () => {
   //   image: null,
   //   slug: ""
   // });
-const [formData, setFormData] = useState({
-  title: "",
-  author: "",
-  category: "",
-  content: "",
-  date: new Date().toISOString().split('T')[0],
-  excerpt: "",
-  alt: "",
-  status: "draft",
-  images: [], // <-- changed from image: null
-  slug: ""
-});
+  const [formData, setFormData] = useState({
+    title: "",
+    author: "",
+    category: "",
+    content: "",
+    date: new Date().toISOString().split('T')[0],
+    excerpt: "",
+    alt: "",
+    status: "draft",
+    images: [], // <-- changed from image: null
+    slug: ""
+  });
 
 
   const [editingId, setEditingId] = useState(null);
@@ -78,19 +78,19 @@ const [formData, setFormData] = useState({
   //   }
   // };
 
-const handleChange = (e) => {
-  const { name, value, files } = e.target;
+  const handleChange = (e) => {
+    const { name, value, files } = e.target;
 
-  if (name === "images") {
-    setFormData({ ...formData, images: Array.from(files) }); // for multiple images
-  } else {
-    const updatedFormData = { ...formData, [name]: value };
-    if (name === "title" && !editingId) {
-      updatedFormData.slug = slugify(value);
+    if (name === "images") {
+      setFormData({ ...formData, images: Array.from(files) }); // for multiple images
+    } else {
+      const updatedFormData = { ...formData, [name]: value };
+      if (name === "title" && !editingId) {
+        updatedFormData.slug = slugify(value);
+      }
+      setFormData(updatedFormData);
     }
-    setFormData(updatedFormData);
-  }
-};
+  };
 
 
   // const handleSubmit = async (e) => {
@@ -122,36 +122,36 @@ const handleChange = (e) => {
   //   }
   // };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  setIsLoading(true);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
 
-  const payload = new FormData();
-  Object.entries(formData).forEach(([key, value]) => {
-    if (key === 'images' && Array.isArray(value)) {
-      value.forEach(file => payload.append('images', file));
-    } else if (value !== null && value !== undefined) {
-      payload.append(key, value);
-    }
-  });
+    const payload = new FormData();
+    Object.entries(formData).forEach(([key, value]) => {
+      if (key === 'images' && Array.isArray(value)) {
+        value.forEach(file => payload.append('images', file));
+      } else if (value !== null && value !== undefined) {
+        payload.append(key, value);
+      }
+    });
 
-  try {
-    if (editingId) {
-      await axios.put(`${API_BASE_URL}/${editingId}`, payload);
-    } else {
-      await axios.post(API_BASE_URL, payload);
+    try {
+      if (editingId) {
+        await axios.put(`${API_BASE_URL}/${editingId}`, payload);
+      } else {
+        await axios.post(API_BASE_URL, payload);
+      }
+      await fetchBlogs();
+      setShowModal(false);
+      setEditingId(null);
+      resetForm();
+    } catch (err) {
+      console.error("Error submitting form:", err);
+      alert(`Error: ${err.response?.data?.error || err.message}`);
+    } finally {
+      setIsLoading(false);
     }
-    await fetchBlogs();
-    setShowModal(false);
-    setEditingId(null);
-    resetForm();
-  } catch (err) {
-    console.error("Error submitting form:", err);
-    alert(`Error: ${err.response?.data?.error || err.message}`);
-  } finally {
-    setIsLoading(false);
-  }
-};
+  };
 
 
   const resetForm = () => {
@@ -248,17 +248,17 @@ const handleSubmit = async (e) => {
                 </div>
               )} */}
               {Array.isArray(blog.images) && blog.images.length > 0 && (
-  <div className="blog-image-preview multi">
-    {blog.images.map((img, i) => (
-      <img
-        key={i}
-        src={img}
-        alt={blog.alt || blog.title}
-        onError={(e) => e.target.style.display = 'none'}
-      />
-    ))}
-  </div>
-)}
+                <div className="blog-image-preview multi">
+                  {blog.images.map((img, i) => (
+                    <img
+                      key={i}
+                      src={img}
+                      alt={blog.alt || blog.title}
+                      onError={(e) => e.target.style.display = 'none'}
+                    />
+                  ))}
+                </div>
+              )}
 
               <div className="blog-actions">
                 <button
@@ -352,6 +352,8 @@ const handleSubmit = async (e) => {
                     <option value="Religious">Religious</option>
                     <option value="Treks">Treks</option>
                     <option value="Offbeat">Offbeat</option>
+                    <option value="Desert">Desert</option>
+                    <option value="Cityscape">Cityscape</option>
                     <option value="Other">Other</option>
                   </select>
                 </div>
@@ -440,28 +442,28 @@ const handleSubmit = async (e) => {
               </div> */}
 
               <div className="form-group">
-  <label>Featured Images{!editingId && '*'}</label>
-  <div className="file-upload">
-    <input
-      type="file"
-      name="images"
-      accept="image/*"
-      multiple
-      onChange={handleChange}
-      {...(editingId ? {} : { required: true })}
-    />
-    <span className="file-upload-label">
-      {formData.images?.length > 0
-        ? `${formData.images.length} file(s) selected`
-        : "Choose images"}
-    </span>
-  </div>
-  {editingId && (
-    <small className="image-hint">
-      Leave empty to keep current images
-    </small>
-  )}
-</div>
+                <label>Featured Images{!editingId && '*'}</label>
+                <div className="file-upload">
+                  <input
+                    type="file"
+                    name="images"
+                    accept="image/*"
+                    multiple
+                    onChange={handleChange}
+                    {...(editingId ? {} : { required: true })}
+                  />
+                  <span className="file-upload-label">
+                    {formData.images?.length > 0
+                      ? `${formData.images.length} file(s) selected`
+                      : "Choose images"}
+                  </span>
+                </div>
+                {editingId && (
+                  <small className="image-hint">
+                    Leave empty to keep current images
+                  </small>
+                )}
+              </div>
 
 
               <div className="modal-buttons">
