@@ -1,3 +1,4 @@
+
 const express = require('express');
 const admin = require('firebase-admin');
 const bodyParser = require('body-parser');
@@ -11,11 +12,12 @@ const ImageKit = require("imagekit");
 const session = require('express-session');
 
 const app = express();
-const port = 3000;
-
 app.use(cors());
 app.use(bodyParser.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+
+const port = 3000;
 
 
 // SDK initialization
@@ -1404,42 +1406,42 @@ app.delete('/callback-package/:id', ownerAuth, async (req, res) => {
 });
 
 
-app.post('/api/admin/upcoming-trip', async (req, res) => {
-  try {
-    const { trips } = req.body;
+// app.post('/api/admin/upcoming-trip', async (req, res) => {
+//   try {
+//     const { trips } = req.body;
 
-    if (!Array.isArray(trips) || trips.length !== 4) {
-      return res.status(400).json({ error: 'Exactly 4 trips are required' });
-    }
+//     if (!Array.isArray(trips) || trips.length !== 4) {
+//       return res.status(400).json({ error: 'Exactly 4 trips are required' });
+//     }
 
-    for (const trip of trips) {
-      if (!trip.packageId || !trip.travelDate) {
-        return res.status(400).json({ error: 'Each trip must include packageId and travelDate' });
-      }
-    }
+//     for (const trip of trips) {
+//       if (!trip.packageId || !trip.travelDate) {
+//         return res.status(400).json({ error: 'Each trip must include packageId and travelDate' });
+//       }
+//     }
 
-    const upcomingTripRef = db.collection('upcomingTrips').doc('current');
-    await upcomingTripRef.set({
-      trips,
-      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-    });
+//     const upcomingTripRef = db.collection('upcomingTrips').doc('current');
+//     await upcomingTripRef.set({
+//       trips,
+//       updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+//     });
 
-    res.status(200).json({ message: 'Upcoming trips saved successfully' });
-  } catch (error) {
-    console.error('Error saving upcoming trips:', error);
-    res.status(500).json({ error: 'Server error' });
-  }
-});
+//     res.status(200).json({ message: 'Upcoming trips saved successfully' });
+//   } catch (error) {
+//     console.error('Error saving upcoming trips:', error);
+//     res.status(500).json({ error: 'Server error' });
+//   }
+// });
 
 
-app.get("/api/upcoming-trips", async (req, res) => {
-  const snapshot = await db.collection("upcomingTrips").get();
-  const trips = snapshot.docs.map((doc) => ({
-    id: doc.id,
-    ...doc.data(),
-  }));
-  res.json(trips);
-});
+// app.get("/api/upcoming-trips", async (req, res) => {
+//   const snapshot = await db.collection("upcomingTrips").get();
+//   const trips = snapshot.docs.map((doc) => ({
+//     id: doc.id,
+//     ...doc.data(),
+//   }));
+//   res.json(trips);
+// });
 
 // CREATE contact
 // app.post('/contact-us', async (req, res) => {
@@ -1698,3 +1700,82 @@ app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
 
+
+
+// --- UPCOMING TRIPS CRUD ---
+
+app.post('/api/upcoming-trips', async (req, res) => {
+  try {
+    const { tripName, travelDate } = req.body;
+
+    // Validate required fields
+    if (!tripName || !travelDate) {
+      return res.status(400).json({ error: 'Trip name and travel date are required' });
+    }
+
+    // Sanitize trip name to prevent XSS
+    const safeTripName = sanitizeHtml(tripName);
+
+    const newTrip = {
+      tripName: safeTripName,
+      travelDate: new Date(travelDate).toISOString(),
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    };
+
+    // Save to Firestore
+    const docRef = await db.collection('upcoming-trips').add(newTrip);
+
+    res.status(201).json({ message: 'Trip added successfully', id: docRef.id });
+  } catch (error) {
+    console.error('Error adding trip:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+
+// GET: Fetch all upcoming trips (ordered by travel date)
+app.get('/api/upcoming-trips', async (req, res) => {
+  try {
+    const snapshot = await db.collection('upcoming-trips').orderBy('travelDate').get();
+    const trips = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    res.status(200).json(trips);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch trips' });
+  }
+});
+
+// PUT: Update trip (only tripName and travelDate)
+app.put('/api/upcoming-trips/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { tripName, travelDate } = req.body;
+
+    if (!tripName || !travelDate) {
+      return res.status(400).json({ error: 'Trip name and travel date are required' });
+    }
+
+    const updateData = {
+      tripName: sanitizeHtml(tripName),
+      travelDate: new Date(travelDate).toISOString(),
+    };
+
+    const tripRef = db.collection('upcoming-trips').doc(id);
+    await tripRef.update(updateData);
+
+    res.status(200).json({ message: 'Trip updated successfully' });
+  } catch (error) {
+    console.error('Update error:', error);
+    res.status(500).json({ error: 'Update failed' });
+  }
+});
+
+// DELETE: Remove a trip by ID
+app.delete('/api/upcoming-trips/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    await db.collection('upcoming-trips').doc(id).delete();
+    res.status(200).json({ message: 'Trip deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ error: 'Delete failed' });
+  }
+});
