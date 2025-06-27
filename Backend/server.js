@@ -1699,9 +1699,7 @@ app.delete('/api/admin/popup-enquiries/:id', ownerAuth, async (req, res) => {
   }
 });
 
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
+
 
 
 
@@ -1772,6 +1770,16 @@ app.put('/api/upcoming-trips/:id', async (req, res) => {
   }
 });
 
+// DELETE: Remove a trip by ID
+app.delete('/api/upcoming-trips/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    await db.collection('upcoming-trips').doc(id).delete();
+    res.status(200).json({ message: 'Trip deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ error: 'Delete failed' });
+  }
+});
 
 
 
@@ -1890,16 +1898,7 @@ app.get('/api/last-visit', async (req, res) => {
   }
 });
 
-
-
-
-// DELETE: Remove a trip by ID
-app.delete('/api/upcoming-trips/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-    await db.collection('upcoming-trips').doc(id).delete();
-    res.status(200).json({ message: 'Trip deleted successfully' });
-  } catch (error) {
-    res.status(500).json({ error: 'Delete failed' });
-  }
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
 });
+
