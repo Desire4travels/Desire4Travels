@@ -1606,21 +1606,23 @@ const activityCallback = db.collection('activity-callbacks');
  */
 app.post('/activity-callback', async (req, res) => {
   try {
-    const { number } = req.body;
-    if (!number) return res.status(400).json({ error: 'Number is required' });
+    const { number, activityName } = req.body;
+    if (!number || !activityName) {
+      return res.status(400).json({ error: 'Number and activityName are required' });
+    }
 
     const newDoc = await activityCallback.add({
       number,
-      called: false, // 👈 default value
+      activityName,
+      called: false,
       createdAt: admin.firestore.FieldValue.serverTimestamp()
     });
 
-    res.status(201).json({ id: newDoc.id, number, called: false });
+    res.status(201).json({ id: newDoc.id, number, activityName, called: false });
   } catch (err) {
     res.status(500).json({ error: 'Failed to add callback' });
   }
 });
-
 /**
  * READ ALL
  * GET /activity-callback
@@ -1655,11 +1657,12 @@ app.get('/activity-callback/:id', async (req, res) => {
  */
 app.put('/activity-callback/:id', async (req, res) => {
   try {
-    const { number, called } = req.body;
+    const { number, called, activityName } = req.body;
     const updateData = {};
 
     if (number !== undefined) updateData.number = number;
     if (called !== undefined) updateData.called = called;
+    if (activityName !== undefined) updateData.activityName = activityName;
 
     if (Object.keys(updateData).length === 0) {
       return res.status(400).json({ error: 'No valid fields provided to update' });
@@ -1768,6 +1771,127 @@ app.put('/api/upcoming-trips/:id', async (req, res) => {
     res.status(500).json({ error: 'Update failed' });
   }
 });
+
+
+
+
+const hotelsCollection = db.collection('hotels');
+
+// Create hotel
+app.post('/hotels', async (req, res) => {
+  try {
+    const {
+      hotelId,
+      hotelName,
+      location,
+      typeOfProperty,
+      starRating,
+      contactPerson,
+      contactNumber,
+      notes
+    } = req.body;
+
+    const hotelData = {
+      hotelId,
+      hotelName,
+      location,
+      typeOfProperty,
+      starRating,
+      contactPerson,
+      contactNumber,
+      notes
+    };
+
+    await hotelsCollection.doc(hotelId).set(hotelData);
+    res.status(201).send('Hotel added successfully');
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
+
+// Get all hotels
+app.get('/hotels', async (req, res) => {
+  try {
+    const snapshot = await hotelsCollection.get();
+    const hotels = snapshot.docs.map(doc => doc.data());
+    res.status(200).json(hotels);
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
+
+// Get hotel by ID
+app.get('/hotels/:id', async (req, res) => {
+  try {
+    const doc = await hotelsCollection.doc(req.params.id).get();
+    if (!doc.exists) {
+      return res.status(404).send('Hotel not found');
+    }
+    res.status(200).json(doc.data());
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
+
+// Update hotel by ID
+app.put('/hotels/:id', async (req, res) => {
+  try {
+    await hotelsCollection.doc(req.params.id).update(req.body);
+    res.status(200).send('Hotel updated');
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
+
+// Delete hotel by ID
+app.delete('/hotels/:id', async (req, res) => {
+  try {
+    await hotelsCollection.doc(req.params.id).delete();
+    res.status(200).send('Hotel deleted');
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
+
+
+// POST - Update last visit timestamp
+app.post('/api/last-visit', async (req, res) => {
+  try {
+    const { section } = req.body;
+    if (!section) return res.status(400).json({ error: 'Section is required' });
+
+    await db.collection('lastVisits').doc('admin').set(
+      {
+        [section]: admin.firestore.FieldValue.serverTimestamp()
+      },
+      { merge: true }
+    );
+
+    res.status(200).json({ message: 'Last visit updated' });
+  } catch (error) {
+    console.error('Error updating last visit:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// GET - Retrieve last visit timestamp
+app.get('/api/last-visit', async (req, res) => {
+  try {
+    const { section } = req.query;
+    if (!section) return res.status(400).json({ error: 'Section is required' });
+
+    const doc = await db.collection('lastVisits').doc('admin').get();
+    const data = doc.exists ? doc.data() : null;
+
+    res.status(200).json({ lastVisited: data?.[section] ? data[section].toDate().toISOString() : null });
+  } catch (error) {
+    console.error('Error fetching last visit:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+
+
 
 // DELETE: Remove a trip by ID
 app.delete('/api/upcoming-trips/:id', async (req, res) => {
