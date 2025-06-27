@@ -410,101 +410,102 @@ const ManageDestination = () => {
 
   return (
     <div className="manage-destination">
-      <h2>{editingId ? 'Edit Destination' : 'Add Destination'}</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label htmlFor="name">Destination Name</label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            placeholder="Enter destination name"
-            required
-          />
-        </div>
+      <div className="manage-destination-1">
+        <h2>{editingId ? 'Edit Destination' : 'Add Destination'}</h2>
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label htmlFor="name">Destination Name</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              placeholder="Enter destination name"
+              required
+            />
+          </div>
 
-        <div className="form-group">
-          <label htmlFor="state">State</label>
-          <input
-            type="text"
-            id="state"
-            name="state"
-            value={formData.state}
-            onChange={handleChange}
-            placeholder="Enter state"
-            required
-          />
-        </div>
+          <div className="form-group">
+            <label htmlFor="state">State</label>
+            <input
+              type="text"
+              id="state"
+              name="state"
+              value={formData.state}
+              onChange={handleChange}
+              placeholder="Enter state"
+              required
+            />
+          </div>
 
-        <div className="form-group">
-          <label htmlFor="type">Type</label>
-          <select
-            id="type"
-            name="type"
-            value={formData.type}
-            onChange={handleChange}
-            multiple
-            required
-          >
-            <option value="Mountain">Mountain</option>
-            <option value="Beach">Beach</option>
-            <option value="Religious">Religious</option>
-            <option value="Treks">Treks</option>
-            <option value="Offbeat">Offbeat</option>
-            <option value="Desert">Desert</option>
-            <option value="Cityscape">Cityscape</option>
-            <option value="Other">Other</option>
-          </select>
-        </div>
+          <div className="form-group">
+            <label htmlFor="type">Type</label>
+            <select
+              id="type"
+              name="type"
+              value={formData.type}
+              onChange={handleChange}
+              multiple
+              required
+            >
+              <option value="Mountain">Mountain</option>
+              <option value="Beach">Beach</option>
+              <option value="Religious">Religious</option>
+              <option value="Treks">Treks</option>
+              <option value="Offbeat">Offbeat</option>
+              <option value="Desert">Desert</option>
+              <option value="Cityscape">Cityscape</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
 
-        <div className="form-group">
-          <label htmlFor="rating">Rating (0–5)</label>
-          <input
-            type="number"
-            id="rating"
-            name="rating"
-            value={formData.rating}
-            onChange={handleChange}
-            min="0"
-            max="5"
-            step="0.1"
-            required
-          />
-        </div>
+          <div className="form-group">
+            <label htmlFor="rating">Rating (0–5)</label>
+            <input
+              type="number"
+              id="rating"
+              name="rating"
+              value={formData.rating}
+              onChange={handleChange}
+              min="0"
+              max="5"
+              step="0.1"
+              required
+            />
+          </div>
 
-        <div className="form-group">
-          <label htmlFor="description">Description (HTML allowed)</label>
-          <textarea
-            id="description"
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            placeholder="You can use HTML like <p>, <h1> etc."
-            required
-          />
-        </div>
+          <div className="form-group">
+            <label htmlFor="description">Description (HTML allowed)</label>
+            <textarea
+              id="description"
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              placeholder="You can use HTML like <p>, <h1> etc."
+              required
+            />
+          </div>
 
-        <div className="form-group">
-          <label htmlFor="image">Destination Image</label>
-          <input
-            type="file"
-            id="image"
-            name="image"
-            onChange={handleImageChange}
-            accept="image/*"
-          />
-          {previewImage && (
-            <div className="image-preview">
-              <img src={previewImage} alt="Preview" />
-            </div>
-          )}
-        </div>
+          <div className="form-group">
+            <label htmlFor="image">Destination Image</label>
+            <input
+              type="file"
+              id="image"
+              name="image"
+              onChange={handleImageChange}
+              accept="image/*"
+            />
+            {previewImage && (
+              <div className="image-preview">
+                <img src={previewImage} alt="Preview" />
+              </div>
+            )}
+          </div>
 
-        <button type="submit">{editingId ? 'Update' : 'Add'} Destination</button>
-      </form>
-
+          <button type="submit">{editingId ? 'Update' : 'Add'} Destination</button>
+        </form>
+      </div>
       <h2>Existing Destinations</h2>
       <table className="destination-table">
         <thead>
