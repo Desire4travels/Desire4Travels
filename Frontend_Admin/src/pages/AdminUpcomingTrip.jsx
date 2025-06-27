@@ -1,21 +1,28 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./AdminUpcomingTrip.css";
 
-const API_BASE_URL = "https://desire4travels-1.onrender.com/api/upcoming-trips";
+const API_BASE_URL = "http://localhost:3000/api/upcoming-trips";
 
 const ManageUpcomingTrips = () => {
   const [trips, setTrips] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editIndex, setEditIndex] = useState(null);
-
   const [formData, setFormData] = useState({
     tripName: "",
     travelDate: "",
   });
-
   const [isLoading, setIsLoading] = useState(false);
 
+  const navigate = useNavigate();
+
+  // Logout function (just redirect to home)
+  const handleLogout = () => {
+    navigate('/');
+  };
+
+  // Fetch trips
   const fetchTrips = async () => {
     setIsLoading(true);
     try {
@@ -27,11 +34,13 @@ const ManageUpcomingTrips = () => {
       setIsLoading(false);
     }
   };
-function decodeHtml(html) {
-  const txt = document.createElement("textarea");
-  txt.innerHTML = html;
-  return txt.value;
-}
+
+  function decodeHtml(html) {
+    const txt = document.createElement("textarea");
+    txt.innerHTML = html;
+    return txt.value;
+  }
+
   useEffect(() => {
     fetchTrips();
   }, []);
@@ -59,7 +68,7 @@ function decodeHtml(html) {
 
   const handleEdit = (trip, idx) => {
     setFormData({
-      tripName: trip.tripName, // always raw string
+      tripName: trip.tripName,
       travelDate: trip.travelDate ? trip.travelDate.slice(0, 10) : "",
     });
     setEditIndex(idx);
@@ -71,7 +80,7 @@ function decodeHtml(html) {
     setIsLoading(true);
     try {
       const payload = {
-        tripName: formData.tripName, // always raw string
+        tripName: formData.tripName,
         travelDate: formData.travelDate,
       };
 
@@ -135,7 +144,24 @@ function decodeHtml(html) {
   ];
 
   return (
-    <div className="manage-upcoming-container">
+    <div className="manage-upcoming-container" style={{ position: "relative" }}>
+      <button
+        onClick={handleLogout}
+        style={{
+          position: 'absolute',
+          top: 20,
+          right: 30,
+          padding: '6px 16px',
+          background: '#2196F3',
+          color: 'white',
+          border: 'none',
+          borderRadius: 5,
+          cursor: 'pointer',
+          zIndex: 10
+        }}
+      >
+        Logout
+      </button>
       <h1 className="page-title">Manage Upcoming Trips</h1>
 
       <button className="create-btn" onClick={() => setIsModalOpen(true)}>

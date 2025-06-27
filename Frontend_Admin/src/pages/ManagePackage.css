@@ -1,5 +1,5 @@
 .manage-package {
-  display: flex;
+  display: flex; position: relative;
   flex-direction: column;
   padding: 20px;
   max-width: 100%;

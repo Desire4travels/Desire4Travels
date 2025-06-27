@@ -1,7 +1,57 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom'; // <-- Add this import
+import ProtectedCard from '../Components/ProtectedCard.jsx'; // <-- Add this import
 import './ManagePackage.css';
 
+const AUTO_LOGOUT_MS = 60 * 60 * 1000; // 1 hour
+
 const ManagePackage = () => {
+
+   const [isAuthenticated, setIsAuthenticated] = useState(false); // <-- Add this line
+  const navigate = useNavigate(); // <-- Add this line
+const timerRef = useRef();
+
+
+  useEffect(() => {
+    const localAuth = localStorage.getItem('auth-packages');
+    setIsAuthenticated(localAuth === 'true');
+  }, []);
+
+
+   // Auto logout effect
+  useEffect(() => {
+    if (!isAuthenticated) return;
+
+    const resetTimer = () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+      timerRef.current = setTimeout(() => {
+        handleLogout();
+      }, AUTO_LOGOUT_MS);
+    };
+
+    const events = ['mousemove', 'keydown', 'click', 'scroll', 'touchstart'];
+    events.forEach(event => window.addEventListener(event, resetTimer));
+    resetTimer();
+
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+      events.forEach(event => window.removeEventListener(event, resetTimer));
+    };
+  }, [isAuthenticated]);
+
+  
+
+  const handleLogout = () => {
+    localStorage.removeItem('auth-enquiries');
+    localStorage.removeItem('auth-destinations');
+    localStorage.removeItem('auth-packages');
+    localStorage.removeItem('auth-blogs');
+    setIsAuthenticated(false);
+    navigate('/'); // Redirect to home page
+  };
+
+
+
   const [formData, setFormData] = useState({
     packageName: '',
     duration: '',
@@ -139,8 +189,41 @@ const handleEdit = (pkg) => {
     }
   };
 
+    if (!isAuthenticated) {
+    return (
+      <ProtectedCard cardKey="packages">
+        <div className="manage-package-card">
+          <h1>Manage Packages</h1>
+        </div>
+      </ProtectedCard>
+    );
+  }
+
+
   return (
     <div className="manage-package">
+
+
+      <button
+        onClick={handleLogout}
+        style={{
+          position: 'absolute',
+          top: 20,
+          right: 30,
+          padding: '6px 16px',
+          background: '#2196F3',
+          color: 'white',
+          border: 'none',
+          borderRadius: 5,
+          cursor: 'pointer',
+          zIndex: 10
+        }}
+      >
+        Logout
+      </button>
+
+
+      
       <div className="form-section">
         <h2>{editingId ? 'Edit Package' : 'Add Package'}</h2>
         <form onSubmit={handleSubmit}>

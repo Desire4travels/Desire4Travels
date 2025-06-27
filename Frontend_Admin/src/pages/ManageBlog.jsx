@@ -1,8 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import ProtectedCard from '../Components/ProtectedCard.jsx';
 import "./ManageBlog.css";
 
+
 const API_BASE_URL = "https://desire4travels-1.onrender.com/blogs";
+
+const AUTO_LOGOUT_MS =  60 * 60 * 1000; // 1 hour
 
 const slugify = (text) => {
   return text.toString().toLowerCase()
@@ -15,6 +20,10 @@ const slugify = (text) => {
 
 const Blog = () => {
   const [blogs, setBlogs] = useState([]);
+   const [isAuthenticated, setIsAuthenticated] = useState(false); // <-- Add this
+  const navigate = useNavigate(); // <-- Add this
+    const timerRef = useRef(); 
+
   // const [formData, setFormData] = useState({
   //   title: "",
   //   author: "",
@@ -27,6 +36,45 @@ const Blog = () => {
   //   image: null,
   //   slug: ""
   // });
+  useEffect(() => {
+    const localAuth = localStorage.getItem('auth-blogs');
+    setIsAuthenticated(localAuth === 'true');
+  }, []);
+
+
+  // Auto logout effect
+  useEffect(() => {
+    if (!isAuthenticated) return;
+
+    const resetTimer = () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+      timerRef.current = setTimeout(() => {
+        handleLogout();
+      }, AUTO_LOGOUT_MS);
+    };
+
+    const events = ['mousemove', 'keydown', 'click', 'scroll', 'touchstart'];
+    events.forEach(event => window.addEventListener(event, resetTimer));
+    resetTimer();
+
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+      events.forEach(event => window.removeEventListener(event, resetTimer));
+    };
+  }, [isAuthenticated]);
+
+
+  const handleLogout = () => {
+    localStorage.removeItem('auth-enquiries');
+    localStorage.removeItem('auth-destinations');
+    localStorage.removeItem('auth-packages');
+    localStorage.removeItem('auth-blogs');
+    setIsAuthenticated(false);
+    navigate('/'); // Redirect to home page
+  };
+
+
+
   const [formData, setFormData] = useState({
     title: "",
     author: "",
@@ -200,8 +248,39 @@ const Blog = () => {
     }
   };
 
+
+  if (!isAuthenticated) {
+    return (
+      <ProtectedCard cardKey="blogs">
+        <div className="manage-blog-card">
+          <h1>Manage Blogs</h1>
+        </div>
+      </ProtectedCard>
+    );
+  }
+
   return (
     <div className="manage-blog-container">
+
+          <button
+      onClick={handleLogout}
+      style={{
+        position: 'absolute',
+        top: 20,
+        right: 30,
+        padding: '6px 16px',
+        background: '#2196F3',
+        color: 'white',
+        border: 'none',
+        borderRadius: 5,
+        cursor: 'pointer',
+        zIndex: 10
+      }}
+    >
+      Logout
+    </button>
+
+    
       <h1 className="page-title">Manage Blog Posts</h1>
 
       <button
@@ -494,6 +573,8 @@ const Blog = () => {
         </div>
       )}
     </div>
+
+    
   );
 };
 

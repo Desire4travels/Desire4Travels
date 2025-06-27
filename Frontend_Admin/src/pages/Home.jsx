@@ -8,7 +8,7 @@ const Home = () => {
      
      <ProtectedCard cardKey="enquiries">
       <div className='all-enquiries-card'>
-        <h1><Link to="/Allenquiries" className="link">All Enquiries</Link></h1>
+        <h1><Link to="/allenquiries" className="link">All Enquiries</Link></h1>
       </div>
      </ProtectedCard>
  
