@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./AdminUpcomingTrip.css";
 
-const API_BASE_URL = "http://localhost:3000/api/upcoming-trips";
+const API_BASE_URL = "https://desire4travels-1.onrender.com/api/upcoming-trips";
 
 const ManageUpcomingTrips = () => {
   const [trips, setTrips] = useState([]);
