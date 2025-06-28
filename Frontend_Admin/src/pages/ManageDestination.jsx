@@ -279,8 +279,12 @@
 
 import { useState, useEffect } from 'react';
 import './ManageDestination.css';
+import { useRef } from 'react';
+
+import { useNavigate } from 'react-router-dom';
 
 const ManageDestination = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false); // <-- Add this line
   const [formData, setFormData] = useState({
     name: '',
     state: '',
@@ -296,6 +300,58 @@ const ManageDestination = () => {
   useEffect(() => {
     fetchDestinations();
   }, []);
+
+
+
+
+const navigate = useNavigate();
+
+
+const logoutTimerRef = useRef(null);  // useRef for stable reference
+// Auto logout after 1 hour (3600000 ms)
+useEffect(() => {
+  
+
+  const logout = () => {
+    
+    handleLogout();
+  };
+
+  const resetTimer = () => {
+    clearTimeout(logoutTimerRef.current);
+    logoutTimerRef.current = setTimeout(logout, 3600000); // 1 hour = 3600000ms
+  };
+
+  resetTimer(); // Start on mount
+
+  // Attach activity listeners
+  window.addEventListener('mousemove', resetTimer);
+  window.addEventListener('keydown', resetTimer);
+  window.addEventListener('click', resetTimer);
+
+  // Cleanup
+  return () => {
+    clearTimeout(logoutTimerRef.current);
+    window.removeEventListener('mousemove', resetTimer);
+    window.removeEventListener('keydown', resetTimer);
+    window.removeEventListener('click', resetTimer);
+  };
+}, []);
+
+ 
+
+// Manual logout handler
+  const handleLogout = () => {
+    localStorage.removeItem('auth-enquiries');
+    localStorage.removeItem('auth-destinations');
+    localStorage.removeItem('auth-packages');
+    localStorage.removeItem('auth-blogs');
+    setIsAuthenticated(false);
+    navigate('/'); // Redirect to home page
+  };
+
+
+
 
   const fetchDestinations = async () => {
     try {
@@ -408,8 +464,35 @@ const ManageDestination = () => {
     }
   };
 
+
+
+  
+
+
   return (
     <div className="manage-destination">
+
+
+
+      <button
+  onClick={handleLogout}
+  style={{
+    position: 'absolute',
+    top: 20,
+    right: 30,
+    padding: '6px 16px',
+   background: '#2196F3',
+    color: 'white',
+    border: 'none',
+    borderRadius: 5,
+    cursor: 'pointer',
+    zIndex: 10
+  }}
+>
+  Logout
+</button>
+
+
       <div className="manage-destination-1">
         <h2>{editingId ? 'Edit Destination' : 'Add Destination'}</h2>
         <form onSubmit={handleSubmit}>

@@ -134,6 +134,7 @@ h1 {
 
 /* Base Styles */
 .manage-blog-container {
+  position: relative; /* <-- Add this line */
   padding: 2rem;
   max-width: 1200px;
   margin: 0 auto;

@@ -1,4 +1,5 @@
 .manage-destination {
+     position: relative; /* <-- Add this line */
     width: 90% !important;
     margin: 2rem auto;
     padding: 2rem;
