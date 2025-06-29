@@ -86,37 +86,52 @@ const HomePlannedTrips = () => {
     fetchTrips();
   }, [filter]);
 
-const fetchTrips = async () => {
-  try {
-    setLoading(true);
-    const response = await axios.get('https://desire4travels-1.onrender.com/api/admin/planned-trips');
+  useEffect(() => {
+    const updateLastVisit = async () => {
+      try {
+        await axios.post('https://desire4travels-1.onrender.com/api/last-visit', {
+          section: 'plannedTrips',
+        });
+      } catch (err) {
+        console.error('Failed to update last visit for planned trips:', err);
+      }
+    };
 
-    let filteredData = response.data.map(item => ({
-      ...item,
-      createdAt: item.createdAt ? new Date(item.createdAt) : null,
-      startDate: item.startDate || null,
-    }));
+    updateLastVisit();
+  }, []);
 
-    // Filter by status
-    if (filter === 'called') {
-      filteredData = filteredData.filter(item => item.called);
-    } else if (filter === 'not_called') {
-      filteredData = filteredData.filter(item => !item.called);
+
+  const fetchTrips = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get('https://desire4travels-1.onrender.com/api/admin/planned-trips');
+
+      let filteredData = response.data.map(item => ({
+        ...item,
+        createdAt: item.createdAt ? new Date(item.createdAt) : null,
+        startDate: item.startDate || null,
+      }));
+
+      // Filter by status
+      if (filter === 'called') {
+        filteredData = filteredData.filter(item => item.called);
+      } else if (filter === 'not_called') {
+        filteredData = filteredData.filter(item => !item.called);
+      }
+
+      // ✅ Sort by createdAt in descending order (latest first)
+      filteredData.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+      setTrips(filteredData);
+      setLoading(false);
+      setSelectedAll(false);
+      setSelectedIds([]);
+    } catch (err) {
+      console.error('Error fetching planned trips:', err);
+      setError('Failed to fetch planned trips');
+      setLoading(false);
     }
-
-    // ✅ Sort by createdAt in descending order (latest first)
-    filteredData.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
-    setTrips(filteredData);
-    setLoading(false);
-    setSelectedAll(false);
-    setSelectedIds([]);
-  } catch (err) {
-    console.error('Error fetching planned trips:', err);
-    setError('Failed to fetch planned trips');
-    setLoading(false);
-  }
-};
+  };
 
   const handleCall = (number) => {
     window.open(`tel:${number}`);
@@ -135,20 +150,20 @@ const fetchTrips = async () => {
     try {
       const isOwner = localStorage.getItem('isOwner') === 'yes';
       const headers = isOwner ? { 'x-owner-key': 'OWNER-KEY-123' } : {};
-  
+
       await axios.delete(`https://desire4travels-1.onrender.com/api/admin/planned-trips/${id}`, { headers });
       fetchTrips();
     } catch (err) {
       setError('Failed to delete trip');
     }
   };
-  
+
   const handleDeleteSelected = async () => {
     if (selectedIds.length === 0) return;
-  
+
     const isOwner = localStorage.getItem('isOwner') === 'yes';
     const headers = isOwner ? { 'x-owner-key': 'OWNER-KEY-123' } : {};
-  
+
     try {
       await Promise.all(
         selectedIds.map(id =>
@@ -160,13 +175,13 @@ const fetchTrips = async () => {
       setError('Failed to delete selected trips');
     }
   };
-  
+
   const handleDeleteAll = async () => {
     if (!window.confirm('Are you sure you want to delete ALL planned trips?')) return;
-  
+
     const isOwner = localStorage.getItem('isOwner') === 'yes';
     const headers = isOwner ? { 'x-owner-key': 'OWNER-KEY-123' } : {};
-  
+
     try {
       await axios.delete('https://desire4travels-1.onrender.com/api/admin/planned-trips', { headers });
       fetchTrips();
@@ -174,7 +189,7 @@ const fetchTrips = async () => {
       setError('Failed to delete all trips');
     }
   };
-  
+
 
   const toggleSelectAll = () => {
     if (selectedAll) {
@@ -244,8 +259,8 @@ const fetchTrips = async () => {
           <thead>
             <tr>
               <th>
-                <input 
-                  type="checkbox" 
+                <input
+                  type="checkbox"
                   checked={selectedAll}
                   onChange={toggleSelectAll}
                 />
@@ -271,7 +286,7 @@ const fetchTrips = async () => {
                   />
                 </td>
                 <td>{trip.destination}</td>
-<td>{trip.startDate || 'N/A'}</td>
+                <td>{trip.startDate || 'N/A'}</td>
                 <td>{trip.noofdays}</td>
                 <td>{trip.travelers}</td>
                 <td>{trip.mobileNumber || 'N/A'}</td>
@@ -283,23 +298,23 @@ const fetchTrips = async () => {
                 <td>{formatDateTime(trip.createdAt)}</td>
                 <td>
                   <div className="action-buttons">
-                    <button 
-                      onClick={() => handleCall(trip.mobileNumber)} 
+                    <button
+                      onClick={() => handleCall(trip.mobileNumber)}
                       className="btn blue"
                       disabled={!trip.mobileNumber}
                     >
                       Call
                     </button>
                     {!trip.called && (
-                      <button 
-                        onClick={() => handleMarkAsCalled(trip.id)} 
+                      <button
+                        onClick={() => handleMarkAsCalled(trip.id)}
                         className="btn green"
                       >
                         Mark Contacted
                       </button>
                     )}
-                    <button 
-                      onClick={() => handleDelete(trip.id)} 
+                    <button
+                      onClick={() => handleDelete(trip.id)}
                       className="btn red"
                     >
                       Delete

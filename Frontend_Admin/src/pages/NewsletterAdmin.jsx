@@ -75,9 +75,26 @@ const NewsletterAdmin = () => {
   const [selectedAll, setSelectedAll] = useState(false);
   const [selectedIds, setSelectedIds] = useState([]);
 
+  // useEffect(() => {
+  //   fetchSubscribers();
+  // }, [filter]);
+
   useEffect(() => {
+    // ✅ Mark this section as visited on first load
+    const markVisited = async () => {
+      try {
+        await axios.post('https://desire4travels-1.onrender.com/api/last-visit', {
+          section: 'newsletter'
+        });
+      } catch (err) {
+        console.error('Error updating last visit:', err);
+      }
+    };
+
+    markVisited();
     fetchSubscribers();
   }, [filter]);
+
 
   const fetchSubscribers = async () => {
     try {

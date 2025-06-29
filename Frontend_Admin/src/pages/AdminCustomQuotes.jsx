@@ -128,6 +128,21 @@ const AdminCustomQuotes = () => {
   //   }
   // };
 
+  useEffect(() => {
+  const updateLastVisit = async () => {
+    try {
+      await axios.post('https://desire4travels-1.onrender.com/api/last-visit', {
+        section: 'customQuotes',
+      });
+    } catch (err) {
+      console.error('Failed to update last visit for custom quotes:', err);
+    }
+  };
+
+  updateLastVisit();
+}, []);
+
+
   const fetchQuotes = async () => {
   try {
     setLoading(true);

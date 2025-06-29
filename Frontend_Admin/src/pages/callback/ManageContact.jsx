@@ -145,9 +145,26 @@ const ManageContact = () => {
   const [activeTab, setActiveTab] = useState('all');
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchContacts();
-  }, []);
+  // useEffect(() => {
+  //   fetchContacts();
+  // }, []);
+
+    useEffect(() => {
+      fetchContacts();
+
+      const updateLastVisit = async () => {
+        try {
+          await axios.post('https://desire4travels-1.onrender.com/api/last-visit', {
+            section: 'contact-us',
+          });
+        } catch (err) {
+          console.error('Failed to update last visit for activity callback:', err);
+        }
+      };
+
+      updateLastVisit();
+    }, []);
+
 
   const fetchContacts = async () => {
     try {

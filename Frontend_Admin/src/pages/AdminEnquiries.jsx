@@ -66,9 +66,27 @@ const AdminEnquiries = () => {
   const [error, setError] = useState('');
   const [filter, setFilter] = useState('all');
 
-  useEffect(() => {
+
+    useEffect(() => {
+    // ✅ Mark this section as visited on first load
+    const markVisited = async () => {
+      try {
+        await axios.post('https://desire4travels-1.onrender.com/api/last-visit', {
+          section: 'enquiries'
+        });
+      } catch (err) {
+        console.error('Error updating last visit:', err);
+      }
+    };
+
+    markVisited();
     fetchEnquiries();
   }, [filter]);
+
+
+  // useEffect(() => {
+  //   fetchEnquiries();
+  // }, [filter]);
 
 const fetchEnquiries = async () => {
   try {

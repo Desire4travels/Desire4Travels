@@ -223,9 +223,27 @@ const ActivityCallbacksAdmin = () => {
   const [editingId, setEditingId] = useState(null);
   const [editNumber, setEditNumber] = useState('');
 
-  useEffect(() => {
-    fetchCallbacks();
-  }, [filter]);
+  // useEffect(() => {
+  //   fetchCallbacks();
+  // }, [filter]);
+
+      useEffect(() => {
+      fetchCallbacks();
+
+      const updateLastVisit = async () => {
+        try {
+          await axios.post('https://desire4travels-1.onrender.com/api/last-visit', {
+            section: 'activityCallback',
+          });
+        } catch (err) {
+          console.error('Failed to update last visit for activity callback:', err);
+        }
+      };
+
+      updateLastVisit();
+    }, []);
+
+
 
   const fetchCallbacks = async () => {
     try {

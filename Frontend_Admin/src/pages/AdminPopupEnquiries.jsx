@@ -125,6 +125,22 @@ export default function AdminPopupEnquiries() {
     return 'Invalid Date';
   };
 
+  useEffect(() => {
+
+    const updateLastVisit = async () => {
+      try {
+        await axios.post('https://desire4travels-1.onrender.com/api/last-visit', {
+          section: 'popupEnquiries',
+        });
+      } catch (err) {
+        console.error('Failed to update last visit for activity callback:', err);
+      }
+    };
+    fetchEnquiries();
+
+    updateLastVisit();
+  }, []);
+
   const fetchEnquiries = async () => {
     try {
       setLoading(true);

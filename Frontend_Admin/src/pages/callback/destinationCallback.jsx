@@ -166,6 +166,23 @@ const destinationCallback = () => {
     fetchContacts();
   }, []);
 
+    useEffect(() => {
+    fetchContacts();
+  
+    const updateLastVisit = async () => {
+      try {
+        await axios.post('https://desire4travels-1.onrender.com/api/last-visit', {
+          section: 'callback-destination',
+        });
+      } catch (err) {
+        console.error('Failed to update last visit for destination callback:', err);
+      }
+    };
+  
+    updateLastVisit();
+  }, []);
+
+
   const fetchContacts = async () => {
     try {
       setLoading(true);
