@@ -479,6 +479,11 @@ const AllEnquiriesContent = ({ onLogout, counts }) => (
       {counts.newContactCount > 0 && <span className="badge">{counts.newContactCount}</span>}
       <h1><Link to="/managecontact" className="link">Manage Contact Enquiries</Link></h1>
     </div>
+
+    <div className="manage-upcoming-trip-card card-container">
+      <h1><Link to="/hotel" className="link">Manage Hotel</Link></h1>
+    </div>
+
   </div>
 );
 
