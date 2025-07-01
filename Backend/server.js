@@ -1862,6 +1862,105 @@ app.delete('/hotels/:id', async (req, res) => {
 });
 
 
+
+
+//cab services
+
+const servicesCollection = db.collection('services');
+
+
+// Create service
+app.post('/services', async (req, res) => {
+  try {
+    const {
+      city,
+      serviceType,
+      providerName,
+      contactInfo,
+      category,
+      notes
+    } = req.body;
+
+    const serviceData = {
+      city,
+      serviceType,
+      providerName,
+      contactInfo,
+      category,
+      notes
+    };
+
+    const docRef = await servicesCollection.add(serviceData);
+    res.status(201).send(`Service added with ID: ${docRef.id}`);
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
+
+// Get all services
+app.get('/services', async (req, res) => {
+  try {
+    const snapshot = await servicesCollection.get();
+    const services = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    res.status(200).json(services);
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
+
+// Get service by ID
+app.get('/services/:id', async (req, res) => {
+  try {
+    const doc = await servicesCollection.doc(req.params.id).get();
+    if (!doc.exists) {
+      return res.status(404).send('Service not found');
+    }
+    res.status(200).json({ id: doc.id, ...doc.data() });
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
+
+// Update service by ID
+app.put('/services/:id', async (req, res) => {
+  try {
+    await servicesCollection.doc(req.params.id).update(req.body);
+    res.status(200).send('Service updated');
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
+
+// Delete service by ID
+app.delete('/services/:id', async (req, res) => {
+  try {
+    await servicesCollection.doc(req.params.id).delete();
+    res.status(200).send('Service deleted');
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
+
+
+// Delete all services
+app.delete('/services', async (req, res) => {
+  try {
+    const snapshot = await servicesCollection.get();
+    const batch = db.batch();
+
+    snapshot.forEach((doc) => {
+      batch.delete(doc.ref);
+    });
+
+    await batch.commit();
+    res.status(200).send('All services deleted');
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
+
+
+
 // POST - Update last visit timestamp
 app.post('/api/last-visit', async (req, res) => {
   try {

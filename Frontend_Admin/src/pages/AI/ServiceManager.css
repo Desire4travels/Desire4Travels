@@ -1,0 +1,198 @@
+.container {
+  max-width: 1000px;
+  margin: 40px auto;
+  padding: 20px;
+  background: #f7f7f7;
+  font-family: sans-serif;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+form input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+form button {
+  grid-column: span 2;
+  padding: 10px 20px;
+  background-color: #007bff;
+  border: none;
+  color: white;
+  font-weight: bold;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+form button:hover {
+  background-color: #0056b3;
+}
+
+.group {
+  margin-bottom: 30px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 15px;
+}
+
+.group h2 {
+  font-size: 18px;
+  margin-bottom: 15px;
+  color: #444;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table thead {
+  background-color: #eee;
+}
+
+table th,
+table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+
+.actions button {
+  margin: 0 5px;
+  padding: 4px 10px;
+  font-size: 14px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.actions .edit {
+  background-color: #ffc107;
+  color: black;
+}
+
+.actions .delete {
+  background-color: #dc3545;
+  color: white;
+}
+
+
+.container {
+  max-width: 1000px;
+  margin: 40px auto;
+  padding: 20px;
+  background: #f7f7f7;
+  font-family: sans-serif;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+form input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+form button {
+  grid-column: span 2;
+  padding: 10px 20px;
+  background-color: #007bff;
+  border: none;
+  color: white;
+  font-weight: bold;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+form button:hover {
+  background-color: #0056b3;
+}
+
+.upload-section {
+  margin-bottom: 20px;
+}
+
+.delete-all-button {
+  margin-top: 10px;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.group {
+  margin-bottom: 30px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 15px;
+}
+
+.group h2 {
+  font-size: 18px;
+  margin-bottom: 15px;
+  color: #444;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table thead {
+  background-color: #eee;
+}
+
+table th,
+table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+
+.actions button {
+  margin: 0 5px;
+  padding: 4px 10px;
+  font-size: 14px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.actions .edit {
+  background-color: #ffc107;
+  color: black;
+}
+
+.actions .delete {
+  background-color: #dc3545;
+  color: white;
+}

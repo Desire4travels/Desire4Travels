@@ -484,6 +484,11 @@ const AllEnquiriesContent = ({ onLogout, counts }) => (
       <h1><Link to="/hotel" className="link">Manage Hotel</Link></h1>
     </div>
 
+        <div className="manage-upcoming-trip-card card-container">
+      <h1><Link to="/services" className="link">Manage Service</Link></h1>
+    </div>
+
+
   </div>
 );
 
