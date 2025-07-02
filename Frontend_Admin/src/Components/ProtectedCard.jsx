@@ -5,7 +5,8 @@ const cardNames = {
   packages: "Manage Packages",
   blogs: "Manage Blogs",
   destinations: "Manage Destinations",
-  enquiries: "Enquiry Panel"
+  enquiries: "Enquiry Panel",
+  AI: "AI Tools Panel",
 };
 
 const AUTO_LOCK_MINUTES = 45;
@@ -29,7 +30,7 @@ const ProtectedCard = ({ cardKey, children }) => {
     const events = ['mousemove', 'keydown', 'click', 'scroll', 'touchstart'];
 
     events.forEach(event => window.addEventListener(event, resetInactivityTimer));
-    resetInactivityTimer(); 
+    resetInactivityTimer();
 
     return () => {
       events.forEach(event => window.removeEventListener(event, resetInactivityTimer));

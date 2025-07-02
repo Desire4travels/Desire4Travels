@@ -4,5 +4,6 @@ export const accessConfig = {
     blogs: { password: 'blog123' },
     destinations: { password: 'dest123' },
     packages: { password: 'package123' },
+    AI: { password: 'ai123' },
   };
   

@@ -480,13 +480,13 @@ const AllEnquiriesContent = ({ onLogout, counts }) => (
       <h1><Link to="/managecontact" className="link">Manage Contact Enquiries</Link></h1>
     </div>
 
-    <div className="manage-upcoming-trip-card card-container">
+    {/* <div className="manage-upcoming-trip-card card-container">
       <h1><Link to="/hotel" className="link">Manage Hotel</Link></h1>
     </div>
 
         <div className="manage-upcoming-trip-card card-container">
       <h1><Link to="/services" className="link">LLM Data</Link></h1>
-    </div>
+    </div> */}
 
 
   </div>
