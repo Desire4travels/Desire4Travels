@@ -2001,3 +2001,33 @@ app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
 
+
+
+/* ========  SERVICE‑PROVIDER REGISTRATION  ======== */
+app.post('/service-providers', async (req, res) => {
+  const { type, data } = req.body;           // e.g. "hotel" and { hotelName, city, … }
+
+  // Map each type to its own collection
+  const colMap = {
+    hotel:      'hotels',
+    cab:        'cabs',
+    adventure:  'adventures',
+    bus:        'buses',
+  };
+
+  if (!colMap[type]) {
+    return res.status(400).json({ error: 'Invalid provider type.' });
+  }
+
+  try {
+    await db.collection(colMap[type]).add({
+      ...data,
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    });
+
+    res.status(201).json({ message: 'Provider saved.' });
+  } catch (err) {
+    console.error('Save error:', err);
+    res.status(500).json({ error: 'Server error.' });
+  }
+});

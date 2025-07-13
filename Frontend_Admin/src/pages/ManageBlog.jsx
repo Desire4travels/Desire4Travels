@@ -262,23 +262,9 @@ const Blog = () => {
   return (
     <div className="manage-blog-container">
 
-          <button
-      onClick={handleLogout}
-      style={{
-        position: 'absolute',
-        top: 20,
-        right: 30,
-        padding: '6px 16px',
-        background: '#2196F3',
-        color: 'white',
-        border: 'none',
-        borderRadius: 5,
-        cursor: 'pointer',
-        zIndex: 10
-      }}
-    >
-      Logout
-    </button>
+         <button className="logout-fixed-btn" onClick={handleLogout}>
+  Logout
+</button>
 
     
       <h1 className="page-title">Manage Blog Posts</h1>

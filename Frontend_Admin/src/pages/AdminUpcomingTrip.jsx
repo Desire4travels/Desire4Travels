@@ -17,10 +17,6 @@ const ManageUpcomingTrips = () => {
 
   const navigate = useNavigate();
 
-  // Logout function (just redirect to home)
-  const handleLogout = () => {
-    navigate('/');
-  };
 
   // Fetch trips
   const fetchTrips = async () => {
@@ -145,24 +141,7 @@ const ManageUpcomingTrips = () => {
 
   return (
     <div className="manage-upcoming-container" style={{ position: "relative" }}>
-      <button
-        onClick={handleLogout}
-        style={{
-          position: 'absolute',
-          top: 20,
-          right: 30,
-          padding: '6px 16px',
-          background: '#2196F3',
-          color: 'white',
-          border: 'none',
-          borderRadius: 5,
-          cursor: 'pointer',
-          zIndex: 10
-        }}
-      >
-        Logout
-      </button>
-      <h1 className="page-title">Manage Upcoming Trips</h1>
+    
 
       <button className="create-btn" onClick={() => setIsModalOpen(true)}>
         + Create New Trip
