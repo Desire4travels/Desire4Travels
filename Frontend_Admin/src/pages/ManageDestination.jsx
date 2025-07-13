@@ -474,21 +474,7 @@ useEffect(() => {
 
 
 
-      <button
-  onClick={handleLogout}
-  style={{
-    position: 'absolute',
-    top: 20,
-    right: 30,
-    padding: '6px 16px',
-   background: '#2196F3',
-    color: 'white',
-    border: 'none',
-    borderRadius: 5,
-    cursor: 'pointer',
-    zIndex: 10
-  }}
->
+<button className="logout-fixed-btn" onClick={handleLogout}>
   Logout
 </button>
 

@@ -1,24 +1,21 @@
-import { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom'; // <-- Add this import
-import ProtectedCard from '../Components/ProtectedCard.jsx'; // <-- Add this import
-import './ManagePackage.css';
+import { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom"; // <-- Add this import
+import ProtectedCard from "../Components/ProtectedCard.jsx"; // <-- Add this import
+import "./ManagePackage.css";
 
 const AUTO_LOGOUT_MS = 60 * 60 * 1000; // 1 hour
 
 const ManagePackage = () => {
-
-   const [isAuthenticated, setIsAuthenticated] = useState(false); // <-- Add this line
+  const [isAuthenticated, setIsAuthenticated] = useState(false); // <-- Add this line
   const navigate = useNavigate(); // <-- Add this line
-const timerRef = useRef();
-
+  const timerRef = useRef();
 
   useEffect(() => {
-    const localAuth = localStorage.getItem('auth-packages');
-    setIsAuthenticated(localAuth === 'true');
+    const localAuth = localStorage.getItem("auth-packages");
+    setIsAuthenticated(localAuth === "true");
   }, []);
 
-
-   // Auto logout effect
+  // Auto logout effect
   useEffect(() => {
     if (!isAuthenticated) return;
 
@@ -29,36 +26,32 @@ const timerRef = useRef();
       }, AUTO_LOGOUT_MS);
     };
 
-    const events = ['mousemove', 'keydown', 'click', 'scroll', 'touchstart'];
-    events.forEach(event => window.addEventListener(event, resetTimer));
+    const events = ["mousemove", "keydown", "click", "scroll", "touchstart"];
+    events.forEach((event) => window.addEventListener(event, resetTimer));
     resetTimer();
 
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
-      events.forEach(event => window.removeEventListener(event, resetTimer));
+      events.forEach((event) => window.removeEventListener(event, resetTimer));
     };
   }, [isAuthenticated]);
 
-  
-
   const handleLogout = () => {
-    localStorage.removeItem('auth-enquiries');
-    localStorage.removeItem('auth-destinations');
-    localStorage.removeItem('auth-packages');
-    localStorage.removeItem('auth-blogs');
+    localStorage.removeItem("auth-enquiries");
+    localStorage.removeItem("auth-destinations");
+    localStorage.removeItem("auth-packages");
+    localStorage.removeItem("auth-blogs");
     setIsAuthenticated(false);
-    navigate('/'); // Redirect to home page
+    navigate("/"); // Redirect to home page
   };
 
-
-
   const [formData, setFormData] = useState({
-    packageName: '',
-    duration: '',
-    price: '',
-    description: '',
-    inclusions: '',
-    itinerary: '',
+    packageName: "",
+    duration: "",
+    price: "",
+    description: "",
+    inclusions: "",
+    itinerary: "",
     photo: null,
     destinations: [],
   });
@@ -72,35 +65,41 @@ const timerRef = useRef();
     fetchPackages();
     fetchDestinations();
   }, []);
-  
+
   const fetchPackages = async () => {
     try {
-      const res = await fetch('https://desire4travels-1.onrender.com/api/admin/packages');
+      const res = await fetch(
+        "https://desire4travels-1.onrender.com/api/admin/packages"
+      );
       const data = await res.json();
       setPackages(data);
     } catch (error) {
-      console.error('Error fetching packages:', error);
+      console.error("Error fetching packages:", error);
     }
   };
 
   const fetchDestinations = async () => {
     try {
-      const res = await fetch('https://desire4travels-1.onrender.com/api/destinations');
+      const res = await fetch(
+        "https://desire4travels-1.onrender.com/api/destinations"
+      );
       const data = await res.json();
-      setDestinations(Array.isArray(data.destinations) ? data.destinations : []);
+      setDestinations(
+        Array.isArray(data.destinations) ? data.destinations : []
+      );
     } catch (error) {
-      console.error('Error fetching destinations:', error);
+      console.error("Error fetching destinations:", error);
     }
   };
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
-    if (name === 'destinations') {
+    if (name === "destinations") {
       const selectedOptions = Array.from(e.target.selectedOptions);
-      const selectedValues = selectedOptions.map(opt => opt.value);
-      setFormData(prev => ({ ...prev, destinations: selectedValues }));
+      const selectedValues = selectedOptions.map((opt) => opt.value);
+      setFormData((prev) => ({ ...prev, destinations: selectedValues }));
     } else {
-      setFormData(prev => ({ ...prev, [name]: files ? files[0] : value }));
+      setFormData((prev) => ({ ...prev, [name]: files ? files[0] : value }));
 
       if (files && files[0]) {
         setPreviewImage(URL.createObjectURL(files[0]));
@@ -113,7 +112,7 @@ const timerRef = useRef();
 
     const data = new FormData();
     for (const key in formData) {
-      if (key === 'destinations') {
+      if (key === "destinations") {
         data.append(key, JSON.stringify(formData[key]));
       } else if (formData[key] !== null) {
         data.append(key, formData[key]);
@@ -122,24 +121,24 @@ const timerRef = useRef();
 
     const url = editingId
       ? `https://desire4travels-1.onrender.com/api/admin/packages/${editingId}`
-      : 'https://desire4travels-1.onrender.com/api/admin/packages';
+      : "https://desire4travels-1.onrender.com/api/admin/packages";
 
     try {
       const res = await fetch(url, {
-        method: editingId ? 'PUT' : 'POST',
+        method: editingId ? "PUT" : "POST",
         body: data,
       });
 
-      if (!res.ok) throw new Error('Failed to submit package');
+      if (!res.ok) throw new Error("Failed to submit package");
 
-      alert(editingId ? 'Package updated!' : 'Package created!');
+      alert(editingId ? "Package updated!" : "Package created!");
       setFormData({
-        packageName: '',
-        duration: '',
-        price: '',
-        description: '',
-        inclusions: '',
-        itinerary: '',
+        packageName: "",
+        duration: "",
+        price: "",
+        description: "",
+        inclusions: "",
+        itinerary: "",
         photo: null,
         destinations: [],
       });
@@ -148,48 +147,52 @@ const timerRef = useRef();
       fetchPackages();
     } catch (err) {
       console.error(err);
-      alert('Error submitting package');
+      alert("Error submitting package");
     }
   };
 
-const handleEdit = (pkg) => {
-  console.log('Editing package:', pkg);
+  const handleEdit = (pkg) => {
+    console.log("Editing package:", pkg);
 
-  setFormData({
-    packageName: pkg.packageName,
-    duration: pkg.duration,
-    price: pkg.price,
-    description: pkg.description,
-    inclusions: pkg.inclusions,
-    itinerary: pkg.itinerary,
-    photo: null,
-    destinations: Array.isArray(pkg.destinations) && pkg.destinations.length > 0
-      ? pkg.destinations
-      : [],
-  });
+    setFormData({
+      packageName: pkg.packageName,
+      duration: pkg.duration,
+      price: pkg.price,
+      description: pkg.description,
+      inclusions: pkg.inclusions,
+      itinerary: pkg.itinerary,
+      photo: null,
+      destinations:
+        Array.isArray(pkg.destinations) && pkg.destinations.length > 0
+          ? pkg.destinations
+          : [],
+    });
 
-  setPreviewImage(pkg.photo || null);
-  setEditingId(pkg._id || pkg.id);
-};
-
+    setPreviewImage(pkg.photo || null);
+    setEditingId(pkg._id || pkg.id);
+  };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this package?')) return;
+    if (!window.confirm("Are you sure you want to delete this package?"))
+      return;
 
     try {
-      const res = await fetch(`https://desire4travels-1.onrender.com/api/admin/packages/${id}`, {
-        method: 'DELETE',
-      });
-      if (!res.ok) throw new Error('Delete failed');
-      alert('Package deleted');
+      const res = await fetch(
+        `https://desire4travels-1.onrender.com/api/admin/packages/${id}`,
+        {
+          method: "DELETE",
+        }
+      );
+      if (!res.ok) throw new Error("Delete failed");
+      alert("Package deleted");
       fetchPackages();
     } catch (err) {
       console.error(err);
-      alert('Error deleting package');
+      alert("Error deleting package");
     }
   };
 
-    if (!isAuthenticated) {
+  if (!isAuthenticated) {
     return (
       <ProtectedCard cardKey="packages">
         <div className="manage-package-card">
@@ -199,33 +202,14 @@ const handleEdit = (pkg) => {
     );
   }
 
-
   return (
     <div className="manage-package">
-
-
-      <button
-        onClick={handleLogout}
-        style={{
-          position: 'absolute',
-          top: 20,
-          right: 30,
-          padding: '6px 16px',
-          background: '#2196F3',
-          color: 'white',
-          border: 'none',
-          borderRadius: 5,
-          cursor: 'pointer',
-          zIndex: 10
-        }}
-      >
+      <button className="logout-fixed-btn" onClick={handleLogout}>
         Logout
       </button>
 
-
-      
       <div className="form-section">
-        <h2>{editingId ? 'Edit Package' : 'Add Package'}</h2>
+        <h2>{editingId ? "Edit Package" : "Add Package"}</h2>
         <form onSubmit={handleSubmit}>
           <input
             type="text"
@@ -236,7 +220,9 @@ const handleEdit = (pkg) => {
             required
           />
 
-          <label>Select Multiple Destinations (Ctrl/Cmd + Click to select multiple)</label>
+          <label>
+            Select Multiple Destinations (Ctrl/Cmd + Click to select multiple)
+          </label>
           <select
             multiple
             name="destinations"
@@ -244,7 +230,7 @@ const handleEdit = (pkg) => {
             onChange={handleChange}
             size={5}
           >
-            {destinations.map(dest => (
+            {destinations.map((dest) => (
               <option key={dest._id || dest.id} value={dest._id || dest.id}>
                 {dest.name} - {dest.state}
               </option>
@@ -288,11 +274,20 @@ const handleEdit = (pkg) => {
             onChange={handleChange}
             required
           />
-          <input type="file" name="photo" accept="image/*" onChange={handleChange} />
+          <input
+            type="file"
+            name="photo"
+            accept="image/*"
+            onChange={handleChange}
+          />
           {previewImage && (
-            <img src={previewImage} alt="Preview" style={{ maxHeight: 100, marginTop: 10 }} />
+            <img
+              src={previewImage}
+              alt="Preview"
+              style={{ maxHeight: 100, marginTop: 10 }}
+            />
           )}
-          <button type="submit">{editingId ? 'Update' : 'Add'} Package</button>
+          <button type="submit">{editingId ? "Update" : "Add"} Package</button>
         </form>
       </div>
 
@@ -313,16 +308,17 @@ const handleEdit = (pkg) => {
             </tr>
           </thead>
           <tbody>
-            {packages.map(pkg => {
-                const selectedDests = Array.isArray(pkg.destinations)
-                  ? pkg.destinations
-                      .map(destId => {
-                        const dest = destinations.find(d => d._id === destId || d.id === destId);
-                        return dest ? `${dest.name} (${dest.state})` : destId;
-                      })
-                      .join(', ')
-                  : 'No destinations';
-
+            {packages.map((pkg) => {
+              const selectedDests = Array.isArray(pkg.destinations)
+                ? pkg.destinations
+                    .map((destId) => {
+                      const dest = destinations.find(
+                        (d) => d._id === destId || d.id === destId
+                      );
+                      return dest ? `${dest.name} (${dest.state})` : destId;
+                    })
+                    .join(", ")
+                : "No destinations";
 
               return (
                 <tr key={pkg._id || pkg.id}>
@@ -331,10 +327,14 @@ const handleEdit = (pkg) => {
                       <img
                         src={pkg.photo}
                         alt={pkg.packageName}
-                        style={{ maxWidth: 100, maxHeight: 100, objectFit: 'cover' }}
+                        style={{
+                          maxWidth: 100,
+                          maxHeight: 100,
+                          objectFit: "cover",
+                        }}
                       />
                     ) : (
-                      'No Image'
+                      "No Image"
                     )}
                   </td>
                   <td>{pkg.packageName}</td>
@@ -354,8 +354,10 @@ const handleEdit = (pkg) => {
                     <div className="table-content-cell">{pkg.itinerary}</div>
                   </td>
                   <td>
-                    <button onClick={() => handleEdit(pkg)}>Edit</button>{' '}
-                    <button onClick={() => handleDelete(pkg._id || pkg.id)}>Delete</button>
+                    <button onClick={() => handleEdit(pkg)}>Edit</button>{" "}
+                    <button onClick={() => handleDelete(pkg._id || pkg.id)}>
+                      Delete
+                    </button>
                   </td>
                 </tr>
               );

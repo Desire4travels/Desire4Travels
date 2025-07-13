@@ -414,22 +414,9 @@ const AUTO_LOGOUT_MS = 60 * 60 * 1000; // 1 hour
 
 const AllEnquiriesContent = ({ onLogout, counts }) => (
   <div className="all-enquiries-container">
-    <button
-      onClick={onLogout}
-      style={{
-        position: 'absolute',
-        top: 20,
-        right: 30,
-        padding: '6px 16px',
-        background: '#2196F3',
-        color: 'white',
-        border: 'none',
-        borderRadius: 5,
-        cursor: 'pointer'
-      }}
-    >
-      Logout
-    </button>
+   <button className="logout-fixed-btn" onClick={onLogout}>
+  Logout
+</button>
 
     <div className="manage-enquiries-card card-container">
       {counts.newEnquiryCount > 0 && <span className="badge">{counts.newEnquiryCount}</span>}
@@ -537,6 +524,7 @@ const AllEnquiries = () => {
     localStorage.removeItem('auth-destinations');
     localStorage.removeItem('auth-packages');
     localStorage.removeItem('auth-blogs');
+  
     setIsAuthenticated(false);
     navigate('/');
   };

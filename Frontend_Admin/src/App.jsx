@@ -43,7 +43,7 @@ function App() {
         <Route path="/activityCallback" element={<PrivateRoute cardKey="enquiries"><ActivityCallbacksAdmin /></PrivateRoute>} />
         <Route path="/managecontact" element={<PrivateRoute cardKey="enquiries"><ManageContact /></PrivateRoute>} />
         {/* <Route path="/hotel" element={<PrivateRoute cardKey="enquiries"><HotelManager /></PrivateRoute>} /> */}
-              <Route path="/manage-ai" element={<PrivateRoute cardKey="enquiries"><ServiceManager /></PrivateRoute>} />
+              <Route path="/manage-ai" element={<PrivateRoute cardKey="AI"><ServiceManager /></PrivateRoute>} />
 
         <Route path="/allenquiries" element={<AllEnquiries />} />
       </Routes>
