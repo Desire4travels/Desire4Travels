@@ -2031,3 +2031,34 @@ app.post('/service-providers', async (req, res) => {
     res.status(500).json({ error: 'Server error.' });
   }
 });
+
+
+app.get('/service-providers', async (req, res) => {
+  const colMap = {
+    hotel:      'hotels',
+    cab:        'cabs',
+    adventure:  'adventures',
+    bus:        'buses',
+  };
+
+  try {
+    const allData = [];
+
+    for (const [type, collection] of Object.entries(colMap)) {
+      const snapshot = await db.collection(collection).get();
+
+      snapshot.forEach(doc => {
+        allData.push({
+          id: doc.id,
+          type,
+          ...doc.data()
+        });
+      });
+    }
+
+    res.status(200).json(allData);
+  } catch (err) {
+    console.error("GET error:", err);
+    res.status(500).json({ error: "Server error while fetching providers." });
+  }
+});
