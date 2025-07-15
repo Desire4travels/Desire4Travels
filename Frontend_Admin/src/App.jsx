@@ -20,6 +20,7 @@ import ActivityCallbacksAdmin from './pages/ActivityCallbacksAdmin.jsx';
 import ManageContact from './pages/callback/ManageContact.jsx';
 import HotelManager from './pages/AI/HotelManager.jsx';
 import ServiceManager from './pages/AI/ServiceManager.jsx';
+import ServiceProvidersList from './pages/AI/ServiceProviders.jsx';
 
 function App() {
   const [count, setCount] = useState(0);
@@ -43,8 +44,10 @@ function App() {
         <Route path="/activityCallback" element={<PrivateRoute cardKey="enquiries"><ActivityCallbacksAdmin /></PrivateRoute>} />
         <Route path="/managecontact" element={<PrivateRoute cardKey="enquiries"><ManageContact /></PrivateRoute>} />
         {/* <Route path="/hotel" element={<PrivateRoute cardKey="enquiries"><HotelManager /></PrivateRoute>} /> */}
-              <Route path="/manage-ai" element={<PrivateRoute cardKey="AI"><ServiceManager /></PrivateRoute>} />
-
+        
+        <Route path="/manage-ai" element={<PrivateRoute cardKey="AI"><ServiceManager /></PrivateRoute>} />
+        <Route path="/serviceprovider" element={<PrivateRoute cardKey="AI"><ServiceProvidersList /></PrivateRoute>} />
+        
         <Route path="/allenquiries" element={<AllEnquiries />} />
       </Routes>
     </div>
