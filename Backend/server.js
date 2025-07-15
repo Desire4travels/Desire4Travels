@@ -2004,27 +2004,24 @@ app.listen(port, () => {
 
 
 /* ========  SERVICE‑PROVIDER REGISTRATION  ======== */
+/* ========  MAP for all routes ======== */
+const colMap = {
+  hotel: 'hotels',
+  cab:   'cabs',
+  adventure: 'adventures',
+  bus:   'buses',
+};
+
+/* ========  CREATE  ======== */
 app.post('/service-providers', async (req, res) => {
-  const { type, data } = req.body;           // e.g. "hotel" and { hotelName, city, … }
-
-  // Map each type to its own collection
-  const colMap = {
-    hotel:      'hotels',
-    cab:        'cabs',
-    adventure:  'adventures',
-    bus:        'buses',
-  };
-
-  if (!colMap[type]) {
-    return res.status(400).json({ error: 'Invalid provider type.' });
-  }
+  const { type, data } = req.body;
+  if (!colMap[type]) return res.status(400).json({ error: 'Invalid provider type.' });
 
   try {
     await db.collection(colMap[type]).add({
       ...data,
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
     });
-
     res.status(201).json({ message: 'Provider saved.' });
   } catch (err) {
     console.error('Save error:', err);
@@ -2032,33 +2029,54 @@ app.post('/service-providers', async (req, res) => {
   }
 });
 
+/* ========  READ  (all) ======== */
+app.get('/service-providers', async (_req, res) => {
+  try {
+    const results = [];
 
-app.get('/service-providers', async (req, res) => {
-  const colMap = {
-    hotel:      'hotels',
-    cab:        'cabs',
-    adventure:  'adventures',
-    bus:        'buses',
-  };
+    for (const [type, col] of Object.entries(colMap)) {
+      const snap = await db.collection(col).get();
+      snap.forEach(doc =>
+        results.push({ id: doc.id, type, ...doc.data() })
+      );
+    }
+    res.json(results);
+  } catch (err) {
+    console.error('GET error:', err);
+    res.status(500).json({ error: 'Server error while fetching providers.' });
+  }
+});
+
+/* ========  UPDATE  ======== */
+app.put('/service-providers/:type/:id', async (req, res) => {
+  const { type, id } = req.params;
+  if (!colMap[type]) return res.status(400).json({ error: 'Invalid type.' });
 
   try {
-    const allData = [];
+    // remove meta fields if present
+    delete req.body.id;
+    delete req.body.createdAt;
 
-    for (const [type, collection] of Object.entries(colMap)) {
-      const snapshot = await db.collection(collection).get();
-
-      snapshot.forEach(doc => {
-        allData.push({
-          id: doc.id,
-          type,
-          ...doc.data()
-        });
-      });
-    }
-
-    res.status(200).json(allData);
+    await db.collection(colMap[type])
+            .doc(id)
+            .set(req.body, { merge: true });   // <‑‑ merge ensures only provided fields change
+    res.json({ message: 'Updated' });
   } catch (err) {
-    console.error("GET error:", err);
-    res.status(500).json({ error: "Server error while fetching providers." });
+    console.error('UPDATE error:', err);
+    res.status(500).json({ error: 'Update failed.' });
+  }
+});
+
+/* ========  DELETE  ======== */
+app.delete('/service-providers/:type/:id', async (req, res) => {
+  const { type, id } = req.params;
+  if (!colMap[type]) return res.status(400).json({ error: 'Invalid type.' });
+
+  try {
+    await db.collection(colMap[type]).doc(id).delete();
+    res.json({ message: 'Deleted' });
+  } catch (err) {
+    console.error('DELETE error:', err);
+    res.status(500).json({ error: 'Delete failed.' });
   }
 });
