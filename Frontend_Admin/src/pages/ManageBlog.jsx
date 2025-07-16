@@ -65,10 +65,9 @@ const Blog = () => {
 
 
   const handleLogout = () => {
-    localStorage.removeItem('auth-enquiries');
-    localStorage.removeItem('auth-destinations');
-    localStorage.removeItem('auth-packages');
-    localStorage.removeItem('auth-blogs');
+    const AUTH_KEYS = ["auth-enquiries", "auth-destinations", "auth-packages", "auth-blogs", "auth-AI"];
+AUTH_KEYS.forEach(k => localStorage.removeItem(k));
+
     setIsAuthenticated(false);
     navigate('/'); // Redirect to home page
   };
@@ -360,201 +359,180 @@ const Blog = () => {
             </h2>
 
             <form onSubmit={handleSubmit} encType="multipart/form-data">
-              <div className="form-group">
-                <label>Title*</label>
-                <input
-                  type="text"
-                  name="title"
-                  placeholder="Enter blog title"
-                  value={formData.title}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
+  {/* 1 – Title */}
+  <div className="form-group">
+    <label>Title*</label>
+    <input
+      type="text"
+      name="title"
+      placeholder="Enter blog title"
+      value={formData.title}
+      onChange={handleChange}
+      required
+    />
+  </div>
 
-              {!editingId && (
-                <div className="form-group">
-                  <label>Slug*</label>
-                  <input
-                    type="text"
-                    name="slug"
-                    placeholder="URL-friendly slug"
-                    value={formData.slug}
-                    onChange={handleChange}
-                    required
-                    pattern="^[a-z0-9]+(?:-[a-z0-9]+)*$"
-                    title="Slug can only contain lowercase letters, numbers, and hyphens"
-                  />
-                  <small className="slug-hint">
-                    This will be part of the URL: /blogs/{formData.slug || 'your-slug'}
-                  </small>
-                </div>
-              )}
+  {/* 2 – Slug (only when creating) */}
+  {!editingId && (
+    <div className="form-group">
+      <label>Slug*</label>
+      <input
+        type="text"
+        name="slug"
+        placeholder="URL‑friendly slug"
+        value={formData.slug}
+        onChange={handleChange}
+        required
+        pattern="^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        title="Slug can only contain lowercase letters, numbers, and hyphens"
+      />
+      <small className="slug-hint">
+        This will be part of the URL: /blogs/{formData.slug || "your-slug"}
+      </small>
+    </div>
+  )}
 
-              <div className="form-row">
-                <div className="form-group">
-                  <label>Author*</label>
-                  <input
-                    type="text"
-                    name="author"
-                    placeholder="Author name"
-                    value={formData.author}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Category*</label>
-                  <select
-                    name="category"
-                    value={formData.category}
-                    onChange={handleChange}
-                    required
-                  >
-                    <option value="" disabled>Select a category</option>
-                    <option value="Mountain">Mountain</option>
-                    <option value="Beach">Beach</option>
-                    <option value="Religious">Religious</option>
-                    <option value="Treks">Treks</option>
-                    <option value="Offbeat">Offbeat</option>
-                    <option value="Desert">Desert</option>
-                    <option value="Cityscape">Cityscape</option>
-                    <option value="Other">Other</option>
-                  </select>
-                </div>
-              </div>
+  {/* 3 – Author + Category */}
+  <div className="form-row">
+    <div className="form-group">
+      <label>Author*</label>
+      <input
+        type="text"
+        name="author"
+        placeholder="Author name"
+        value={formData.author}
+        onChange={handleChange}
+        required
+      />
+    </div>
 
-              <div className="form-group">
-                <label>Content*</label>
-                <textarea
-                  name="content"
-                  placeholder="Write your blog content here..."
-                  value={formData.content}
-                  onChange={handleChange}
-                  required
-                  rows="5"
-                />
-              </div>
+    <div className="form-group">
+      <label>Category*</label>
+      <select
+        name="category"
+        value={formData.category}
+        onChange={handleChange}
+        required
+      >
+        <option value="" disabled>Select a category</option>
+        <option value="Mountain">Mountain</option>
+        <option value="Beach">Beach</option>
+        <option value="Religious">Religious</option>
+        <option value="Treks">Treks</option>
+        <option value="Offbeat">Offbeat</option>
+        <option value="Desert">Desert</option>
+        <option value="Cityscape">Cityscape</option>
+        <option value="Other">Other</option>
+      </select>
+    </div>
+  </div>
 
-              <div className="form-row">
-                <div className="form-group">
-                  <label>Date*</label>
-                  <input
-                    type="date"
-                    name="date"
-                    value={formData.date}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Status*</label>
-                  <select
-                    name="status"
-                    value={formData.status}
-                    onChange={handleChange}
-                    required
-                  >
-                    <option value="draft">Draft</option>
-                    <option value="published">Published</option>
-                  </select>
-                </div>
-              </div>
+  {/* 4 – Date + Status */}
+  <div className="form-row">
+    <div className="form-group">
+      <label>Date*</label>
+      <input
+        type="date"
+        name="date"
+        value={formData.date}
+        onChange={handleChange}
+        required
+      />
+    </div>
 
-              <div className="form-group">
-                <label>Excerpt*</label>
-                <textarea
-                  name="excerpt"
-                  placeholder="Short summary of your blog"
-                  value={formData.excerpt}
-                  onChange={handleChange}
-                  required
-                  rows="3"
-                />
-              </div>
+    <div className="form-group">
+      <label>Status*</label>
+      <select
+        name="status"
+        value={formData.status}
+        onChange={handleChange}
+        required
+      >
+        <option value="draft">Draft</option>
+        <option value="published">Published</option>
+      </select>
+    </div>
+  </div>
 
-              <div className="form-group">
-                <label>Image Alt Text*</label>
-                <input
-                  type="text"
-                  name="alt"
-                  placeholder="Description for accessibility"
-                  value={formData.alt}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
+  {/* 5 – Alt text */}
+  <div className="form-group">
+    <label>Image Alt Text*</label>
+    <input
+      type="text"
+      name="alt"
+      placeholder="Description for accessibility"
+      value={formData.alt}
+      onChange={handleChange}
+      required
+    />
+  </div>
 
-              {/* <div className="form-group">
-                <label>Featured Image{!editingId && '*'}</label>
-                <div className="file-upload">
-                  <input
-                    type="file"
-                    name="image"
-                    accept="image/*"
-                    onChange={handleChange}
-                    {...(editingId ? {} : { required: true })}
-                  />
-                  <span className="file-upload-label">
-                    {formData.image ? formData.image.name : "Choose an image"}
-                  </span>
-                </div>
-                {editingId && (
-                  <small className="image-hint">
-                    Leave empty to keep current image
-                  </small>
-                )}
-              </div> */}
+  {/* 6 – Images */}
+  <div className="form-group">
+    <label>Featured Images{!editingId && "*"}</label>
+    <div className="file-upload">
+      <input
+        type="file"
+        name="images"
+        accept="image/*"
+        multiple
+        onChange={handleChange}
+        {...(editingId ? {} : { required: true })}
+      />
+      <span className="file-upload-label">
+        {formData.images?.length > 0
+          ? `${formData.images.length} file(s) selected`
+          : "Choose images"}
+      </span>
+    </div>
+    {editingId && (
+      <small className="image-hint">Leave empty to keep current images</small>
+    )}
+  </div>
 
-              <div className="form-group">
-                <label>Featured Images{!editingId && '*'}</label>
-                <div className="file-upload">
-                  <input
-                    type="file"
-                    name="images"
-                    accept="image/*"
-                    multiple
-                    onChange={handleChange}
-                    {...(editingId ? {} : { required: true })}
-                  />
-                  <span className="file-upload-label">
-                    {formData.images?.length > 0
-                      ? `${formData.images.length} file(s) selected`
-                      : "Choose images"}
-                  </span>
-                </div>
-                {editingId && (
-                  <small className="image-hint">
-                    Leave empty to keep current images
-                  </small>
-                )}
-              </div>
+  {/* 7 – Excerpt */}
+  <div className="form-group excerpt-group">
+    <label>Excerpt*</label>
+    <textarea
+      name="excerpt"
+      placeholder="Short summary of your blog"
+      value={formData.excerpt}
+      onChange={handleChange}
+      required
+      rows="4"
+    />
+  </div>
+
+  {/* 8 – Content */}
+  <div className="form-group content-group">
+    <label>Content*</label>
+    <textarea
+      name="content"
+      placeholder="Write your blog content here..."
+      value={formData.content}
+      onChange={handleChange}
+      required
+      rows="8"
+    />
+  </div>
+
+  {/* 9 – Buttons (directly after content) */}
+  <div className="modal-buttons">
+    <button
+      type="button"
+      className="cancel-btn"
+      onClick={() => setShowModal(false)}
+      disabled={isLoading}
+    >
+      Cancel
+    </button>
+    <button type="submit" className="submit-btn" disabled={isLoading}>
+      {isLoading ? <span className="btn-spinner" /> : editingId ? "Update Blog" : "Publish Blog"}
+    </button>
+  </div>
+</form>
 
 
-              <div className="modal-buttons">
-                <button
-                  type="button"
-                  className="cancel-btn"
-                  onClick={() => setShowModal(false)}
-                  disabled={isLoading}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="submit-btn"
-                  disabled={isLoading}
-                >
-                  {isLoading ? (
-                    <span className="btn-spinner"></span>
-                  ) : editingId ? (
-                    "Update Blog"
-                  ) : (
-                    "Publish Blog"
-                  )}
-                </button>
-              </div>
-            </form>
           </div>
         </div>
       )}

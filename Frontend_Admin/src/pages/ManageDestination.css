@@ -1,161 +1,165 @@
-.manage-destination {
-     position: relative; /* <-- Add this line */
-    width: 90% !important;
-    margin: 2rem auto;
-    padding: 2rem;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+/* ───────────────────────────────
+   1. Container
+──────────────────────────────── */
+.manage-destination{
+  position:relative;
+  width:90%;
+  margin:2rem auto;
+  padding:2rem;
+  background:#fff;
+  border-radius:8px;
+  box-shadow:0 2px 4px rgba(0,0,0,.1);
 }
 
-.manage-destination-1 {
-    width: 100% !important;
-    max-width: 1000px;
-    margin: auto;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
+/* full‑screen panel */
+.manage-destination-1{
+  width:100%;
+  max-width:none;      /* remove 1000 px cap  */
+  /* margin:0; */
+  padding:clamp(1rem,2vw + .5rem,2.5rem);
+  display:flex;
+  flex-direction:column;
+  /* align-items:flex-start; */
+  min-height:100vh;
 }
 
-.manage-destination h2 {
-    text-align: center;
-    color: #333;
-    margin-bottom: 2rem;
+.manage-destination h2{
+  text-align:center;
+  color:#333;
+  margin-bottom:2rem;
 }
 
-.form-group {
-    margin-bottom: 1.5rem;
+/* ───────────────────────────────
+   2. Form grid
+──────────────────────────────── */
+.destination-form{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(320px,1fr));
+  gap:1.25rem 2rem;
 }
 
-.form-group label {
-    display: block;
-    margin-bottom: 0.5rem;
-    color: #555;
-    font-weight: 500;
+/* span‑full‑width blocks */
+.image-group,
+.description-group,
+.form-buttons{
+  grid-column:1 / -1;
 }
 
-.form-group input,
-.form-group select,
-.form-group textarea {
-    width: 90%;
-    padding: 0.75rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 1rem;
-    resize: vertical;
+/* inputs */
+.destination-form input,
+.destination-form select,
+.destination-form textarea{
+  width:100%;
+  padding:.75rem;
+  border:1px solid #ddd;
+  border-radius:4px;
+  font-size:1rem;
+  resize:vertical;
 }
 
-.form-group input:focus,
-.form-group select:focus {
-    outline: none;
-    border-color: #4a90e2;
-    box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+.destination-form input:focus,
+.destination-form select:focus{
+  outline:none;
+  border-color:#4a90e2;
+  box-shadow:0 0 0 2px rgba(74,144,226,.2);
 }
 
-.image-preview {
-    margin-top: 1rem;
-    max-width: 300px;
+/* large textarea */
+.description-group textarea{min-height:300px;}
+@media(max-width:600px){
+  .destination-form{grid-template-columns:1fr;}
+  .description-group textarea{min-height:220px;}
 }
 
-.image-preview img {
-    width: 100%;
-    height: auto;
-    border-radius: 4px;
-    border: 1px solid #ddd;
+/* image preview */
+.image-preview{
+  margin-top:1rem;
+  max-width:300px;
+}
+.image-preview img{
+  width:100%;
+  height:auto;
+  border-radius:4px;
+  border:1px solid #ddd;
 }
 
+/* buttons row */
+.form-buttons{
+  display:flex;
+  justify-content:flex-end;
+  gap:1rem;
+}
 button[type="submit"],
-.destination-table button {
-    padding: 0.6rem 1rem;
-    margin-top: 10px;
-    background-color: #4a90e2;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-size: 0.95rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    margin-right: 0.5rem;
+.destination-table button{
+  padding:.6rem 1rem;
+  background:#4a90e2;
+  color:#fff;
+  border:none;
+  border-radius:4px;
+  font-size:.95rem;
+  font-weight:500;
+  cursor:pointer;
+  transition:background-color .2s;
 }
-
 button[type="submit"]:hover,
-.destination-table button:hover {
-    background-color: #357abd;
-}
+.destination-table button:hover{background:#357abd;}
+button[type="submit"]:disabled{background:#ccc;cursor:not-allowed;}
 
-button[type="submit"]:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
+/* ───────────────────────────────
+   3. Table
+──────────────────────────────── */
+.destination-table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:2rem;
+  font-size:.95rem;
 }
-
-.destination-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 2rem;
-    font-size: 0.95rem;
-}
-
 .destination-table th,
-.destination-table td {
-    border: 1px solid #ddd;
-    padding: 0.75rem;
-    text-align: center;
+.destination-table td{
+  border:1px solid #ddd;
+  padding:.75rem;
+  text-align:center;
+}
+.destination-table th{
+  background:#f5f5f5;
+  color:#333;
+}
+.destination-table img{
+  height:50px;
+  object-fit:cover;
+  border-radius:4px;
 }
 
-.destination-table th {
-    background-color: #f5f5f5;
-    color: #333;
+/* ───────────────────────────────
+   4. Fixed logout button
+──────────────────────────────── */
+.logout-fixed-btn{
+  position:fixed;
+  top:20px;
+  right:30px;
+  padding:10px 20px;
+  background:#2196F3;
+  color:#fff;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  font-size:16px;
+  z-index:9999;
+  box-shadow:0 4px 6px rgba(0,0,0,.1);
+  transition:background-color .2s;
 }
-
-.destination-table img {
-    height: 50px;
-    object-fit: cover;
-    border-radius: 4px;
-}
-
-
-
-
-.logout-fixed-btn {
-  position: fixed;
-  top: 20px;
-  right: 30px;
-  padding: 10px 20px;
-  background-color: #2196F3;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 16px;
-  z-index: 9999;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.2s ease;
-}
-
-.logout-fixed-btn:hover {
-  background-color: #1976D2;
-}
-
-@media (max-width: 768px) {
-  .logout-fixed-btn {
-    top: 15px;
-    right: 15px;
-    padding: 8px 16px;
-    font-size: 14px;
-    border-radius: 6px;
+.logout-fixed-btn:hover{background:#1976D2;}
+@media(max-width:768px){
+  .logout-fixed-btn{
+    top:15px;right:15px;
+    padding:8px 16px;
+    font-size:14px;
   }
 }
-
-@media (max-width: 480px) {
-  .logout-fixed-btn {
-    top: 10px;
-    right: 10px;
-    padding: 6px 12px;
-    font-size: 12px;
-    border-radius: 5px;
+@media(max-width:480px){
+  .logout-fixed-btn{
+    top:10px;right:10px;
+    padding:6px 12px;
+    font-size:12px;
   }
 }

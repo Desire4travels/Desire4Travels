@@ -1,0 +1,83 @@
+/* ============ LAYOUT ============ */
+.ai-container {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  padding: 20px;
+  box-sizing: border-box;
+  min-height: 100vh;
+  background: #e1f0ff;               /* light‑blue tint (different from AllEnquiries) */
+}
+
+/* ============ GENERIC CARD ============ */
+.ai-card {
+  position: relative;
+  width: 250px;
+  height: 150px;
+  background: #f8f8f8;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgb(0 0 0 / .1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  cursor: pointer;
+  transition: transform .2s ease;
+}
+.ai-card:hover { transform: translateY(-5px); }
+
+/* specific colour accents if you like */
+.ai-manager-card   { background:#ffeacc; }   /* soft orange */
+.ai-providers-card { background:#fff9d9; }   /* pale yellow */
+
+.ai-card h1 {
+  font-size: 22px;
+  margin: 0;
+  color: #333;
+}
+
+.ai-link {
+  text-decoration:none;
+  color:#333;
+}
+.ai-link:hover   { color:#1c3f81; }
+.ai-link:active  { color:red; }
+
+/* ============ BADGE ============ */
+.ai-badge {
+  position:absolute;
+  top:7px;
+  right:12px;
+  background:red;
+  color:#fff;
+  font-size:12px;
+  padding:3px 6px;
+  border-radius:999px;
+  z-index:1;
+}
+
+/* ============ LOGOUT BUTTON ============ */
+.ai-logout-btn {
+  position:fixed;
+  top:12px;
+  right:30px;
+  padding:10px 22px;
+  background:#2196f3;
+  color:#fff;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  font-size:16px;
+  box-shadow:0 4px 6px rgba(0,0,0,.1);
+  transition:background .2s;
+  z-index:999;
+}
+.ai-logout-btn:hover { background:#1976d2; }
+
+@media(max-width:768px){
+  .ai-logout-btn{ right:15px; padding:8px 18px; font-size:14px; }
+}
+@media(max-width:480px){
+  .ai-logout-btn{ right:10px; padding:6px 14px; font-size:12px; }
+}
