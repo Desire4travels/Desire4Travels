@@ -37,10 +37,9 @@ const ManagePackage = () => {
   }, [isAuthenticated]);
 
   const handleLogout = () => {
-    localStorage.removeItem("auth-enquiries");
-    localStorage.removeItem("auth-destinations");
-    localStorage.removeItem("auth-packages");
-    localStorage.removeItem("auth-blogs");
+    const AUTH_KEYS = ["auth-enquiries", "auth-destinations", "auth-packages", "auth-blogs", "auth-AI"];
+AUTH_KEYS.forEach(k => localStorage.removeItem(k));
+
     setIsAuthenticated(false);
     navigate("/"); // Redirect to home page
   };
@@ -210,85 +209,122 @@ const ManagePackage = () => {
 
       <div className="form-section">
         <h2>{editingId ? "Edit Package" : "Add Package"}</h2>
-        <form onSubmit={handleSubmit}>
-          <input
-            type="text"
-            name="packageName"
-            placeholder="Package Name"
-            value={formData.packageName}
-            onChange={handleChange}
-            required
-          />
+        <form onSubmit={handleSubmit} className="package-form">
+  {/* 1 – Package name & Duration */}
+  <div className="form-group">
+    <label>Package Name*</label>
+    <input
+      type="text"
+      name="packageName"
+      value={formData.packageName}
+      onChange={handleChange}
+      required
+    />
+  </div>
 
-          <label>
-            Select Multiple Destinations (Ctrl/Cmd + Click to select multiple)
-          </label>
-          <select
-            multiple
-            name="destinations"
-            value={formData.destinations}
-            onChange={handleChange}
-            size={5}
-          >
-            {destinations.map((dest) => (
-              <option key={dest._id || dest.id} value={dest._id || dest.id}>
-                {dest.name} - {dest.state}
-              </option>
-            ))}
-          </select>
+  <div className="form-group">
+    <label>Duration*</label>
+    <input
+      type="text"
+      name="duration"
+      value={formData.duration}
+      onChange={handleChange}
+      required
+    />
+  </div>
 
-          <input
-            type="text"
-            name="duration"
-            placeholder="Duration"
-            value={formData.duration}
-            onChange={handleChange}
-            required
-          />
-          <input
-            type="text"
-            name="price"
-            placeholder="Price"
-            value={formData.price}
-            onChange={handleChange}
-            required
-          />
-          <textarea
-            name="description"
-            placeholder="Description"
-            value={formData.description}
-            onChange={handleChange}
-            required
-          />
-          <textarea
-            name="inclusions"
-            placeholder="Inclusions"
-            value={formData.inclusions}
-            onChange={handleChange}
-            required
-          />
-          <textarea
-            name="itinerary"
-            placeholder="Itinerary"
-            value={formData.itinerary}
-            onChange={handleChange}
-            required
-          />
-          <input
-            type="file"
-            name="photo"
-            accept="image/*"
-            onChange={handleChange}
-          />
-          {previewImage && (
-            <img
-              src={previewImage}
-              alt="Preview"
-              style={{ maxHeight: 100, marginTop: 10 }}
-            />
-          )}
-          <button type="submit">{editingId ? "Update" : "Add"} Package</button>
-        </form>
+  {/* 2 – Price & Destinations (multi) */}
+  <div className="form-group">
+    <label>Price (INR)*</label>
+    <input
+      type="text"
+      name="price"
+      value={formData.price}
+      onChange={handleChange}
+      required
+    />
+  </div>
+
+  <div className="form-group">
+    <label>
+      Destinations * <br />
+      <small>(Ctrl / Cmd + Click to select multiple)</small>
+    </label>
+    <select
+      multiple
+      name="destinations"
+      value={formData.destinations}
+      onChange={handleChange}
+      size={5}
+    >
+      {destinations.map((d) => (
+        <option key={d._id || d.id} value={d._id || d.id}>
+          {d.name} – {d.state}
+        </option>
+      ))}
+    </select>
+  </div>
+
+  {/* 3 – Photo upload (full width) */}
+  <div className="form-group photo-group">
+    <label>Package Image</label>
+    <input
+      type="file"
+      name="photo"
+      accept="image/*"
+      onChange={handleChange}
+    />
+    {previewImage && (
+      <img
+        src={previewImage}
+        alt="Preview"
+        className="preview-img"
+      />
+    )}
+  </div>
+
+  {/* 4 – Big text areas (each full‑width) */}
+  <div className="form-group description-group">
+    <label>Description (HTML allowed)*</label>
+    <textarea
+      name="description"
+      value={formData.description}
+      onChange={handleChange}
+      rows="6"
+      required
+    />
+  </div>
+
+  <div className="form-group inclusions-group">
+    <label>Inclusions*</label>
+    <textarea
+      name="inclusions"
+      value={formData.inclusions}
+      onChange={handleChange}
+      rows="5"
+      required
+    />
+  </div>
+
+  <div className="form-group itinerary-group">
+    <label>Itinerary*</label>
+    <textarea
+      name="itinerary"
+      value={formData.itinerary}
+      onChange={handleChange}
+      rows="6"
+      required
+    />
+  </div>
+
+  {/* 5 – Submit button */}
+  <div className="form-buttons">
+    <button type="submit">
+      {editingId ? "Update" : "Add"} Package
+    </button>
+  </div>
+</form>
+
       </div>
 
       <div className="table-section">

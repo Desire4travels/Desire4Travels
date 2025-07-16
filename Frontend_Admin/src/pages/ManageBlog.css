@@ -303,7 +303,7 @@ h1 {
 }
 
 /* Modal Styles */
-.modal-overlay {
+/* .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -317,14 +317,14 @@ h1 {
   opacity: 0;
   visibility: hidden;
   transition: all 0.3s ease;
-}
+} */
 
 .modal-overlay.visible {
   opacity: 1;
   visibility: visible;
 }
 
-.modal {
+/* .modal {
   background: white;
   padding: 2rem;
   border-radius: 12px;
@@ -335,7 +335,7 @@ h1 {
   transform: translateY(20px);
   transition: transform 0.3s ease;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-}
+} */
 
 .modal-overlay.visible .modal {
   transform: translateY(0);
@@ -424,12 +424,12 @@ textarea {
 }
 
 /* Modal Buttons */
-.modal-buttons {
+/* .modal-buttons {
   display: flex;
   justify-content: flex-end;
   gap: 1rem;
   margin-top: 1.5rem;
-}
+} */
 
 .submit-btn, .cancel-btn {
   padding: 0.75rem 1.5rem;
@@ -536,4 +536,97 @@ textarea {
     font-size: 12px;
     border-radius: 5px;
   }
+}
+
+
+
+/* 1️⃣ Overlay stays the same, but stop centering vertically */
+.modal-overlay {
+  position: fixed;
+  inset: 0;               /* shorthand for top/right/bottom/left:0 */
+  background: rgba(0,0,0,.55);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* let the modal define its own scroll */
+  overflow-y: auto;       /* enable scroll if content > 100 vh */
+}
+
+/* 2️⃣ Full‑screen modal */
+.modal {
+  position: relative;
+  width: 100%;
+  max-width: 960px;       /* cap the width for giant monitors */
+  min-height: 100vh;      /* real full height */
+  background: #fff;
+  border-radius: 0;       /* square corners for edge‑to‑edge look */
+  box-shadow: none;       /* shadow handled by overlay */
+  padding: clamp(1rem, 2vw + .5rem, 2.5rem);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  transform: none;        /* kill the slide‑up transform */
+}
+
+/* 3️⃣ Form uses CSS Grid for neat alignment */
+.modal form {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.25rem 2rem;      /* row / column gaps */
+}
+
+/* Keep big text areas spanning full width */
+.modal textarea,
+.modal .form-row,
+.modal .modal-buttons {
+  grid-column: 1 / -1;    /* stretch across all columns */
+}
+
+/* 4️⃣ Close button floats neatly */
+.modal-close {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.25rem;
+  font-size: 2rem;
+  line-height: 1;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #7f8c8d;
+  transition: color .2s;
+}
+.modal-close:hover { color:#c0392b; }
+
+/* 5️⃣ Buttons bar always sticks to bottom edge on tall screens */
+.modal-buttons {
+  /* margin-top: auto;       push it to the end of the flex column */
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+/* 6️⃣ Mobile tweaks */
+@media (max-width: 600px) {
+  .modal form { grid-template-columns: 1fr; }
+  .modal { max-width: 100%; }      /* use full width on phones */
+}
+
+
+/* Put big textareas after all the small inputs */
+/* .content-group { order: 30; }  
+.excerpt-group { order: 40; } */
+
+.content-group,
+.excerpt-group {
+  grid-column: 1 / -1;          /* always span full width */
+}
+
+/* Bigger writing area */
+.content-group textarea  { min-height: 220px; }
+.excerpt-group textarea  { min-height: 140px; }
+
+/* Still collapsible on mobile */
+@media (max-width:600px) {
+  .content-group textarea,
+  .excerpt-group textarea { min-height: 180px; }
 }

@@ -520,11 +520,9 @@ const AllEnquiries = () => {
   }, [isAuthenticated]);
 
   const handleLogout = () => {
-    localStorage.removeItem('auth-enquiries');
-    localStorage.removeItem('auth-destinations');
-    localStorage.removeItem('auth-packages');
-    localStorage.removeItem('auth-blogs');
-  
+   const AUTH_KEYS = ["auth-enquiries", "auth-destinations", "auth-packages", "auth-blogs", "auth-AI"];
+AUTH_KEYS.forEach(k => localStorage.removeItem(k));
+
     setIsAuthenticated(false);
     navigate('/');
   };

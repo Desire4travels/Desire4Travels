@@ -6,13 +6,19 @@
   gap: 40px;
 }
 
-.form-section {
-  max-width: 500px;
-  margin: 0 auto;
-  background-color: #f9f9f9;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+.form-section{
+  /* stretch edge‑to‑edge and scroll if taller than viewport */
+  width:100%;
+  max-width:960px;
+  margin:auto;
+  background:#fff;
+  padding:clamp(1rem,2vw + .5rem,2.5rem);
+  border-radius:0;
+  box-shadow:none;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  gap:1.5rem;
 }
 
 .table-section {
@@ -111,4 +117,66 @@
     font-size: 12px;
     border-radius: 5px;
   }
+}
+
+
+
+/* ========== FULL‑SCREEN FORM LAYOUT ========== */
+.form-section{
+  /* stretch edge‑to‑edge and scroll if taller than viewport */
+  width:100%;
+  max-width:960px;
+  margin:auto;
+  background:#fff;
+  padding:clamp(1rem,2vw + .5rem,2.5rem);
+  border-radius:0;
+  box-shadow:none;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  gap:1.5rem;
+}
+
+/* Grid for the inputs */
+.package-form{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+  gap:1.25rem 2rem;
+}
+
+/* Make wide blocks span all columns */
+.photo-group,
+.description-group,
+.inclusions-group,
+.itinerary-group,
+.form-buttons{
+  grid-column:1 / -1;
+}
+
+/* Comfortable writing areas */
+.description-group textarea{min-height:220px;}
+.inclusions-group textarea{min-height:180px;}
+.itinerary-group textarea{min-height:220px;}
+
+/* Submit row */
+.form-buttons{
+  display:flex;
+  justify-content:flex-end;
+  gap:1rem;
+}
+
+/* Preview image styling */
+.preview-img{
+  display:block;
+  max-width:180px;
+  max-height:180px;
+  object-fit:cover;
+  margin-top:.75rem;
+  border-radius:8px;
+  border:1px solid #ccc;
+}
+
+/* Mobile single‑column fallback */
+@media(max-width:600px){
+  .package-form{grid-template-columns:1fr;}
 }
