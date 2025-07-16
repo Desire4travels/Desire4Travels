@@ -2029,6 +2029,36 @@ app.post('/service-providers', async (req, res) => {
   }
 });
 
+/* ========  BULK UPLOAD  ======== */
+app.post('/service-providers/bulk', async (req, res) => {
+  const { type, data } = req.body;
+
+  // Validate type and data
+  if (!colMap[type]) return res.status(400).json({ error: 'Invalid provider type.' });
+  if (!Array.isArray(data)) return res.status(400).json({ error: 'Data must be an array.' });
+
+  try {
+    const batch = db.batch();
+    const collectionRef = db.collection(colMap[type]);
+
+    data.forEach((item) => {
+      const docRef = collectionRef.doc(); // create new doc ID
+      batch.set(docRef, {
+        ...item,
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      });
+    });
+
+    await batch.commit();
+
+    res.status(201).json({ message: `${data.length} providers saved.` });
+  } catch (err) {
+    console.error('BULK SAVE error:', err);
+    res.status(500).json({ error: 'Bulk save failed.' });
+  }
+});
+
+
 /* ========  READ  (all) ======== */
 app.get('/service-providers', async (_req, res) => {
   try {
@@ -2080,3 +2110,4 @@ app.delete('/service-providers/:type/:id', async (req, res) => {
     res.status(500).json({ error: 'Delete failed.' });
   }
 });
+
