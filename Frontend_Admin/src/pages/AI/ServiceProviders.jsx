@@ -65,8 +65,11 @@ export default function ServiceProvidersList() {
   }, []);
 
   /* ------------ helpers ------------ */
-  const filtered =
-    selected === "all" ? items : items.filter((p) => p.type === selected);
+const filtered =
+  selected === "all"
+    ? [...items].reverse() // 👈 newest first
+    : [...items].filter((p) => p.type === selected).reverse();
+
 
   function openEdit(item) {
     setEditItem(item);

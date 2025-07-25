@@ -223,6 +223,7 @@ app.post('/api/admin/destinations', upload.single('image'), async (req, res) => 
   }
 });
 
+
 // GET - Fetch all destinations
 app.get('/api/admin/destinations', async (req, res) => {
   try {
@@ -237,6 +238,7 @@ app.get('/api/admin/destinations', async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 });
+
 
 // PUT - Update destination with ImageKit
 app.put('/api/admin/destinations/:id', upload.single('image'), async (req, res) => {
@@ -371,6 +373,8 @@ app.post('/api/admin/packages', upload.single('photo'), async (req, res) => {
 });
 
 
+
+
 // GET - Fetch all admin packages
 app.get('/api/admin/packages', async (req, res) => {
   try {
@@ -413,6 +417,8 @@ app.get('/api/admin/packages', async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 });
+
+
 
 
 // PUT - Update package with ImageKit
@@ -473,6 +479,7 @@ app.put('/api/admin/packages/:id', upload.single('photo'), async (req, res) => {
   }
 });
 
+
 // DELETE - Delete package
 app.delete('/api/admin/packages/:id', async (req, res) => {
   try {
@@ -491,6 +498,7 @@ app.delete('/api/admin/packages/:id', async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 });
+
 
 app.get('/api/packages', async (req, res) => {
   try {
@@ -2065,7 +2073,8 @@ app.get('/service-providers', async (_req, res) => {
     const results = [];
 
     for (const [type, col] of Object.entries(colMap)) {
-      const snap = await db.collection(col).get();
+     const snap = await db.collection(col).orderBy("createdAt", "desc").get();
+
       snap.forEach(doc =>
         results.push({ id: doc.id, type, ...doc.data() })
       );
@@ -2110,4 +2119,14 @@ app.delete('/service-providers/:type/:id', async (req, res) => {
     res.status(500).json({ error: 'Delete failed.' });
   }
 });
+
+
+
+
+
+
+
+
+
+
 
