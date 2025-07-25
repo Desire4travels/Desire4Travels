@@ -54,8 +54,10 @@ export default function ServiceProvidersList() {
   useEffect(() => {
     (async () => {
       try {
-        const res = await fetch(`${API}/service-providers`);
-        setItems(await res.json());
+      const res = await fetch(`${API}/service-providers`);
+const data = await res.json();
+setItems([...data].reverse()); // newest on top
+
       } catch {
         setError("Failed to load providers");
       } finally {
