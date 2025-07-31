@@ -313,15 +313,17 @@ app.delete('/api/admin/destinations/:id', async (req, res) => {
 // POST - Create package with ImageKit
 app.post('/api/admin/packages', upload.single('photo'), async (req, res) => {
   try {
-    const {
-      packageName,
-      duration,
-      price,
-      description,
-      inclusions,
-      itinerary,
-      destinations
-    } = req.body;
+  const {
+  packageName,
+  duration,
+  price,
+  description,
+  inclusions,
+  itinerary,
+  destinations,
+  metaKeywords // <-- Add this
+} = req.body;
+
 
     if (!packageName || !duration || !price || !description || !inclusions || !itinerary || !req.file || !destinations) {
       return res.status(400).json({ error: 'All fields are required' });
@@ -356,6 +358,7 @@ app.post('/api/admin/packages', upload.single('photo'), async (req, res) => {
       itinerary,
       photo: uploadedImage.url,
       destinations: parsedDestinations,
+       metaKeywords: metaKeywords || "", // <-- new line
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
     };
 
@@ -432,7 +435,8 @@ app.put('/api/admin/packages/:id', upload.single('photo'), async (req, res) => {
       description,
       inclusions,
       itinerary,
-      destinations
+      destinations,
+      metaKeywords // <-- Add this
     } = req.body;
 
     const updateData = {
@@ -442,6 +446,7 @@ app.put('/api/admin/packages/:id', upload.single('photo'), async (req, res) => {
       ...(description && { description }),
       ...(inclusions && { inclusions }),
       ...(itinerary && { itinerary }),
+       ...(metaKeywords && { metaKeywords }), // <-- new line
     };
 
     if (destinations) {

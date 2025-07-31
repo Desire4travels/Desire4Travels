@@ -37,8 +37,14 @@ const ManagePackage = () => {
   }, [isAuthenticated]);
 
   const handleLogout = () => {
-    const AUTH_KEYS = ["auth-enquiries", "auth-destinations", "auth-packages", "auth-blogs", "auth-AI"];
-AUTH_KEYS.forEach(k => localStorage.removeItem(k));
+    const AUTH_KEYS = [
+      "auth-enquiries",
+      "auth-destinations",
+      "auth-packages",
+      "auth-blogs",
+      "auth-AI",
+    ];
+    AUTH_KEYS.forEach((k) => localStorage.removeItem(k));
 
     setIsAuthenticated(false);
     navigate("/"); // Redirect to home page
@@ -53,6 +59,7 @@ AUTH_KEYS.forEach(k => localStorage.removeItem(k));
     itinerary: "",
     photo: null,
     destinations: [],
+    metaKeywords: "", // <-- Added this
   });
 
   const [packages, setPackages] = useState([]);
@@ -210,121 +217,129 @@ AUTH_KEYS.forEach(k => localStorage.removeItem(k));
       <div className="form-section">
         <h2>{editingId ? "Edit Package" : "Add Package"}</h2>
         <form onSubmit={handleSubmit} className="package-form">
-  {/* 1 – Package name & Duration */}
-  <div className="form-group">
-    <label>Package Name*</label>
-    <input
-      type="text"
-      name="packageName"
-      value={formData.packageName}
-      onChange={handleChange}
-      required
-    />
-  </div>
+          {/* 1 – Package name & Duration */}
+          <div className="form-group">
+            <label>Package Name*</label>
+            <input
+              type="text"
+              name="packageName"
+              value={formData.packageName}
+              onChange={handleChange}
+              required
+            />
+          </div>
 
-  <div className="form-group">
-    <label>Duration*</label>
-    <input
-      type="text"
-      name="duration"
-      value={formData.duration}
-      onChange={handleChange}
-      required
-    />
-  </div>
+          <div className="form-group">
+            <label>Duration*</label>
+            <input
+              type="text"
+              name="duration"
+              value={formData.duration}
+              onChange={handleChange}
+              required
+            />
+          </div>
 
-  {/* 2 – Price & Destinations (multi) */}
-  <div className="form-group">
-    <label>Price (INR)*</label>
-    <input
-      type="text"
-      name="price"
-      value={formData.price}
-      onChange={handleChange}
-      required
-    />
-  </div>
+          {/* 2 – Price & Destinations (multi) */}
+          <div className="form-group">
+            <label>Price (INR)*</label>
+            <input
+              type="text"
+              name="price"
+              value={formData.price}
+              onChange={handleChange}
+              required
+            />
+          </div>
 
-  <div className="form-group">
-    <label>
-      Destinations * <br />
-      <small>(Ctrl / Cmd + Click to select multiple)</small>
-    </label>
-    <select
-      multiple
-      name="destinations"
-      value={formData.destinations}
-      onChange={handleChange}
-      size={5}
-    >
-      {destinations.map((d) => (
-        <option key={d._id || d.id} value={d._id || d.id}>
-          {d.name} – {d.state}
-        </option>
-      ))}
-    </select>
-  </div>
+          <div className="form-group">
+            <label>
+              Destinations * <br />
+              <small>(Ctrl / Cmd + Click to select multiple)</small>
+            </label>
+            <select
+              multiple
+              name="destinations"
+              value={formData.destinations}
+              onChange={handleChange}
+              size={5}
+            >
+              {destinations.map((d) => (
+                <option key={d._id || d.id} value={d._id || d.id}>
+                  {d.name} – {d.state}
+                </option>
+              ))}
+            </select>
+          </div>
 
-  {/* 3 – Photo upload (full width) */}
-  <div className="form-group photo-group">
-    <label>Package Image</label>
-    <input
-      type="file"
-      name="photo"
-      accept="image/*"
-      onChange={handleChange}
-    />
-    {previewImage && (
-      <img
-        src={previewImage}
-        alt="Preview"
-        className="preview-img"
-      />
-    )}
-  </div>
+          {/* 3 – Photo upload (full width) */}
+          <div className="form-group photo-group">
+            <label>Package Image</label>
+            <input
+              type="file"
+              name="photo"
+              accept="image/*"
+              onChange={handleChange}
+            />
+            {previewImage && (
+              <img src={previewImage} alt="Preview" className="preview-img" />
+            )}
+          </div>
 
-  {/* 4 – Big text areas (each full‑width) */}
-  <div className="form-group description-group">
-    <label>Description (HTML allowed)*</label>
-    <textarea
-      name="description"
-      value={formData.description}
-      onChange={handleChange}
-      rows="6"
-      required
-    />
-  </div>
+          <div className="form-group">
+            <label>
+              Meta Keywords <small>(Comma-separated)</small>
+            </label>
+            <input
+              type="text"
+              name="metaKeywords"
+              value={formData.metaKeywords}
+              onChange={handleChange}
+              placeholder="e.g., beach, Goa, honeymoon, adventure"
+            />
+          </div>
 
-  <div className="form-group inclusions-group">
-    <label>Inclusions*</label>
-    <textarea
-      name="inclusions"
-      value={formData.inclusions}
-      onChange={handleChange}
-      rows="5"
-      required
-    />
-  </div>
+          {/* 4 – Big text areas (each full‑width) */}
+          <div className="form-group description-group">
+            <label>Description (HTML allowed)*</label>
+            <textarea
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              rows="6"
+              required
+            />
+          </div>
 
-  <div className="form-group itinerary-group">
-    <label>Itinerary*</label>
-    <textarea
-      name="itinerary"
-      value={formData.itinerary}
-      onChange={handleChange}
-      rows="6"
-      required
-    />
-  </div>
+          <div className="form-group inclusions-group">
+            <label>Inclusions*</label>
+            <textarea
+              name="inclusions"
+              value={formData.inclusions}
+              onChange={handleChange}
+              rows="5"
+              required
+            />
+          </div>
 
-  {/* 5 – Submit button */}
-  <div className="form-buttons">
-    <button type="submit">
-      {editingId ? "Update" : "Add"} Package
-    </button>
-  </div>
-</form>
+          <div className="form-group itinerary-group">
+            <label>Itinerary*</label>
+            <textarea
+              name="itinerary"
+              value={formData.itinerary}
+              onChange={handleChange}
+              rows="6"
+              required
+            />
+          </div>
 
+          {/* 5 – Submit button */}
+          <div className="form-buttons">
+            <button type="submit">
+              {editingId ? "Update" : "Add"} Package
+            </button>
+          </div>
+        </form>
       </div>
 
       <div className="table-section">
