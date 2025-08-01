@@ -310,6 +310,8 @@ app.delete('/api/admin/destinations/:id', async (req, res) => {
   }
 });
 
+
+
 // POST - Create package with ImageKit
 app.post('/api/admin/packages', upload.single('photo'), async (req, res) => {
   try {
@@ -400,7 +402,7 @@ app.get('/api/admin/packages', async (req, res) => {
       }
 
       packages.push({
-        id: doc.id,
+         id: doc.id,
         packageName: pkg.packageName,
         photo: pkg.photo,
         price: pkg.price,
@@ -408,9 +410,10 @@ app.get('/api/admin/packages', async (req, res) => {
         description: pkg.description,
         inclusions: pkg.inclusions,
         itinerary: pkg.itinerary,
-        destinations: destIds, 
+        destinations: destIds,
         destinationNames: destinationNames,
-        createdAt: pkg.createdAt
+        createdAt: pkg.createdAt,
+        metaKeywords: pkg.metaKeywords || "",
       });
     }
 
@@ -537,14 +540,16 @@ app.get('/api/packages', async (req, res) => {
       // Apply filter if `destination` query param is set
       if (destination && !destinationNames.includes(destination)) return null;
 
-      return {
-        id: pkg.id,
-        packageName: pkg.packageName,
-        photo: pkg.photo,
-        price: pkg.price,
-        duration: pkg.duration,
-        destinations: destinationNames,
-      };
+     return {
+  id: pkg.id,
+  packageName: pkg.packageName,
+  photo: pkg.photo,
+  price: pkg.price,
+  duration: pkg.duration,
+  destinations: destinationNames,
+  metaKeywords: pkg.metaKeywords || "", // ✅ Add this line
+};
+
     }).filter(Boolean);
 
     res.status(200).json(packages);
