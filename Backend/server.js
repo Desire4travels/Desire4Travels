@@ -579,15 +579,28 @@ app.get('/api/packages/:id', async (req, res) => {
         fullDestinations.push({
           id: destDoc.id,
           ...destData,
-          image: destData.image, // ImageKit URL is already complete
+          image: destData.image,
         });
       }
     }
 
+    // 🧠 Compute metaTitle & metaDescription dynamically
+    const cleanDescription = packageData.description?.replace(/(<([^>]+)>)/gi, ''); // remove HTML tags
+    const firstTwoSentences = cleanDescription
+      ?.split('.')
+      .slice(0, 2)
+      .join('. ')
+      .trim();
+
     const responseData = {
       ...packageData,
-      photo: packageData.photo, // ImageKit URL is already complete
+      photo: packageData.photo,
       destinations: fullDestinations,
+
+      // ✅ Dynamic meta fields
+      metaTitle: packageData.packageName,
+      metaDescription: firstTwoSentences ? firstTwoSentences + '.' : '',
+      metaKeywords: packageData.metaKeywords || '',
     };
 
     res.status(200).json(responseData);
@@ -596,6 +609,7 @@ app.get('/api/packages/:id', async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 });
+
 
 // GET - Fetch destinations (public endpoint)
 app.get('/api/destinations', async (req, res) => {
