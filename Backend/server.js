@@ -999,7 +999,7 @@ const slugify = (text) => {
 
 app.post('/blogs', upload.array('images', 5), async (req, res) => {
   try {
-    const { title, author, category, content, date, excerpt, status, alt } = req.body;
+   const { title, author, category, content, date, excerpt, status, alt, metaKeywords } = req.body;
 
     if (
       !title || !author || !category || !content ||
@@ -1035,6 +1035,7 @@ app.post('/blogs', upload.array('images', 5), async (req, res) => {
       alt,
       images: imageUrls, // now storing array instead of single image
       slug,
+        metaKeywords: metaKeywords || "", // <-- Add this line.
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
     });
 
@@ -1083,6 +1084,7 @@ app.get('/blogs', async (req, res) => {
         return {
           id: doc.id,
           ...data,
+          metaKeywords: data.metaKeywords || "",
           url: `/blogs/${data.slug}`,
         };
       })
@@ -1123,6 +1125,7 @@ app.get('/blogs/:identifier', async (req, res) => {
 
     res.json({
       ...blogData,
+      metaKeywords: blogData.metaKeywords || "",
       url: `/blogs/${blogData.slug}`
     });
 
@@ -1135,7 +1138,11 @@ app.get('/blogs/:identifier', async (req, res) => {
 app.put('/blogs/:id', upload.single('image'), async (req, res) => {
   try {
     const { id } = req.params;
-    const updates = req.body;
+   const updates = {
+  ...req.body,
+  metaKeywords: req.body.metaKeywords || "" // Explicit default
+};
+
 
     if (req.file) {
       const uploadedImage = await imagekit.upload({

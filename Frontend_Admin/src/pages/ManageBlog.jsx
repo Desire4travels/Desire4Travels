@@ -84,7 +84,8 @@ AUTH_KEYS.forEach(k => localStorage.removeItem(k));
     alt: "",
     status: "draft",
     images: [], // <-- changed from image: null
-    slug: ""
+    slug: "",
+     metaKeywords: "" // <-- Add this
   });
 
 
@@ -227,7 +228,8 @@ AUTH_KEYS.forEach(k => localStorage.removeItem(k));
       alt: blog.alt,
       status: blog.status,
       image: null,
-      slug: blog.slug
+      slug: blog.slug,
+       metaKeywords: blog.metaKeywords || "" 
     });
     setEditingId(blog.id);
     setShowModal(true);
@@ -489,6 +491,22 @@ AUTH_KEYS.forEach(k => localStorage.removeItem(k));
       <small className="image-hint">Leave empty to keep current images</small>
     )}
   </div>
+
+  {/* Meta Keywords */}
+<div className="form-group">
+  <label>
+    Meta Keywords <small>(Comma-separated)</small>
+  </label>
+  <input
+    type="text"
+    name="metaKeywords"
+    placeholder="e.g., travel, beach, adventure"
+    value={formData.metaKeywords}
+    onChange={handleChange}
+  />
+</div>
+
+
 
   {/* 7 – Excerpt */}
   <div className="form-group excerpt-group">
