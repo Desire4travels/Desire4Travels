@@ -290,11 +290,12 @@ const ManageDestination = () => {
     rating: "",
     image: null,
     description: "",
+    metaKeywords: "",
   });
   const [previewImage, setPreviewImage] = useState(null);
   const [destinations, setDestinations] = useState([]);
   const [editingId, setEditingId] = useState(null);
-const [isLoading, setIsLoading] = useState(false);   // ← NEW
+  const [isLoading, setIsLoading] = useState(false); // ← NEW
 
   useEffect(() => {
     fetchDestinations();
@@ -376,68 +377,69 @@ const [isLoading, setIsLoading] = useState(false);   // ← NEW
   };
 
   // 2️⃣  Updated handleSubmit
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  setIsLoading(true);                       // ← start
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsLoading(true); // ← start
 
-  try {
-    console.log("Submitting form with data:", formData);
+    try {
+      console.log("Submitting form with data:", formData);
 
-    // Validate rating
-    const ratingValue = parseFloat(formData.rating);
-    if (isNaN(ratingValue) || ratingValue < 0 || ratingValue > 5) {
-      alert("Rating must be between 0 and 5");
-      return;
-    }
-
-    // Build FormData
-    const data = new FormData();
-    Object.keys(formData).forEach((key) => {
-      if (key === "type") {
-        formData[key].forEach((t) => data.append("type", t));
-      } else if (formData[key]) {
-        data.append(key, formData[key]);
+      // Validate rating
+      const ratingValue = parseFloat(formData.rating);
+      if (isNaN(ratingValue) || ratingValue < 0 || ratingValue > 5) {
+        alert("Rating must be between 0 and 5");
+        return;
       }
-    });
 
-    // Debug print
-    for (let [key, value] of data.entries()) {
-      console.log(`FormData entry: ${key} =`, value);
+      // Build FormData
+      const data = new FormData();
+      Object.keys(formData).forEach((key) => {
+        if (key === "type") {
+          formData[key].forEach((t) => data.append("type", t));
+        } else if (formData[key]) {
+          data.append(key, formData[key]);
+        }
+      });
+
+      // Debug print
+      for (let [key, value] of data.entries()) {
+        console.log(`FormData entry: ${key} =`, value);
+      }
+
+      // Decide endpoint & method
+      const endpoint = editingId
+        ? `https://desire4travels-1.onrender.com/api/admin/destinations/${editingId}`
+        : "https://desire4travels-1.onrender.com/api/admin/destinations";
+      const method = editingId ? "PUT" : "POST";
+
+      // Send request
+      const res = await fetch(endpoint, { method, body: data });
+
+      console.log("Server response status:", res.status);
+      if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+
+      alert(editingId ? "Destination updated!" : "Destination added!");
+
+      // Reset form
+      setFormData({
+        name: "",
+        state: "",
+        type: [],
+        rating: "",
+        image: null,
+        description: "",
+         metaKeywords: "", // ⬅️ Add this line
+      });
+      setPreviewImage(null);
+      setEditingId(null);
+      fetchDestinations();
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      alert("Failed to submit destination");
+    } finally {
+      setIsLoading(false); // ← always stop
     }
-
-    // Decide endpoint & method
-    const endpoint = editingId
-      ? `https://desire4travels-1.onrender.com/api/admin/destinations/${editingId}`
-      : "https://desire4travels-1.onrender.com/api/admin/destinations";
-    const method = editingId ? "PUT" : "POST";
-
-    // Send request
-    const res = await fetch(endpoint, { method, body: data });
-
-    console.log("Server response status:", res.status);
-    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-
-    alert(editingId ? "Destination updated!" : "Destination added!");
-
-    // Reset form
-    setFormData({
-      name: "",
-      state: "",
-      type: [],
-      rating: "",
-      image: null,
-      description: "",
-    });
-    setPreviewImage(null);
-    setEditingId(null);
-    fetchDestinations();
-  } catch (error) {
-    console.error("Error submitting form:", error);
-    alert("Failed to submit destination");
-  } finally {
-    setIsLoading(false);                    // ← always stop
-  }
-};
+  };
 
   const handleEdit = (dest) => {
     setFormData({
@@ -446,7 +448,9 @@ const handleSubmit = async (e) => {
       type: dest.type || [],
       rating: dest.rating,
       image: null,
+       
       description: dest.description || "",
+    metaKeywords: dest.metaKeywords || "", // ⬅️ Add this line
     });
     setPreviewImage(
       `https://desire4travels-1.onrender.com/uploads/${dest.image}`
@@ -480,109 +484,134 @@ const handleSubmit = async (e) => {
 
       <div className="manage-destination-1">
         <h2>{editingId ? "Edit Destination" : "Add Destination"}</h2>
-        <form onSubmit={handleSubmit} className="destination-form">
-          {/* 1 – Name + State */}
-          <div className="form-group">
-            <label htmlFor="name">Destination Name*</label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              placeholder="Enter destination name"
-              required
-            />
-          </div>
+       <form onSubmit={handleSubmit} className="destination-form">
+  {/* 1 – Name */}
+  <div className="form-group">
+    <label htmlFor="name">Destination Name*</label>
+    <input
+      type="text"
+      id="name"
+      name="name"
+      value={formData.name}
+      onChange={handleChange}
+      placeholder="Enter destination name"
+      required
+    />
+  </div>
 
-          <div className="form-group">
-            <label htmlFor="state">State*</label>
-            <input
-              type="text"
-              id="state"
-              name="state"
-              value={formData.state}
-              onChange={handleChange}
-              placeholder="Enter state"
-              required
-            />
-          </div>
+  {/* 2 – State */}
+  <div className="form-group">
+    <label htmlFor="state">State*</label>
+    <input
+      type="text"
+      id="state"
+      name="state"
+      value={formData.state}
+      onChange={handleChange}
+      placeholder="Enter state"
+      required
+    />
+  </div>
 
-          {/* 2 – Rating + Type */}
-          <div className="form-group">
-            <label htmlFor="rating">Rating (0‑5)*</label>
-            <input
-              type="number"
-              id="rating"
-              name="rating"
-              value={formData.rating}
-              onChange={handleChange}
-              min="0"
-              max="5"
-              step="0.1"
-              required
-            />
-          </div>
+ 
 
-          <div className="form-group">
-            <label htmlFor="type">Type*</label>
-            <select
-              id="type"
-              name="type"
-              value={formData.type}
-              onChange={handleChange}
-              multiple
-              required
-            >
-              <option value="Mountain">Mountain</option>
-              <option value="Beach">Beach</option>
-              <option value="Religious">Religious</option>
-              <option value="Treks">Treks</option>
-              <option value="Offbeat">Offbeat</option>
-              <option value="Desert">Desert</option>
-              <option value="Cityscape">Cityscape</option>
-              <option value="Other">Other</option>
-            </select>
-          </div>
+  {/* 4 – Rating + Type in 2-column grid */}
+  <div className="form-group two-column-grid">
+    <div>
+      <label htmlFor="rating">Rating (0–5)*</label>
+      <input
+        type="number"
+        id="rating"
+        name="rating"
+        value={formData.rating}
+        onChange={handleChange}
+        min="0"
+        max="5"
+        step="0.1"
+        required
+      />
+    </div>
 
-          {/* 3 – Image (full width) */}
-          <div className="form-group image-group">
-            <label htmlFor="image">Destination Image</label>
-            <input
-              type="file"
-              id="image"
-              name="image"
-              onChange={handleImageChange}
-              accept="image/*"
-            />
-            {previewImage && (
-              <div className="image-preview">
-                <img src={previewImage} alt="Preview" />
-              </div>
-            )}
-          </div>
+    <div>
+      <label htmlFor="type">Type*</label>
+      <select
+        id="type"
+        name="type"
+        value={formData.type}
+        onChange={handleChange}
+        multiple
+        required
+      >
+        <option value="Mountain">Mountain</option>
+        <option value="Beach">Beach</option>
+        <option value="Religious">Religious</option>
+        <option value="Treks">Treks</option>
+        <option value="Offbeat">Offbeat</option>
+        <option value="Desert">Desert</option>
+        <option value="Cityscape">Cityscape</option>
+        <option value="Other">Other</option>
+      </select>
+    </div>
+  </div>
 
-          {/* 4 – Description (full width, big area) */}
-          <div className="form-group description-group">
-            <label htmlFor="description">Description (HTML allowed)*</label>
-            <textarea
-              id="description"
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              placeholder="You can use HTML like <p>, <h1> etc."
-              required
-              rows="6"
-            />
-          </div>
+   {/* 3 – Destination Image (after State) */}
+  <div className="form-group">
+    <label htmlFor="image">Destination Image</label>
+    <input
+      type="file"
+      id="image"
+      name="image"
+      onChange={handleImageChange}
+      accept="image/*"
+    />
+    {previewImage && (
+      <div className="image-preview">
+        <img src={previewImage} alt="Preview" />
+      </div>
+    )}
+  </div>
+  
+  {/* 6 – Meta Keywords (after Description) */}
+  <div className="form-group">
+    <label htmlFor="metaKeywords">Meta Keywords*</label>
+    <input
+      type="text"
+      id="metaKeywords"
+      name="metaKeywords"
+      value={formData.metaKeywords}
+      onChange={handleChange}
+      placeholder="e.g. goa, beach, travel, holiday"
+      required
+    />
+  </div>
 
-          {/* 5 – Buttons (immediately after description) */}
-          <div className="form-buttons">
-            <button type="submit" disabled={isLoading}>
-  {editingId ? 'Update' : 'Add'} Destination
-</button>
-          </div>
-        </form>
+  {/* 5 – Description */}
+  <div className="form-group description-group">
+    <label htmlFor="description">Description (HTML allowed)*</label>
+    <textarea
+      id="description"
+      name="description"
+      value={formData.description}
+      onChange={handleChange}
+      placeholder="You can use HTML like <p>, <h1> etc."
+      required
+      rows="6"
+    />
+  </div>
+
+
+  {/* 7 – Buttons */}
+  <div className="form-buttons">
+    <button type="submit" disabled={isLoading}>
+      {editingId ? "Update" : "Add"} Destination
+    </button>
+  </div>
+</form>
+
+
+
+
+
       </div>
       <h2>Existing Destinations</h2>
       <table className="destination-table">

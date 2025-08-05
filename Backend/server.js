@@ -172,7 +172,7 @@ app.delete('/api/admin/enquiries', async (req, res) => {
 // POST - Create destination with ImageKit
 app.post('/api/admin/destinations', upload.single('image'), async (req, res) => {
   try {
-    const { name, state, type, rating, description } = req.body;
+    const { name, state, type, rating, description, metaKeywords } = req.body;
 
     if (!name || !state || !type || !rating || !req.file || !description) {
       return res.status(400).json({ error: 'All fields are required' });
@@ -207,6 +207,7 @@ app.post('/api/admin/destinations', upload.single('image'), async (req, res) => 
       rating: parsedRating,
       description: safeDescription,
       image: uploadedImage.url,
+       metaKeywords: metaKeywords || "", // ⬅ add this line
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
     };
 
@@ -263,6 +264,7 @@ app.put('/api/admin/destinations/:id', upload.single('image'), async (req, res) 
           allowedAttributes: {},
         }),
       }),
+       ...(metaKeywords && { metaKeywords }), // ⬅ add this line
     };
 
     if (req.file) {
