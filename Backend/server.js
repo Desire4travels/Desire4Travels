@@ -2037,11 +2037,6 @@ app.get('/api/last-visit', async (req, res) => {
   }
 });
 
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
-
-
 
 /* ========  SERVICE‑PROVIDER REGISTRATION  ======== */
 /* ========  MAP for all routes ======== */
@@ -2160,5 +2155,18 @@ app.delete('/service-providers/:type/:id', async (req, res) => {
 
 
 
+
+
+
+
+
+app.get("/", (req, res) => {
+  res.send("✅ Desire4Travels backend is running");
+});
+
+
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
+});
 
 
