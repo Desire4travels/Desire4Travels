@@ -217,7 +217,8 @@ AUTH_KEYS.forEach(k => localStorage.removeItem(k));
       alt: "",
       status: "draft",
       image: null,
-      slug: ""
+      slug: "",
+      metaKeywords:""
     });
   };
 

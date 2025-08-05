@@ -163,3 +163,21 @@ button[type="submit"]:disabled{background:#ccc;cursor:not-allowed;}
     font-size:12px;
   }
 }
+
+
+
+.two-column-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.two-column-grid input[type="text"],
+.two-column-grid input[type="file"] {
+  width: 100%;
+}
+.two-column-grid {
+  display: grid;
+  grid-template-columns: 2fr 2fr;
+  gap: 20px;
+}
