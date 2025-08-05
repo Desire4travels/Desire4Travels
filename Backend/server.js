@@ -244,7 +244,8 @@ app.get('/api/admin/destinations', async (req, res) => {
 // PUT - Update destination with ImageKit
 app.put('/api/admin/destinations/:id', upload.single('image'), async (req, res) => {
   try {
-    const { name, state, type, rating, description } = req.body;
+   const { name, state, type, rating, description, metaKeywords } = req.body;
+
     const destinationId = req.params.id;
 
     const destinationRef = db.collection('destinations').doc(destinationId);
@@ -329,7 +330,7 @@ app.post('/api/admin/packages', upload.single('photo'), async (req, res) => {
 } = req.body;
 
 
-    if (!packageName || !duration || !price || !description || !inclusions || !itinerary || !req.file || !destinations) {
+    if (!packageName ||!metaKeywords|| !duration || !price || !description || !inclusions || !itinerary || !req.file || !destinations) {
       return res.status(400).json({ error: 'All fields are required' });
     }
 
