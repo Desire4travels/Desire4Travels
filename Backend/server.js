@@ -1166,6 +1166,7 @@ app.put('/blogs/:id', upload.single('image'), async (req, res) => {
     res.json({
       message: 'Blog updated successfully',
       id,
+      metaKeywords: updatedData.metaKeywords || "",
       url: `/blogs/${updatedData.slug}`
     });
 

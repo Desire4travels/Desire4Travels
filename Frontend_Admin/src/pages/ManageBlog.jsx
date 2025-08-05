@@ -178,11 +178,15 @@ AUTH_KEYS.forEach(k => localStorage.removeItem(k));
     Object.entries(formData).forEach(([key, value]) => {
       if (key === 'images' && Array.isArray(value)) {
         value.forEach(file => payload.append('images', file));
-      } else if (value !== null && value !== undefined) {
-        payload.append(key, value);
+      } else if (key !== 'metaKeywords' && value !== null && value !== undefined) {
+      payload.append(key, value);
       }
     });
 
+      // ✅ Explicitly append metaKeywords
+  payload.append('metaKeywords', formData.metaKeywords || '');
+
+  
     try {
       if (editingId) {
         await axios.put(`${API_BASE_URL}/${editingId}`, payload);
