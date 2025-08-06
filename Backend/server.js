@@ -207,7 +207,7 @@ app.post('/api/admin/destinations', upload.single('image'), async (req, res) => 
       rating: parsedRating,
       description: safeDescription,
       image: uploadedImage.url,
-       metaKeywords: metaKeywords || "", // ⬅ add this line
+      metaKeywords: metaKeywords || "", // ⬅ add this line
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
     };
 
