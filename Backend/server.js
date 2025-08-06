@@ -174,6 +174,9 @@ app.post('/api/admin/destinations', upload.single('image'), async (req, res) => 
   try {
     const { name, state, type, rating, description, metaKeywords } = req.body;
 
+    console.log("Request body:", req.body);  // ADD THIS
+    console.log("Uploaded file:", req.file); // ADD THIS
+
     if (!name || !state || !type || !rating || !req.file || !description) {
       return res.status(400).json({ error: 'All fields are required' });
     }
@@ -310,6 +313,45 @@ app.delete('/api/admin/destinations/:id', async (req, res) => {
   } catch (error) {
     console.error('Error deleting destination:', error);
     res.status(500).json({ error: 'Server error' });
+  }
+});
+
+
+// GET - Fetch destinations (public endpoint)
+app.get('/api/destinations', async (req, res) => {
+  try {
+    const { state, type, page = 1, limit = 100 } = req.query;
+    const destinationsRef = db.collection('destinations');
+    let query = destinationsRef;
+
+    if (state) {
+      query = query.where('state', '==', state);
+    }
+
+    if (type) {
+      query = query.where('type', 'array-contains', type);
+    }
+
+    query = query.orderBy('createdAt', 'desc');
+
+    const snapshot = await query.get();
+    const allDestinations = snapshot.docs.map(doc => ({ 
+      id: doc.id, 
+      ...doc.data()
+      // ImageKit URL is already complete, no need to modify
+    }));
+
+    const startIndex = (page - 1) * limit;
+    const paginated = allDestinations.slice(startIndex, startIndex + Number(limit));
+    const hasNextPage = allDestinations.length > startIndex + Number(limit);
+
+    res.status(200).json({
+      destinations: paginated,
+      hasNextPage
+    });
+  } catch (error) {
+    console.error('Error fetching destinations:', error);
+    res.status(500).json({ error: 'Failed to fetch destinations' });
   }
 });
 
@@ -613,44 +655,6 @@ app.get('/api/packages/:id', async (req, res) => {
   }
 });
 
-
-// GET - Fetch destinations (public endpoint)
-app.get('/api/destinations', async (req, res) => {
-  try {
-    const { state, type, page = 1, limit = 100 } = req.query;
-    const destinationsRef = db.collection('destinations');
-    let query = destinationsRef;
-
-    if (state) {
-      query = query.where('state', '==', state);
-    }
-
-    if (type) {
-      query = query.where('type', 'array-contains', type);
-    }
-
-    query = query.orderBy('createdAt', 'desc');
-
-    const snapshot = await query.get();
-    const allDestinations = snapshot.docs.map(doc => ({ 
-      id: doc.id, 
-      ...doc.data()
-      // ImageKit URL is already complete, no need to modify
-    }));
-
-    const startIndex = (page - 1) * limit;
-    const paginated = allDestinations.slice(startIndex, startIndex + Number(limit));
-    const hasNextPage = allDestinations.length > startIndex + Number(limit);
-
-    res.status(200).json({
-      destinations: paginated,
-      hasNextPage
-    });
-  } catch (error) {
-    console.error('Error fetching destinations:', error);
-    res.status(500).json({ error: 'Failed to fetch destinations' });
-  }
-});
 
 // Subscribe to newsletter
 app.post('/api/newsletter', async (req, res) => {
