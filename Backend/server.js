@@ -2159,7 +2159,85 @@ app.delete('/service-providers/:type/:id', async (req, res) => {
 
 
 
+/* ======== TRIP REQUESTS ======== */
+// POST to save a new trip request from the chatbot
+app.post('/trip-requests', async (req, res) => {
+  const { responses } = req.body;
+  
+  if (!responses || Object.keys(responses).length === 0) {
+    return res.status(400).json({ error: 'Trip data is required.' });
+  }
 
+  try {
+    const docRef = await db.collection('tripRequests').add({
+      ...responses,
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    });
+    res.status(201).json({ id: docRef.id, message: 'Trip request saved successfully.' });
+  } catch (err) {
+    console.error('Error saving trip request:', err);
+    res.status(500).json({ error: 'Server error while saving trip data.' });
+  }
+});
+// GET all trip requests
+app.get('/trip-requests', async (req, res) => {
+  try {
+    const requestsSnapshot = await db.collection('tripRequests').get();
+    const requests = [];
+    requestsSnapshot.forEach(doc => {
+      requests.push({ id: doc.id, ...doc.data() });
+    });
+    res.status(200).json(requests);
+  } catch (err) {
+    console.error('Error getting trip requests:', err);
+    res.status(500).json({ error: 'Server error retrieving data.' });
+  }
+});
+
+// GET a single trip request by ID
+app.get('/trip-requests/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const doc = await db.collection('tripRequests').doc(id).get();
+    if (!doc.exists) {
+      return res.status(404).json({ error: 'Trip request not found.' });
+    }
+    res.status(200).json({ id: doc.id, ...doc.data() });
+  } catch (err) {
+    console.error('Error getting trip request:', err);
+    res.status(500).json({ error: 'Server error retrieving data.' });
+  }
+});
+
+// PUT to update a trip request
+app.put('/trip-requests/:id', async (req, res) => {
+  const { id } = req.params;
+  const updatedData = req.body;
+  
+  if (!updatedData || Object.keys(updatedData).length === 0) {
+    return res.status(400).json({ error: 'Update data is required.' });
+  }
+
+  try {
+    const docRef = db.collection('tripRequests').doc(id);
+    await docRef.update(updatedData);
+    res.status(200).json({ id, message: 'Trip request updated successfully.' });
+  } catch (err) {
+    console.error('Error updating trip request:', err);
+    res.status(500).json({ error: 'Server error updating data.' });
+  }
+});
+// DELETE a trip request
+app.delete('/trip-requests/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    await db.collection('tripRequests').doc(id).delete();
+    res.status(200).json({ message: 'Trip request deleted successfully.' });
+  } catch (err) {
+    console.error('Error deleting trip request:', err);
+    res.status(500).json({ error: 'Server error deleting data.' });
+  }
+});
 
 
 
