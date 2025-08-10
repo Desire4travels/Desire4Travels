@@ -2162,25 +2162,34 @@ app.delete('/service-providers/:type/:id', async (req, res) => {
 /* ======== TRIP REQUESTS ======== */
 // POST to save a new trip request from the chatbot
 app.post('/trip-requests', async (req, res) => {
-  const { responses, tripDate, numPeople, destination } = req.body;
-  
-  if (!responses || Object.keys(responses).length === 0) {
-    return res.status(400).json({ error: 'Trip data is required.' });
-  }
+  const { responses, tripDate, numPeople, destination } = req.body;
+  
+  if (!responses || Object.keys(responses).length === 0) {
+    return res.status(400).json({ error: 'Trip data is required.' });
+  }
 
-  try {
-    const docRef = await db.collection('tripRequests').add({
-      ...responses,
-      tripDate,
-      numPeople,
-      destination,
-      createdAt: admin.firestore.FieldValue.serverTimestamp(),
-    });
-    res.status(201).json({ id: docRef.id, message: 'Trip request saved successfully.' });
-  } catch (err) {
-    console.error('Error saving trip request:', err);
-    res.status(500).json({ error: 'Server error while saving trip data.' });
-  }
+  // 1. Extract the destination array from the responses object
+  //    The key 'Where do you want to go ?...' is what you provided from your API data
+  const destinationsFromResponses = responses['Where do you want to go ? Add all the locations that you are planning to visit(you can select multiple options).'];
+  
+  // 2. Use the extracted array for the destination field
+  const finalDestination = Array.isArray(destinationsFromResponses) 
+    ? destinationsFromResponses 
+    : destination; // Fallback to the original destination field if it's a single string
+
+  try {
+    const docRef = await db.collection('tripRequests').add({
+      ...responses,
+      tripDate,
+      numPeople,
+      destination: finalDestination, // <-- Changed to use the corrected destination
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    });
+    res.status(201).json({ id: docRef.id, message: 'Trip request saved successfully.' });
+  } catch (err) {
+    console.error('Error saving trip request:', err);
+    res.status(500).json({ error: 'Server error while saving trip data.' });
+  }
 });
 
 // GET all trip requests
@@ -2215,21 +2224,33 @@ app.get('/trip-requests/:id', async (req, res) => {
 
 // PUT method to update a trip request
 app.put('/trip-requests/:id', async (req, res) => {
-  const { id } = req.params;
-  const updatedData = req.body;
-  
-  if (!updatedData || Object.keys(updatedData).length === 0) {
-    return res.status(400).json({ error: 'Update data is required.' });
-  }
+  const { id } = req.params;
+  const { responses, ...restOfData } = req.body;
+  
+  if (!req.body || Object.keys(req.body).length === 0) {
+    return res.status(400).json({ error: 'Update data is required.' });
+  }
+  
+  let updatedData = { ...restOfData };
+  
+  // 1. Check if the responses object is being updated
+  if (responses) {
+    // Extract the destination array from the responses object
+    const destinationsFromResponses = responses['Where do you want to go ? Add all the locations that you are planning to visit(you can select multiple options).'];
+    if (destinationsFromResponses) {
+      updatedData.destination = destinationsFromResponses;
+    }
+    updatedData.responses = responses;
+  }
 
-  try {
-    const docRef = db.collection('tripRequests').doc(id);
-    await docRef.update(updatedData);
-    res.status(200).json({ id, message: 'Trip request updated successfully.' });
-  } catch (err) {
-    console.error('Error updating trip request:', err);
-    res.status(500).json({ error: 'Server error updating data.' });
-  }
+  try {
+    const docRef = db.collection('tripRequests').doc(id);
+    await docRef.update(updatedData);
+    res.status(200).json({ id, message: 'Trip request updated successfully.' });
+  } catch (err) {
+    console.error('Error updating trip request:', err);
+    res.status(500).json({ error: 'Server error updating data.' });
+  }
 });
 
 // DELETE a trip request

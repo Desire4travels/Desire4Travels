@@ -80,6 +80,11 @@ AUTH_KEYS.forEach(k => localStorage.removeItem(k));
         {counts.newServiceProviders > 0 && <span className="badge">{counts.newServiceProviders}</span>}
         <h1><Link to="/serviceprovider" className="link">Service Providers</Link></h1>
       </div>
+
+      <div className="manage-package-card card-container">
+        {counts.newTripRequests > 0 && <span className="badge">{counts.newTripRequests}</span>}
+        <h1><Link to="/trip-requests" className="link">Trip Requests</Link></h1>
+      </div>
     </div>
   );
 }

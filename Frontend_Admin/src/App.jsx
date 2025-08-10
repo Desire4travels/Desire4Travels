@@ -22,6 +22,7 @@ import HotelManager from './pages/AI/HotelManager.jsx';
 import ServiceManager from './pages/AI/ServiceManager.jsx';
 import ServiceProvidersList from './pages/AI/ServiceProviders.jsx';
 import ManageAi from './pages/AI/ManageAi.jsx';
+import TripRequestsList from './pages/AI/TripRequests.jsx';
 
 function App() {
   const [count, setCount] = useState(0);
@@ -50,6 +51,7 @@ function App() {
         
         <Route path="/manage-ai" element={<ManageAi />} />
         <Route path="/serviceprovider" element={<PrivateRoute cardKey="AI"><ServiceProvidersList /></PrivateRoute>} />
+        <Route path="/trip-requests" element={<PrivateRoute cardKey="AI"><TripRequestsList /></PrivateRoute>} />
         
         <Route path="/allenquiries" element={<AllEnquiries />} />
       </Routes>
