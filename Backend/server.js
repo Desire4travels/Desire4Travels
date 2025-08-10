@@ -2162,7 +2162,7 @@ app.delete('/service-providers/:type/:id', async (req, res) => {
 /* ======== TRIP REQUESTS ======== */
 // POST to save a new trip request from the chatbot
 app.post('/trip-requests', async (req, res) => {
-  const { responses } = req.body;
+  const { responses, tripDate, numPeople, destination } = req.body;
   
   if (!responses || Object.keys(responses).length === 0) {
     return res.status(400).json({ error: 'Trip data is required.' });
@@ -2171,6 +2171,9 @@ app.post('/trip-requests', async (req, res) => {
   try {
     const docRef = await db.collection('tripRequests').add({
       ...responses,
+      tripDate,
+      numPeople,
+      destination,
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
     });
     res.status(201).json({ id: docRef.id, message: 'Trip request saved successfully.' });
@@ -2179,6 +2182,7 @@ app.post('/trip-requests', async (req, res) => {
     res.status(500).json({ error: 'Server error while saving trip data.' });
   }
 });
+
 // GET all trip requests
 app.get('/trip-requests', async (req, res) => {
   try {
@@ -2209,7 +2213,7 @@ app.get('/trip-requests/:id', async (req, res) => {
   }
 });
 
-// PUT to update a trip request
+// PUT method to update a trip request
 app.put('/trip-requests/:id', async (req, res) => {
   const { id } = req.params;
   const updatedData = req.body;
@@ -2227,6 +2231,7 @@ app.put('/trip-requests/:id', async (req, res) => {
     res.status(500).json({ error: 'Server error updating data.' });
   }
 });
+
 // DELETE a trip request
 app.delete('/trip-requests/:id', async (req, res) => {
   const { id } = req.params;
@@ -2238,6 +2243,7 @@ app.delete('/trip-requests/:id', async (req, res) => {
     res.status(500).json({ error: 'Server error deleting data.' });
   }
 });
+
 
 
 
