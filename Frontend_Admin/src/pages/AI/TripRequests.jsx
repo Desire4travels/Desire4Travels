@@ -114,7 +114,7 @@ export default function TripRequestsList() {
         {items.map((item) => (
           <div key={item.id} className={styles.card}>
             <h3 className={styles.cardTitle}>
-              {getDestinationsArray(item.destination).join(", ") ||
+               Trip to: {getDestinationsArray(item.destination).join(", ") ||
                 "Destination not specified"}
             </h3>
             <ul className={styles.cardList}>
