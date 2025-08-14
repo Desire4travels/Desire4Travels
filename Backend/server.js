@@ -211,7 +211,8 @@ app.post('/api/admin/destinations', upload.single('image'), async (req, res) => 
       description: safeDescription,
       image: uploadedImage.url,
       metaKeywords: metaKeywords || "", // ⬅ add this line
-      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      createdAt: new Date(),
+
     };
 
     const docRef = await db.collection('destinations').add(newDestination);
