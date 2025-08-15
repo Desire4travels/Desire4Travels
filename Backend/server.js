@@ -2265,26 +2265,27 @@ app.delete("/service-providers/:type/:id", async (req, res) => {
 /* ======== TRIP REQUESTS ======== */
 // POST to save a new trip request from the chatbot
 app.post("/trip-requests", async (req, res) => {
-  const { responses, tripDate, numPeople, destination } = req.body;
+  const { responses, tripDate, numPeople, destination, contactNumber } = req.body;
   if (!responses || Object.keys(responses).length === 0) {
     return res.status(400).json({ error: "Trip data is required." });
-  } // 1. Extract the destination array from the responses object //    The key 'Where do you want to go ?...' is what you provided from your API data
+  }
 
   const destinationsFromResponses =
     responses[
       "Where do you want to go ? Add all the locations that you are planning to visit(you can select multiple options)."
-    ]; // 2. Use the extracted array for the destination field
+    ];
+
   const finalDestination = Array.isArray(destinationsFromResponses)
     ? destinationsFromResponses
-    : destination; // Fallback to the original destination field if it's a single string
+    : destination;
 
   try {
     const docRef = await db.collection("tripRequests").add({
       ...responses,
       tripDate,
       numPeople,
-      destination: finalDestination, // <-- Changed to use the corrected destination
-      contactNumber,
+      destination: finalDestination,
+      contactNumber, // now it will have a value
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
     });
     res
@@ -2295,6 +2296,7 @@ app.post("/trip-requests", async (req, res) => {
     res.status(500).json({ error: "Server error while saving trip data." });
   }
 });
+
 
 // GET all trip requests
 app.get("/trip-requests", async (req, res) => {
@@ -2370,6 +2372,9 @@ app.delete("/trip-requests/:id", async (req, res) => {
     res.status(500).json({ error: "Server error deleting data." });
   }
 });
+
+
+
 
 app.get("/", (req, res) => {
   res.send("✅ Desire4Travels backend is running");
