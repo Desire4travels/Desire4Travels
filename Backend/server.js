@@ -2280,14 +2280,22 @@ app.post("/trip-requests", async (req, res) => {
     : destination;
 
   try {
-    const docRef = await db.collection("tripRequests").add({
+    // Build tripData safely without undefined values
+    const tripData = {
       ...responses,
       tripDate,
       numPeople,
       destination: finalDestination,
-      contactNumber, // now it will have a value
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
-    });
+    };
+
+    // Only add contactNumber if it exists
+    if (contactNumber !== undefined && contactNumber !== null && contactNumber !== "") {
+      tripData.contactNumber = contactNumber;
+    }
+
+    const docRef = await db.collection("tripRequests").add(tripData);
+
     res
       .status(201)
       .json({ id: docRef.id, message: "Trip request saved successfully." });
@@ -2296,7 +2304,6 @@ app.post("/trip-requests", async (req, res) => {
     res.status(500).json({ error: "Server error while saving trip data." });
   }
 });
-
 
 // GET all trip requests
 app.get("/trip-requests", async (req, res) => {
