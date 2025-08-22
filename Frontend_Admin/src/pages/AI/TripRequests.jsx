@@ -1,5 +1,7 @@
-import React, { useEffect, useState } from "react";
+"use client";
+import { useEffect, useState } from "react";
 import styles from "./TripRequests.module.css";
+import axios from "axios";
 
 const API = "https://desire4travels-1.onrender.com";
 
@@ -7,15 +9,16 @@ const getDestinationsArray = (dest) => {
   if (Array.isArray(dest)) {
     return dest.filter(Boolean);
   }
-  if (typeof dest === 'string') {
-    // This regex looks for any word characters inside quotes
-    const regex = /"(\w+)"/g; 
+  if (typeof dest === "string") {
+    const regex = /"(\w+)"/g;
     const matches = dest.match(regex);
     if (matches) {
-      return matches.map(match => match.replace(/"/g, ''));
+      return matches.map((match) => match.replace(/"/g, ""));
     }
-    // Fallback for a standard comma-separated string
-    return dest.split(',').map(s => s.trim()).filter(Boolean);
+    return dest
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
   }
   return [];
 };
@@ -37,7 +40,7 @@ export default function TripRequestsList() {
       try {
         const res = await fetch(`${API}/trip-requests`);
         const data = await res.json();
-        setItems(data.reverse()); // Newest on top
+        setItems(data.reverse()); // newest on top
       } catch (err) {
         console.error("Fetch error:", err);
         setError("Failed to load trip requests.");
@@ -49,6 +52,7 @@ export default function TripRequestsList() {
 
   /* ------------ helpers ------------ */
   function openEdit(item) {
+    console.log("Editing item:", item);
     setEditItem(item);
     setEditData(item);
   }
@@ -86,7 +90,6 @@ export default function TripRequestsList() {
       const date = new Date(value._seconds * 1000);
       return date.toLocaleString();
     }
-    // Updated to use the getDestinationsArray helper
     if (
       key === "destination" &&
       (Array.isArray(value) || typeof value === "string")
@@ -107,114 +110,120 @@ export default function TripRequestsList() {
     <div className={styles.container}>
       <h1 className={styles.heading}>Trip Requests</h1>
 
-      {loading && <p>Loading...</p>}
+      {loading && <p className={styles.loading}>Loading...</p>}
       {error && <p className={styles.error}>{error}</p>}
 
-      <div className={styles.listGrid}>
-        {items.map((item) => (
-          <div key={item.id} className={styles.card}>
-            <h3 className={styles.cardTitle}>
-               Trip to: {getDestinationsArray(item.destination).join(", ") ||
-                "Destination not specified"}
-            </h3>
-            <ul className={styles.cardList}>
-              {/* This is the section you need to change. */}
-              {item.numPeople && (
-                <li>
-                  <strong>How many people are going for the trip?:</strong>{" "}
-                  {item.numPeople}
-                </li>
-              )}
-              {item.tripDate && (
-                <li>
-                  <strong>When are you planning for the trip?:</strong>{" "}
-                  {item.tripDate}
-                </li>
-              )}
-              {item.startLocation && (
-                <li>
-                  <strong>
-                    From which location are you starting your trip?:
-                  </strong>{" "}
-                  {item.startLocation}
-                </li>
-              )}
-              {/* Note: `item.destination` is used in the h3 title, so this might be redundant */}
-              {getDestinationsArray(item.destination).length > 0 && (
-                <li>
-                  <strong>Where do you want to go ?:</strong>{" "}
-                  {getDestinationsArray(item.destination).join(", ")}
-                </li>
-              )}
-              {item.additionalLocations && (
-                <li>
-                  <strong>
-                    Add all the locations that you are planning to visit:
-                  </strong>{" "}
-                  {formatValue("additionalLocations", item.additionalLocations)}
-                </li>
-              )}
-            </ul>
-            <div className={styles.btnRow}>
-              <button onClick={() => openEdit(item)} className={styles.editBtn}>
-                Edit
-              </button>
-              <button
-                onClick={() => setDeleteItem(item)}
-                className={styles.deleteBtn}
-              >
-                Delete
-              </button>
-            </div>
-          </div>
-        ))}
-        {!loading && items.length === 0 && (
-          <p className={styles.noResult}>No trip requests found.</p>
-        )}
-      </div>
+      {!loading && items.length > 0 ? (
+        <table className={styles.table}>
+          <thead>
+            <tr>
+              <th>Destination</th>
+              <th>People</th>
+              <th>Trip Date</th>
+              <th>Contact Number</th>
+              <th>Created At</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {items.map((item) => (
+              <tr key={item.id}>
+                <td data-label="Destination">
+                  {getDestinationsArray(item.destination).join(", ") || "N/A"}
+                </td>
+                <td data-label="People">{item.numPeople || "N/A"}</td>
+                <td data-label="Trip Date">{item.tripDate || "N/A"}</td>
+                <td data-label="Contact Number">
+                  {item.contactNumber || "N/A"}
+                </td>
+                <td data-label="Created At">
+                  {item.createdAt?._seconds
+                    ? new Date(item.createdAt._seconds * 1000).toLocaleString()
+                    : "N/A"}
+                </td>
+                <td>
+                  <button onClick={() => openEdit(item)} className={styles.editBtn}>
+  Edit
+</button>
+
+
+                  <button onClick={() => setDeleteItem(item)} className={styles.deleteBtn}>
+  Delete
+</button>
+
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      ) : (
+        !loading && <p className={styles.noResult}>No trip requests found.</p>
+      )}
 
       {/* -------- EDIT MODAL -------- */}
       {editItem && (
-        <div className={styles.modalOverlay}>
-          <div className={styles.modal}>
-            <h2>Edit Trip Request</h2>
-            <div className={styles.editForm}>
-              {Object.entries(editItem).map(([k, v]) => {
-                if (k === "id" || k === "createdAt") return null;
-                return (
-                  <label key={k} className={styles.editLabel}>
-                    {k}
-                    <input
-                      name={k}
-                      value={
-                        (editData[k] &&
-                          (typeof editData[k] === "object"
-                            ? JSON.stringify(editData[k])
-                            : editData[k])) ||
-                        ""
-                      }
-                      onChange={(e) =>
-                        setEditData((d) => ({ ...d, [k]: e.target.value }))
-                      }
-                    />
-                  </label>
-                );
-              })}
-            </div>
-            <div className={styles.modalActions}>
-              <button onClick={saveEdit} className={styles.saveBtn}>
-                Save
-              </button>
-              <button
-                onClick={() => setEditItem(null)}
-                className={styles.cancelBtn}
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+  <div className={styles.modalOverlay}>
+    <div className={styles.modal}>
+      <h2>Edit Trip Request</h2>
+      <div className={styles.editForm}>
+        <label>
+          Destination
+          <input
+            value={editData.destination || ""}
+            onChange={(e) =>
+              setEditData((d) => ({ ...d, destination: e.target.value }))
+            }
+          />
+        </label>
+
+        <label>
+          People
+          <input
+            type="number"
+            value={editData.numPeople || ""}
+            onChange={(e) =>
+              setEditData((d) => ({ ...d, numPeople: e.target.value }))
+            }
+          />
+        </label>
+
+        <label>
+          Trip Date
+          <input
+            type="date"
+            value={editData.tripDate || ""}
+            onChange={(e) =>
+              setEditData((d) => ({ ...d, tripDate: e.target.value }))
+            }
+          />
+        </label>
+
+        <label>
+          Contact Number
+          <input
+            value={editData.contactNumber || ""}
+            onChange={(e) =>
+              setEditData((d) => ({ ...d, contactNumber: e.target.value }))
+            }
+          />
+        </label>
+      </div>
+
+      <div className={styles.modalActions}>
+        <button onClick={saveEdit} className={styles.saveBtn}>
+          Save
+        </button>
+        <button
+          onClick={() => setEditItem(null)}
+          className={styles.cancelBtn}
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
 
       {/* -------- DELETE CONFIRM -------- */}
       {deleteItem && (
