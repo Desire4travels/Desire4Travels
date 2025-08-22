@@ -126,19 +126,23 @@ AUTH_KEYS.forEach(k => localStorage.removeItem(k));
   //   }
   // };
 
-  const handleChange = (e) => {
-    const { name, value, files } = e.target;
+ const handleChange = (e) => {
+  const { name, value, files } = e.target;
 
-    if (name === "images") {
-      setFormData({ ...formData, images: Array.from(files) }); // for multiple images
-    } else {
-      const updatedFormData = { ...formData, [name]: value };
-      if (name === "title" && !editingId) {
-        updatedFormData.slug = slugify(value);
-      }
-      setFormData(updatedFormData);
+  if (name === "images") {
+    setFormData(prev => ({
+      ...prev,
+      images: [...prev.images, ...Array.from(files)] // append new images
+    }));
+  } else {
+    const updatedFormData = { ...formData, [name]: value };
+    if (name === "title" && !editingId) {
+      updatedFormData.slug = slugify(value);
     }
-  };
+    setFormData(updatedFormData);
+  }
+};
+
 
 
   // const handleSubmit = async (e) => {
@@ -169,6 +173,15 @@ AUTH_KEYS.forEach(k => localStorage.removeItem(k));
   //     setIsLoading(false);
   //   }
   // };
+
+const handleDeleteImage = (index) => {
+  setFormData(prev => ({
+    ...prev,
+    images: prev.images.filter((_, i) => i !== index)
+  }));
+};
+
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -232,6 +245,7 @@ AUTH_KEYS.forEach(k => localStorage.removeItem(k));
       excerpt: blog.excerpt,
       alt: blog.alt,
       status: blog.status,
+      images: blog.images || [], // <-- keep existing URLs
       image: null,
       slug: blog.slug,
        metaKeywords: blog.metaKeywords || "" 
@@ -474,33 +488,57 @@ AUTH_KEYS.forEach(k => localStorage.removeItem(k));
     />
   </div>
 
-  {/* 6 – Images */}
-  <div className="form-group">
-    <label>Featured Images{!editingId && "*"}</label>
-    <div className="file-upload">
-      <input
-        type="file"
-        name="images"
-        accept="image/*"
-        multiple
-        onChange={handleChange}
-        {...(editingId ? {} : { required: true })}
-      />
-      <span className="file-upload-label">
-        {formData.images?.length > 0
-          ? `${formData.images.length} file(s) selected`
-          : "Choose images"}
-      </span>
+ {/* 6 – Images */}
+<div className="form-group">
+  <label>Featured Images{!editingId && "*"}</label>
+
+  {/* Existing Images (only when editing) */}
+  {editingId && formData.images.length > 0 && (
+    <div className="existing-images">
+      {formData.images.map((img, index) => (
+        <div key={index} className="image-preview">
+          <img
+            src={typeof img === "string" ? img : URL.createObjectURL(img)}
+            alt={`Image ${index + 1}`}
+          />
+          <button
+            type="button"
+            className="delete-image-btn"
+            onClick={() => handleDeleteImage(index)}
+          >
+            &times;
+          </button>
+        </div>
+      ))}
     </div>
-    {editingId && (
-      <small className="image-hint">Leave empty to keep current images</small>
-    )}
+  )}
+
+  {/* Upload new images */}
+  <div className="file-upload">
+    <input
+      type="file"
+      name="images"
+      accept="image/*"
+      multiple
+      onChange={handleChange}
+      {...(!editingId ? { required: true } : {})}
+    />
+    <span className="file-upload-label">
+      {formData.images?.length > 0
+        ? `${formData.images.length} file(s) selected`
+        : "Choose images"}
+    </span>
   </div>
+
+  {editingId && (
+    <small className="image-hint">Leave empty to keep current images</small>
+  )}
+</div>
 
   {/* Meta Keywords */}
 <div className="form-group">
   <label>
-    Meta Keywords <small>(Comma-separated)</small>
+    Meta Keywords <span >*</span><small>(Comma-separated)</small>
   </label>
   <input
     type="text"
@@ -508,6 +546,7 @@ AUTH_KEYS.forEach(k => localStorage.removeItem(k));
     placeholder="e.g., travel, beach, adventure"
     value={formData.metaKeywords}
     onChange={handleChange}
+    required // ✅ Make it mandatory
   />
 </div>
 

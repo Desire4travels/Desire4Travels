@@ -57,10 +57,12 @@ const ManagePackage = () => {
     description: "",
     inclusions: "",
     itinerary: "",
-    photo: null,
+    photoFile: null,    // new uploaded file
+    photoURL: null,     // existing image URL
     destinations: [],
-    metaKeywords: "", // <-- Added this
+    metaKeywords: "",
   });
+
 
   const [packages, setPackages] = useState([]);
   const [destinations, setDestinations] = useState([]);
@@ -108,8 +110,13 @@ const ManagePackage = () => {
       setFormData((prev) => ({ ...prev, [name]: files ? files[0] : value }));
 
       if (files && files[0]) {
+        setFormData(prev => ({
+          ...prev,
+          photoFile: files[0]
+        }));
         setPreviewImage(URL.createObjectURL(files[0]));
       }
+
     }
   };
 
@@ -117,13 +124,19 @@ const ManagePackage = () => {
     e.preventDefault();
 
     const data = new FormData();
-    for (const key in formData) {
-      if (key === "destinations") {
-        data.append(key, JSON.stringify(formData[key]));
-      } else if (formData[key] !== null) {
-        data.append(key, formData[key]);
-      }
+for (const key in formData) {
+  if (key === "destinations") {
+    data.append(key, JSON.stringify(formData[key]));
+  } else if (key === "photoFile") {
+    if (formData.photoFile) {
+      data.append("photo", formData.photoFile);
+    } else if (formData.photoURL) {
+      data.append("photoURL", formData.photoURL); // send existing URL
     }
+  } else if (formData[key] !== null) {
+    data.append(key, formData[key]);
+  }
+}
 
     const url = editingId
       ? `https://desire4travels-1.onrender.com/api/admin/packages/${editingId}`
@@ -167,11 +180,13 @@ const ManagePackage = () => {
       description: pkg.description,
       inclusions: pkg.inclusions,
       itinerary: pkg.itinerary,
-      photo: null,
+      photoFile: null,      // user hasn't uploaded a new file yet
+      photoURL: pkg.photo,  // keep existing photo URL
       destinations:
         Array.isArray(pkg.destinations) && pkg.destinations.length > 0
           ? pkg.destinations
           : [],
+      metaKeywords: pkg.metaKeywords || "",
     });
 
     setPreviewImage(pkg.photo || null);
@@ -288,7 +303,7 @@ const ManagePackage = () => {
 
           <div className="form-group">
             <label>
-              Meta Keywords <small>(Comma-separated)</small>
+              Meta Keywords* <small>(Comma-separated)</small>
             </label>
             <input
               type="text"
@@ -296,6 +311,7 @@ const ManagePackage = () => {
               value={formData.metaKeywords}
               onChange={handleChange}
               placeholder="e.g., beach, Goa, honeymoon, adventure"
+              required
             />
           </div>
 
@@ -362,13 +378,13 @@ const ManagePackage = () => {
             {packages.map((pkg) => {
               const selectedDests = Array.isArray(pkg.destinations)
                 ? pkg.destinations
-                    .map((destId) => {
-                      const dest = destinations.find(
-                        (d) => d._id === destId || d.id === destId
-                      );
-                      return dest ? `${dest.name} (${dest.state})` : destId;
-                    })
-                    .join(", ")
+                  .map((destId) => {
+                    const dest = destinations.find(
+                      (d) => d._id === destId || d.id === destId
+                    );
+                    return dest ? `${dest.name} (${dest.state})` : destId;
+                  })
+                  .join(", ")
                 : "No destinations";
 
               return (

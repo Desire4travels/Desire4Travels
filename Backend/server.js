@@ -400,7 +400,7 @@ app.post("/api/admin/packages", upload.single("photo"), async (req, res) => {
       inclusions,
       itinerary,
       destinations,
-      metaKeywords, // <-- Add this
+      metaKeywords,
     } = req.body;
 
     if (
@@ -423,34 +423,21 @@ app.post("/api/admin/packages", upload.single("photo"), async (req, res) => {
     }
 
     const safeDescription = sanitizeHtml(description, {
-      allowedTags: [
-        "p",
-        "b",
-        "i",
-        "em",
-        "strong",
-        "h1",
-        "h2",
-        "ul",
-        "ol",
-        "li",
-        "br",
-      ],
+      allowedTags: ["p","b","i","em","strong","h1","h2","ul","ol","li","br"],
       allowedAttributes: {},
     });
 
-    // Upload photo to ImageKit
+    // Upload photo
     const uploadedImage = await imagekit.upload({
       file: fs.readFileSync(req.file.path),
       fileName: req.file.originalname,
       folder: "/packages",
     });
-
-    // Remove temp file
     fs.unlinkSync(req.file.path);
 
     const newPackage = {
       packageName,
+      slug: slugify(packageName), // <-- generate slug here
       duration,
       price,
       description: safeDescription,
@@ -458,24 +445,18 @@ app.post("/api/admin/packages", upload.single("photo"), async (req, res) => {
       itinerary,
       photo: uploadedImage.url,
       destinations: parsedDestinations,
-      metaKeywords: metaKeywords || "", // <-- new line
+      metaKeywords: metaKeywords || "",
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
     };
 
     const docRef = await db.collection("packages").add(newPackage);
-    res
-      .status(201)
-      .json({ message: "Package added successfully", id: docRef.id });
+    res.status(201).json({ message: "Package added successfully", id: docRef.id });
   } catch (error) {
-    console.error("Error creating package:", {
-      message: error.message,
-      stack: error.stack,
-      body: req.body,
-      file: req.file,
-    });
+    console.error("Error creating package:", error);
     res.status(500).json({ error: "Server error" });
   }
 });
+
 
 // GET - Fetch all admin packages
 app.get("/api/admin/packages", async (req, res) => {
@@ -536,57 +517,63 @@ app.put("/api/admin/packages/:id", upload.single("photo"), async (req, res) => {
       inclusions,
       itinerary,
       destinations,
-      metaKeywords, // <-- Add this
+      metaKeywords,
     } = req.body;
 
+    const docRef = db.collection("packages").doc(packageId);
+    const existingDoc = await docRef.get();
+
+    if (!existingDoc.exists) {
+      return res.status(404).json({ error: "Package not found" });
+    }
+
     const updateData = {
-      ...(packageName && { packageName }),
       ...(duration && { duration }),
       ...(price && { price }),
       ...(description && { description }),
       ...(inclusions && { inclusions }),
       ...(itinerary && { itinerary }),
-      ...(metaKeywords && { metaKeywords }), // <-- new line
+      ...(metaKeywords && { metaKeywords }),
     };
 
+    // Only update slug if packageName changed
+    if (packageName && packageName !== existingDoc.data().packageName) {
+      updateData.packageName = packageName;
+      updateData.slug = slugify(packageName);
+    }
+
+    // Update destinations
     if (destinations) {
       try {
         const parsedDestinations = JSON.parse(destinations);
         if (!Array.isArray(parsedDestinations)) {
-          return res
-            .status(400)
-            .json({ error: "Destinations must be an array" });
+          return res.status(400).json({ error: "Destinations must be an array" });
         }
         updateData.destinations = parsedDestinations;
       } catch (err) {
-        return res
-          .status(400)
-          .json({ error: "Invalid JSON format for destinations" });
+        return res.status(400).json({ error: "Invalid JSON for destinations" });
       }
     }
 
+    // Update photo if new file uploaded
     if (req.file) {
-      // Upload new photo to ImageKit
       const uploadedPhoto = await imagekit.upload({
         file: fs.readFileSync(req.file.path),
         fileName: req.file.originalname,
         folder: "/packages",
       });
-
-      // Remove temporary file
       fs.unlinkSync(req.file.path);
-
       updateData.photo = uploadedPhoto.url;
     }
 
-    await db.collection("packages").doc(packageId).update(updateData);
-
+    await docRef.update(updateData);
     res.status(200).json({ message: "Package updated successfully" });
   } catch (error) {
     console.error("Error updating package:", error);
     res.status(500).json({ error: "Server error" });
   }
 });
+
 
 // DELETE - Delete package
 app.delete("/api/admin/packages/:id", async (req, res) => {
