@@ -229,7 +229,7 @@ const handleDeleteImage = (index) => {
       excerpt: "",
       alt: "",
       status: "draft",
-      image: [],
+      images: [],
       slug: "",
       metaKeywords:""
     });
