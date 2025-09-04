@@ -83,7 +83,7 @@ AUTH_KEYS.forEach(k => localStorage.removeItem(k));
     excerpt: "",
     alt: "",
     status: "draft",
-    images: [], // <-- changed from image: null
+    images:[], // <-- changed from image: null
     slug: "",
      metaKeywords: "" // <-- Add this
   });
@@ -229,7 +229,7 @@ const handleDeleteImage = (index) => {
       excerpt: "",
       alt: "",
       status: "draft",
-      images: [],
+      images: [], // FIXED: changing the images value from null to array 
       slug: "",
       metaKeywords:""
     });
@@ -605,3 +605,4 @@ const handleDeleteImage = (index) => {
 };
 
 export default Blog;
+
