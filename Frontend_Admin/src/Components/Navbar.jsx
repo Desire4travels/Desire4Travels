@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import NotificationDropdown from './NotificationDropdown';
 import './Navbar.css';
 
 const Navbar = () => {
@@ -8,13 +9,18 @@ const Navbar = () => {
         Desire<span>4</span>Travels_Admin
       </div>
       <ul className="nav-menu">
-        <li><Link to="/" className="nav-link">Home</Link></li>
         {/*<li><Link to="/managedestination" className="nav-link">Manage Destination</Link></li>
-        <li><Link to="/managepackage" className="nav-link">Manage Packages</Link></li>    
+        <li><Link to="/managepackage" className="nav-link">Manage Packages</Link></li>
         <li><Link to="/manageblog" className="nav-link">Manage Blog</Link></li>
         <li><Link to="/packageCallback" className="nav-link">Package Callback</Link></li>
         <li><Link to="/destinationCallback" className="nav-link">Package Callback</Link></li>*/}
       </ul>
+      <div className="nav-home">
+        <li><Link to="/" className="nav-link">Home</Link></li>
+      </div>
+      <div className="nav-notifications">
+        <NotificationDropdown />
+      </div>
     </nav>
   );
 };
