@@ -15,6 +15,10 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
+// Routes
+const notificationsRouter = require('./routes/notifications');
+app.use('/api', notificationsRouter);
+
 const port = 3000;
 
 // SDK initialization
@@ -87,6 +91,17 @@ app.post("/enquiry", async (req, res) => {
     };
 
     const docRef = await db.collection("enquiries").add(enquiry);
+
+     // Create a notification for the new enquiry
+    const notification = {
+      title: "New Enquiry Received",
+      message: `Enquiry from ${name} for ${destination || "unspecified destination"}`,
+      type: "enquiry",
+      read: false,
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+    };
+    await db.collection("notifications").add(notification);
 
     res.status(201).json({ message: "Form submitted", id: docRef.id });
   } catch (error) {
@@ -1739,6 +1754,10 @@ app.get("/api/admin/popup-enquiries", async (req, res) => {
 });
 
 const activityCallback = db.collection("activity-callbacks");
+
+// Import notifications route
+const notificationsRoute = require('./routes/notifications');
+app.use('/api/notifications', notificationsRoute);
 
 /**
  * CREATE
