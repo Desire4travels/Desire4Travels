@@ -1,0 +1,67 @@
+.notification-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #ff4444;
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: bold;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+  animation: pulse 2s infinite;
+}
+
+.notification-badge.navbar-badge {
+  position: relative;
+  top: auto;
+  right: auto;
+  width: 16px;
+  height: 16px;
+  font-size: 10px;
+  margin-left: 4px;
+}
+
+.notification-badge.card-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  width: 18px;
+  height: 18px;
+  font-size: 10px;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* For larger badges */
+.notification-badge.large {
+  width: 24px;
+  height: 24px;
+  font-size: 12px;
+}
+
+/* For small badges */
+.notification-badge.small {
+  width: 14px;
+  height: 14px;
+  font-size: 9px;
+}
